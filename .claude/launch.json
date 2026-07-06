@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "urban-loyalty",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "C:\\Users\\nadi5\\OneDrive\\Desktop\\AI\\אפליקציה חבר מועדון urban\\urban-loyalty",
+      "port": 3000
+    }
+  ]
+}
