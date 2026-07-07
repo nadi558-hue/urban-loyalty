@@ -38,14 +38,14 @@ CREATE TABLE IF NOT EXISTS processed_checkins (
   processed_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Rewards catalog
+-- Rewards catalog (status/discount perks only — no physical merch)
 CREATE TABLE IF NOT EXISTS rewards (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   description TEXT NOT NULL,
   cost_coins INTEGER NOT NULL,
-  reward_type TEXT NOT NULL DEFAULT 'merch' CHECK (reward_type IN ('merch', 'workshop', 'discount', 'class', 'other')),
-  emoji TEXT NOT NULL DEFAULT '🎁',
+  reward_type TEXT NOT NULL DEFAULT 'discount' CHECK (reward_type IN ('priority', 'discount', 'class', 'workshop', 'other')),
+  emoji TEXT NOT NULL DEFAULT '✨',
   stock INTEGER,                 -- null = ללא הגבלה
   active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -118,12 +118,19 @@ INSERT INTO point_rules (key, points, description) VALUES
   ('anniversary',         20, 'שנת חברות בסטודיו')
 ON CONFLICT (key) DO UPDATE SET points = EXCLUDED.points;
 
--- ─── Default rewards catalog ───────────────────────────────────────────────
+-- ─── Default rewards catalog (matches the app UI) ─────────────────────────
 INSERT INTO rewards (name, description, cost_coins, reward_type, emoji) VALUES
-  ('גרביים / בקבוק URBAN',     'גרביי פילאטיס מעוצבות או בקבוק מים ממותג', 30,  'merch',    '🧦'),
-  ('כניסה לסדנה מיוחדת',       'כניסה חינמית לסדנת מאסטר בסופ"ש',          50,  'workshop', '✨'),
-  ('10% הנחה על מנוי',         '10% הנחה על רכישת מנוי חדש',               100, 'discount', '💰'),
-ON CONFLICT DO NOTHING;
+  ('הקפצה בראש רשימת המתנה',          'קפיצה לראש רשימת ההמתנה בשיעור מלא',                       20,  'priority', '⤴️'),
+  ('שריון מוקדם · שבוע מראש',          'פתיחת מערכת השעות שבוע לפני כולם',                          35,  'priority', '📅'),
+  ('5% הנחה · חידוש מנוי או כרטיסייה',  '5% הנחה על החידוש הבא (מנוי פעיל 3+ חודשים)',              45,  'discount', '💫'),
+  ('10% הנחה · חידוש מנוי או כרטיסייה', '10% הנחה על החידוש הבא (מנוי פעיל 3+ חודשים)',             90,  'discount', '💰'),
+  ('שריון VIP · שבועיים מראש',          'פתיחת מערכת השעות שבועיים לפני כולם',                       110, 'priority', '⭐'),
+  ('שיעור בודד מעבר למכסה',            'שיעור נוסף מעבר למכסת המנוי החודשי',                        120, 'class',    '🎫')
+ON CONFLICT (name) DO UPDATE SET
+  description = EXCLUDED.description,
+  cost_coins  = EXCLUDED.cost_coins,
+  reward_type = EXCLUDED.reward_type,
+  emoji       = EXCLUDED.emoji;
 
 -- ─── Default Happy Hours ───────────────────────────────────────────────────
 INSERT INTO happy_hours (branch, day_of_week, start_time, end_time, multiplier) VALUES
@@ -144,3 +151,20 @@ CREATE TRIGGER members_updated_at BEFORE UPDATE ON members
 DROP TRIGGER IF EXISTS point_rules_updated_at ON point_rules;
 CREATE TRIGGER point_rules_updated_at BEFORE UPDATE ON point_rules
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ─── Row Level Security ────────────────────────────────────────────────────
+-- All app access goes through the server with the service-role key (bypasses RLS).
+-- Enabling RLS with no policies blocks any direct access via the public anon key.
+ALTER TABLE members            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE point_ledger       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE processed_checkins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rewards            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE redemptions        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE referrals          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE happy_hours        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE point_rules        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sync_log           ENABLE ROW LEVEL SECURITY;
+
+-- Read-only public access to the rewards catalog (safe to display before login)
+DROP POLICY IF EXISTS rewards_public_read ON rewards;
+CREATE POLICY rewards_public_read ON rewards FOR SELECT USING (active = true);
