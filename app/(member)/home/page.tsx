@@ -89,8 +89,23 @@ export default async function HomePage() {
         background: 'linear-gradient(180deg,#3a342d 0%,#1c1917 100%)',
         overflow: 'hidden', position: 'relative', padding: '20px 20px 28px',
       }}>
+        {/* Faded studio illustration behind the header */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/header-class.jpg" alt="" aria-hidden
+          style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center 30%',
+            opacity: 0.16, pointerEvents: 'none',
+          }}
+        />
+        {/* Dark overlay to keep text readable */}
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(180deg, rgba(28,25,23,0.35) 0%, rgba(28,25,23,0.75) 100%)',
+        }} />
+
         {/* Greeting + tier chip */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
           <div>
             <p style={{ fontSize: 13, color: 'rgba(245,240,230,0.5)', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#f5f0e8', lineHeight: 1.1 }}>{firstName} {name.split(' ')[1]}</p>
@@ -107,7 +122,7 @@ export default async function HomePage() {
         </div>
 
         {/* Arc gauge */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
           <svg width="160" height="90" viewBox="0 0 160 90" style={{ overflow: 'visible' }}>
             {/* Track: half circle, left→right, top */}
             <path
