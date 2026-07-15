@@ -163,16 +163,6 @@ export default async function HomePage() {
           )}
         </div>
 
-        {/* Illustration — figure-reach, faded left */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/figure-reach.png" alt="" aria-hidden
-          style={{
-            position: 'absolute', bottom: -24, left: -46, height: 262,
-            pointerEvents: 'none', opacity: 0.5,
-            WebkitMaskImage: 'linear-gradient(105deg,#000 0%,rgba(0,0,0,.55) 30%,transparent 52%)',
-            maskImage: 'linear-gradient(105deg,#000 0%,rgba(0,0,0,.55) 30%,transparent 52%)',
-          }}
-        />
       </div>
 
       {/* ── Available UC card (gold) ─────────────── */}
