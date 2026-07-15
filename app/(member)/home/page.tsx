@@ -1,6 +1,5 @@
 import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { TIER_NEXT, TIER_PERKS } from '@/lib/points'
 import Link from 'next/link'
 
 type Member = {
@@ -70,12 +69,8 @@ export default async function HomePage() {
   // Arc gauge SVG (semicircle, 180°)
   const R = 68
   const cx = 80, cy = 80
-  const startAngle = 180 // degrees, left side
-  const endAngle = 0
   const arcFrac = progressPct / 100
   // We draw a half-circle arc from left to right (bottom half hidden)
-  // strokeDasharray trick on a full circle
-  const fullCirc = 2 * Math.PI * R
   const halfCirc = Math.PI * R // 180° arc length
   const fillLen = arcFrac * halfCirc
 
@@ -130,14 +125,7 @@ export default async function HomePage() {
             />
             {/* Progress fill */}
             {fillLen > 0 && (() => {
-              // angle: starts at 180° (left), goes clockwise to 0° (right)
-              const angle = 180 - arcFrac * 180 // end angle in degrees from right
-              const rad = (angle * Math.PI) / 180
-              // end point on circle (from cx,cy center)
-              const ex = cx + R * Math.cos(Math.PI - rad) // mirror since we go left→right
-              const ey = cy - R * Math.sin(Math.PI - rad)
-              // actually simpler: parametric
-              const endRad2 = ((180 - arcFrac * 180) * Math.PI) / 180
+              // Parametric end point on the semicircle (left→right sweep)
               const px = cx + R * Math.cos(Math.PI - arcFrac * Math.PI)
               const py = cy - R * Math.sin(arcFrac * Math.PI)
               const largeArc = arcFrac > 0.5 ? 1 : 0

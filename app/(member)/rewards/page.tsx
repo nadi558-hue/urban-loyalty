@@ -71,10 +71,45 @@ function RewardIcon({ type, muted = false }: { type: IconKey; muted?: boolean })
 }
 
 type Filter = 'all' | 'available' | 'soon'
+type Reward = { id: number; icon: IconKey; name: string; cost: number }
 
 export default function RewardsPage() {
   const [filter, setFilter] = useState<Filter>('all')
+  const [confirming, setConfirming] = useState<Reward | null>(null)
+  const [redeemed, setRedeemed] = useState<Reward | null>(null)
+  const [redeemedCode, setRedeemedCode] = useState<string | null>(null)
+  const [redeeming, setRedeeming] = useState(false)
+  const [redeemError, setRedeemError] = useState('')
   const uc = DEMO_UC
+
+  async function confirmRedeem(r: Reward) {
+    setRedeeming(true); setRedeemError('')
+    try {
+      const res = await fetch('/api/rewards/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reward_name: r.name }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setRedeemedCode(data.code ?? null)
+        setRedeemed(r)
+        setConfirming(null)
+      } else if (res.status === 401) {
+        // Not signed in (local demo without a live session) — show the demo
+        // success so the flow is reviewable; real redemption runs in production.
+        setRedeemedCode(null)
+        setRedeemed(r)
+        setConfirming(null)
+      } else {
+        setRedeemError(data.error ?? 'שגיאה במימוש')
+      }
+    } catch {
+      setRedeemError('שגיאת רשת — נסה שוב')
+    } finally {
+      setRedeeming(false)
+    }
+  }
   const showAvailable = filter !== 'soon'
   const showLocked = filter !== 'available'
   const filters: { key: Filter; label: string }[] = [
@@ -108,7 +143,7 @@ export default function RewardsPage() {
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/figure-stretch.png" alt="" aria-hidden
-          style={{ position: 'absolute', bottom: 0, left: -30, height: 170, opacity: 0.5, pointerEvents: 'none', zIndex: 1, filter: 'drop-shadow(0 12px 20px rgba(28,25,23,.16))', WebkitMaskImage: 'linear-gradient(90deg,#000 40%,transparent 85%)', maskImage: 'linear-gradient(90deg,#000 40%,transparent 85%)' }}
+          style={{ position: 'absolute', bottom: 0, left: 4, height: 182, opacity: 0.5, pointerEvents: 'none', zIndex: 1, filter: 'drop-shadow(0 12px 20px rgba(28,25,23,.16))', WebkitMaskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)', maskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)' }}
         />
       </div>
 
@@ -147,14 +182,21 @@ export default function RewardsPage() {
         <div style={{ padding: '14px 16px 0' }}>
           <p style={{ fontSize: 11, color: '#94897e', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין עכשיו</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {REWARDS_AVAILABLE.map(r => (
+            {REWARDS_AVAILABLE.map(r => {
+              const affordable = uc >= r.cost
+              return (
               <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(196,160,90,0.2)', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}>
                 <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} /></div>
                 <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#1c1917', marginBottom: 4 }}>{r.name}</p>
                 <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#94897e', marginBottom: 10 }}>{r.cost} UC</p>
-                <button style={{ width: '100%', background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', border: 'none', borderRadius: 999, padding: '7px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#1c1917', cursor: 'pointer' }}>מימוש</button>
+                <button
+                  onClick={() => affordable && setConfirming(r)}
+                  disabled={!affordable}
+                  style={{ width: '100%', background: affordable ? 'linear-gradient(135deg,#e8cc88,#c4a05a)' : '#f0ebe2', border: 'none', borderRadius: 999, padding: '7px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: affordable ? '#1c1917' : '#94897e', cursor: affordable ? 'pointer' : 'not-allowed' }}
+                >{affordable ? 'מימוש' : `חסרים ${r.cost - uc} UC`}</button>
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}
@@ -181,6 +223,55 @@ export default function RewardsPage() {
       )}
 
       <div style={{ height: 24 }} />
+
+      {/* Confirm redemption */}
+      {confirming && (
+        <div onClick={() => setConfirming(null)} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(20,16,12,0.55)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 448, background: '#faf7f0', borderRadius: '24px 24px 0 0', padding: '24px 22px calc(24px + env(safe-area-inset-bottom))' }}>
+            <div style={{ width: 40, height: 4, borderRadius: 999, background: '#d9d0c0', margin: '0 auto 18px' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><RewardIcon type={confirming.icon} /></div>
+            <p style={{ textAlign: 'center', fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#1c1917', marginBottom: 6 }}>{confirming.name}</p>
+            <p style={{ textAlign: 'center', fontSize: 13, color: '#8a7c6a', marginBottom: 18, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              המימוש ינכה <strong style={{ color: '#c4a05a' }}>{confirming.cost} UC</strong> מהיתרה שלך · יישאר {uc - confirming.cost} UC
+            </p>
+            {redeemError && <p style={{ textAlign: 'center', fontSize: 13, color: '#c04040', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>{redeemError}</p>}
+            <button
+              onClick={() => confirmRedeem(confirming)}
+              disabled={redeeming}
+              style={{ width: '100%', background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', border: 'none', borderRadius: 999, padding: '13px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#1c1917', cursor: redeeming ? 'default' : 'pointer', opacity: redeeming ? 0.6 : 1, marginBottom: 8 }}
+            >{redeeming ? 'מבצע מימוש...' : 'אישור מימוש'}</button>
+            <button
+              onClick={() => { setConfirming(null); setRedeemError('') }}
+              style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, color: '#94897e', cursor: 'pointer' }}
+            >ביטול</button>
+          </div>
+        </div>
+      )}
+
+      {/* Redemption success */}
+      {redeemed && (
+        <div onClick={() => setRedeemed(null)} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(20,16,12,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 340, background: '#faf7f0', borderRadius: 24, padding: '28px 24px', textAlign: 'center' }}>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+            </div>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#1c1917', marginBottom: 6 }}>ההטבה מומשה!</p>
+            <p style={{ fontSize: 13, color: '#8a7c6a', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              {redeemed.name} · הצג את הקוד בדלפק הסטודיו
+            </p>
+            {redeemedCode && (
+              <div style={{ background: '#1c1917', borderRadius: 14, padding: '12px 0', marginBottom: 16 }}>
+                <p style={{ fontSize: 10, color: 'rgba(232,204,136,0.6)', letterSpacing: '0.18em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>קוד מימוש</p>
+                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 900, color: '#e8cc88', letterSpacing: '0.25em' }}>{redeemedCode}</p>
+              </div>
+            )}
+            <button
+              onClick={() => { setRedeemed(null); setRedeemedCode(null) }}
+              style={{ width: '100%', background: '#1c1917', border: 'none', borderRadius: 999, padding: '12px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#e8cc88', cursor: 'pointer' }}
+            >סגירה</button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

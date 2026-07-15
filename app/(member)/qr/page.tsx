@@ -1,7 +1,12 @@
-const DEMO = { name: 'מאיה לוי', memberId: 'URB-2847', tier: 'SILVER' }
+import { getCurrentMember, DEMO_MEMBER, memberIdLabel } from '@/lib/member'
 
-export default function QrPage() {
-  const { name, memberId, tier } = DEMO
+const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
+
+export default async function QrPage() {
+  const member = (await getCurrentMember()) ?? DEMO_MEMBER
+  const name = member.name
+  const memberId = memberIdLabel(member)
+  const tier = TIER_LABELS[member.tier] ?? member.tier
 
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#d9d3c7' }}>

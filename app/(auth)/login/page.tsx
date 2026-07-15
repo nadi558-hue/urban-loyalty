@@ -76,6 +76,9 @@ export default function LoginPage() {
 
         {step === 'phone' ? (
           <>
+            <label className="block text-xs mb-1.5 px-1" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              מספר טלפון
+            </label>
             <div className="relative mb-4">
               <input
                 type="tel"
@@ -86,20 +89,23 @@ export default function LoginPage() {
                 onKeyDown={e => e.key === 'Enter' && sendOtp()}
                 className="w-full py-4 px-5 rounded-2xl text-center text-lg tracking-widest outline-none"
                 style={{
-                  background: 'rgba(255,255,255,0.07)',
+                  background: 'rgba(255,255,255,0.12)',
                   color: 'white',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  border: '1px solid rgba(255,255,255,0.25)',
                 }}
               />
             </div>
-            <div className="flex items-start gap-2.5 mb-4 px-1">
-              <button
-                type="button"
-                onClick={() => setAgreed(a => !a)}
-                aria-pressed={agreed}
+            <button
+              type="button"
+              onClick={() => setAgreed(a => !a)}
+              aria-pressed={agreed}
+              className="flex items-start gap-2.5 mb-4 w-full text-right rounded-xl p-3"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}
+            >
+              <span
                 style={{
                   width: 20, height: 20, borderRadius: 6, flexShrink: 0, marginTop: 1,
-                  border: `1.5px solid ${agreed ? '#e2bd7e' : 'rgba(255,255,255,0.25)'}`,
+                  border: `1.5px solid ${agreed ? '#e2bd7e' : 'rgba(255,255,255,0.4)'}`,
                   background: agreed ? 'linear-gradient(135deg,#c4905a,#e2bd7e)' : 'transparent',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
@@ -109,22 +115,22 @@ export default function LoginPage() {
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                 )}
-              </button>
-              <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              </span>
+              <span className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 קראתי ואני מסכים/ה ל
-                <button type="button" onClick={() => setShowTerms(true)}
+                <span onClick={(e) => { e.stopPropagation(); setShowTerms(true) }}
                   className="underline font-bold"
                   style={{ color: '#e2bd7e' }}>
                   תקנון ותנאי השימוש
-                </button>
+                </span>
                 {' '}של מועדון Urban
-              </p>
-            </div>
+              </span>
+            </button>
 
             {error && <p className="text-red-400 text-sm text-center mb-3">{error}</p>}
             <button
               onClick={sendOtp}
-              disabled={loading || phone.length < 9 || !agreed}
+              disabled={loading || phone.length < 9}
               className="w-full py-4 rounded-2xl font-bold text-sm transition disabled:opacity-40"
               style={{ background: 'linear-gradient(135deg, #c4905a, #e2bd7e)', color: '#1e1e1e' }}
             >

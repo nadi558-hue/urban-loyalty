@@ -1,5 +1,3 @@
-import { createServiceClient } from '@/lib/supabase'
-
 const REASON_LABELS: Record<string, string> = {
   class_attended:       'שיעור הושלם',
   streak_10:            'בונוס רצף 10 שיעורים',
@@ -40,9 +38,11 @@ export default async function HistoryPage() {
         </h1>
       </div>
 
-      {/* Ledger entries */}
+      {/* Ledger entries — newest first */}
       <div className="px-5 pt-5 pb-6 space-y-2.5">
-        {DEMO_LEDGER.map((entry) => {
+        {[...DEMO_LEDGER]
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .map((entry) => {
           const positive = entry.points > 0
           return (
             <div key={entry.id} className="urban-card px-4 py-3.5 flex items-center justify-between">

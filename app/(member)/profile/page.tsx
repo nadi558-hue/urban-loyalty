@@ -1,19 +1,16 @@
-const DEMO = {
-  name: 'מאיה לוי',
-  phone: '050-1234567',
-  branch: 'סוקולוב',
-  tier: 'SILVER',
-  memberSince: 'ינואר 2026',
-}
+import { getCurrentMember, DEMO_MEMBER, memberSinceLabel } from '@/lib/member'
 
-const ROWS = [
-  { label: 'טלפון', value: DEMO.phone },
-  { label: 'סניף מועדף', value: DEMO.branch },
-  { label: 'רמת מועדון', value: DEMO.tier },
-  { label: 'חבר/ה מאז', value: DEMO.memberSince },
-]
+const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const member = (await getCurrentMember()) ?? DEMO_MEMBER
+  const rows = [
+    { label: 'טלפון', value: member.phone },
+    { label: 'סניף מועדף', value: member.preferred_branch ?? '—' },
+    { label: 'רמת מועדון', value: TIER_LABELS[member.tier] ?? member.tier },
+    { label: 'חבר/ה מאז', value: memberSinceLabel(member.created_at) },
+  ]
+
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#d9d3c7' }}>
 
@@ -28,20 +25,20 @@ export default function ProfilePage() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 28, fontWeight: 700, color: '#1c1917' }}>
-            {DEMO.name[0]}
+            {member.name[0]}
           </span>
         </div>
-        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#f5f0e8' }}>{DEMO.name}</p>
+        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#f5f0e8' }}>{member.name}</p>
       </div>
 
       {/* Details card */}
       <div style={{ padding: '20px 16px 0' }}>
         <div style={{ background: '#ffffff', borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(196,160,90,0.2)' }}>
-          {ROWS.map((r, i) => (
+          {rows.map((r, i) => (
             <div key={r.label} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               padding: '14px 18px',
-              borderBottom: i < ROWS.length - 1 ? '1px solid #f0ebe2' : undefined,
+              borderBottom: i < rows.length - 1 ? '1px solid #f0ebe2' : undefined,
             }}>
               <span style={{ fontSize: 13, color: '#94897e', fontFamily: 'var(--font-assistant,sans-serif)' }}>{r.label}</span>
               <span style={{ fontSize: 14, fontWeight: 600, color: '#1c1917', fontFamily: 'var(--font-assistant,sans-serif)' }}>{r.value}</span>
