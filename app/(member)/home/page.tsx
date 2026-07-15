@@ -89,12 +89,6 @@ export default async function HomePage() {
         background: 'linear-gradient(180deg,#3a342d 0%,#1c1917 100%)',
         overflow: 'hidden', position: 'relative', padding: '20px 20px 28px',
       }}>
-        {/* Branch + time row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <span style={{ fontSize: 13, color: 'rgba(245,240,230,0.5)', fontFamily: 'var(--font-assistant,sans-serif)' }}>סוקולוב</span>
-          <span style={{ fontSize: 13, color: 'rgba(245,240,230,0.35)', fontFamily: 'var(--font-assistant,sans-serif)' }}>9:41</span>
-        </div>
-
         {/* Greeting + tier chip */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
           <div>

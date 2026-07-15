@@ -1,9 +1,19 @@
 import { getCurrentMember, DEMO_MEMBER, memberSinceLabel } from '@/lib/member'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { isAdminPhone } from '@/lib/admin'
+import Link from 'next/link'
 
 const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
 export default async function ProfilePage() {
   const member = (await getCurrentMember()) ?? DEMO_MEMBER
+
+  let isAdmin = false
+  try {
+    const authClient = await createSupabaseServerClient()
+    const { data: { user } } = await authClient.auth.getUser()
+    isAdmin = isAdminPhone(user?.phone)
+  } catch { /* not configured / not signed in */ }
   const rows = [
     { label: 'טלפון', value: member.phone },
     { label: 'סניף מועדף', value: member.preferred_branch ?? '—' },
@@ -62,6 +72,23 @@ export default async function ProfilePage() {
           ))}
         </div>
       </div>
+
+      {/* Admin-only link */}
+      {isAdmin && (
+        <div style={{ padding: '16px 16px 0' }}>
+          <Link href="/admin" style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '15px 18px', borderRadius: 18, textDecoration: 'none',
+            background: 'linear-gradient(135deg,#3a342d,#1c1917)',
+            border: '1px solid rgba(196,160,90,0.45)',
+          }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#e8cc88', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              🛠️ ניהול מועדון
+            </span>
+            <span style={{ color: '#c4a05a' }}>‹</span>
+          </Link>
+        </div>
+      )}
 
       <div style={{ height: 100 }} />
     </main>
