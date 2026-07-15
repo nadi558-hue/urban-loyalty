@@ -56,13 +56,25 @@ export default function LoginPage() {
         />
         <div className="absolute inset-0"
           style={{ background: 'linear-gradient(to bottom, transparent 50%, #111 100%)' }} />
-        <div className="absolute bottom-6 inset-x-0 text-center">
-          <h1 className="text-5xl font-black uppercase"
-            style={{ color: 'white', letterSpacing: '0.14em', lineHeight: 1.1 }}>
-            URBAN
-          </h1>
-          <p className="text-sm font-black uppercase tracking-[0.28em]"
-            style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.3em' }}>
+        <div className="absolute bottom-6 inset-x-0 flex flex-col items-center">
+          <div className="text-5xl font-black uppercase" dir="ltr"
+            style={{ display: 'flex', alignItems: 'flex-end', gap: '0.07em', lineHeight: 1 }}>
+            {['U', 'R', 'B', 'A', 'N'].map((ch) => (
+              <span key={ch} style={{ position: 'relative', display: 'inline-block', color: 'white' }}>
+                {ch}
+                {ch === 'B' && (
+                  <span style={{
+                    position: 'absolute', left: '50%', bottom: '-0.18em',
+                    transform: 'translateX(-50%)',
+                    width: '0.62em', height: '0.10em',
+                    background: 'white', borderRadius: 1,
+                  }} />
+                )}
+              </span>
+            ))}
+          </div>
+          <p className="text-3xl font-black uppercase" dir="ltr"
+            style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.16em', textIndent: '0.16em', marginTop: '1.1rem' }}>
             CLUB
           </p>
         </div>
