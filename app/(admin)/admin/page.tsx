@@ -1,17 +1,19 @@
 import { createServiceClient } from '@/lib/supabase'
 
-type TopMember = { name: string; total_points: number; tier: string }
+export const dynamic = 'force-dynamic'
+
+type TopMember = { name: string; total_coins: number; tier: string }
 
 async function getStats() {
   const db = createServiceClient()
   const [membersRes, redemptionsRes, topRes] = await Promise.all([
     db.from('members').select('*', { count: 'exact', head: true }),
     db.from('redemptions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    db.from('members').select('name, total_points, tier').order('total_points', { ascending: false }).limit(5),
+    db.from('members').select('name, total_coins, tier').order('total_coins', { ascending: false }).limit(5),
   ])
   const topMembers: TopMember[] = (topRes.data ?? []).map((m) => ({
     name: (m as TopMember).name,
-    total_points: (m as TopMember).total_points,
+    total_coins: (m as TopMember).total_coins,
     tier: (m as TopMember).tier,
   }))
   return { totalMembers: membersRes.count ?? 0, totalRedemptions: redemptionsRes.count ?? 0, topMembers }
@@ -67,13 +69,22 @@ export default async function AdminPage() {
                   <span className="text-sm font-medium" style={{ color: 'var(--urban-dark)' }}>{m.name}</span>
                 </div>
                 <span className="text-sm font-bold" style={{ color: 'var(--urban-gold)' }}>
-                  {m.total_points.toLocaleString('he-IL')} נק׳
+                  {m.total_coins.toLocaleString('he-IL')} UC
                 </span>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Happy Hour — featured */}
+      <a
+        href="/admin/happy-hour"
+        className="block rounded-2xl p-4 mb-3 text-center font-bold transition hover:opacity-90"
+        style={{ background: 'linear-gradient(135deg, #c4905a, #e2bd7e)', color: '#1e1e1e' }}
+      >
+        🔥 Happy Hour · שיעורים מקודמים
+      </a>
 
       {/* Admin links */}
       <div className="grid grid-cols-2 gap-3">
