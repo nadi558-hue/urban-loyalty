@@ -22,6 +22,9 @@ export default function KioskClient() {
           width: 420, margin: 1,
           color: { dark: '#1c1917', light: '#ffffff' },
         })
+        // qrcode overrides the canvas inline size each render — keep it responsive
+        canvasRef.current.style.width = '100%'
+        canvasRef.current.style.height = 'auto'
       }
       setError(null)
     } catch {
@@ -57,10 +60,11 @@ export default function KioskClient() {
       </div>
 
       <div style={{
-        background: '#ffffff', borderRadius: 32, padding: 24,
+        background: '#ffffff', borderRadius: 32, padding: 'min(24px, 4vw)',
+        width: 'min(82vw, 62vh, 470px)', boxSizing: 'border-box',
         boxShadow: '0 20px 60px rgba(0,0,0,0.45)', border: '1px solid rgba(196,160,90,0.4)',
       }}>
-        <canvas ref={canvasRef} style={{ display: 'block', borderRadius: 12 }} />
+        <canvas ref={canvasRef} style={{ display: 'block', borderRadius: 12, width: '100%', height: 'auto' }} />
       </div>
 
       {error
