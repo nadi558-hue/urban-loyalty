@@ -89,13 +89,14 @@ export default async function HomePage() {
         background: 'linear-gradient(180deg,#3a342d 0%,#1c1917 100%)',
         overflow: 'hidden', position: 'relative', padding: '20px 20px 28px',
       }}>
-        {/* Faded studio illustration behind the header */}
+        {/* Faded figure illustration on the left side of the header */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/header-class.jpg" alt="" aria-hidden
+        <img src="/assets/header-figure.jpg" alt="" aria-hidden
           style={{
-            position: 'absolute', inset: 0, width: '100%', height: '100%',
-            objectFit: 'cover', objectPosition: 'center 30%',
+            position: 'absolute', top: 0, left: 0, height: '100%', width: 'auto',
             opacity: 0.16, pointerEvents: 'none',
+            maskImage: 'linear-gradient(90deg, black 55%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(90deg, black 55%, transparent 100%)',
           }}
         />
         {/* Dark overlay to keep text readable */}
