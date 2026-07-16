@@ -86,6 +86,15 @@ export default async function AdminPage() {
         🔥 Happy Hour · שיעורים מקודמים
       </a>
 
+      {/* Kiosk — tablet check-in screen */}
+      <a
+        href="/admin/kiosk"
+        className="block rounded-2xl p-4 mb-3 text-center font-bold transition hover:opacity-90"
+        style={{ background: 'linear-gradient(135deg,#3a342d,#1c1917)', color: '#e8cc88' }}
+      >
+        📺 מסך צ׳ק-אין לטאבלט (QR מתחלף)
+      </a>
+
       {/* Admin links */}
       <div className="grid grid-cols-2 gap-3">
         {[
