@@ -1,8 +1,18 @@
 import { createServiceClient } from '@/lib/supabase'
 import { TIER_LABELS } from '@/lib/points'
+import { syncPlanMembers } from '@/lib/member-sync'
+import { arboxConfigured } from '@/lib/arbox'
+import { revalidatePath } from 'next/cache'
 import Link from 'next/link'
+import ConfirmButton from '../redemptions/ConfirmButton'
 
 export const dynamic = 'force-dynamic'
+
+async function importFromArbox() {
+  'use server'
+  await syncPlanMembers()
+  revalidatePath('/admin/members')
+}
 
 type Member = {
   id: string
@@ -38,6 +48,18 @@ export default async function AdminMembersPage() {
         </div>
         <span className="text-sm text-gray-400">{members.length} חברים</span>
       </div>
+
+      {arboxConfigured() && (
+        <form action={importFromArbox} className="mb-5">
+          <ConfirmButton
+            confirm="לייבא/לעדכן חברים מ-Arbox? רק בעלי מנוי פעיל ייכנסו (לא כרטיסיות ולא שיעורי היכרות)."
+            className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
+            style={{ background: 'var(--urban-gold)' }}
+          >
+            ↻ ייבוא חברים מ-Arbox (בעלי מנוי בלבד)
+          </ConfirmButton>
+        </form>
+      )}
 
       {members.length === 0 ? (
         <p className="text-sm text-gray-400">אין חברים עדיין</p>

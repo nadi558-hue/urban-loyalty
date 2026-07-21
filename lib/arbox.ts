@@ -33,6 +33,18 @@ async function arboxFetch<T = unknown>(path: string, params?: Record<string, str
   return Array.isArray(data) ? data : []
 }
 
+// Fetch all pages of a report/list endpoint (Arbox caps at 500/page).
+async function arboxFetchAll<T = unknown>(path: string, params: Record<string, string> = {}): Promise<T[]> {
+  const perPage = 500
+  const out: T[] = []
+  for (let page = 1; page <= 50; page++) {
+    const rows = await arboxFetch<T>(path, { ...params, limit: String(perPage), page: String(page) })
+    out.push(...rows)
+    if (rows.length < perPage) break
+  }
+  return out
+}
+
 function ymd(d: Date): string {
   return d.toISOString().slice(0, 10)
 }
@@ -93,6 +105,76 @@ export async function getLateCancellations(fromDate: string, toDate: string): Pr
     branch: r.location_name,
     start: `${(r.start_time || '').replace(' ', 'T')}${IL_OFFSET}`,
   }))
+}
+
+// ─── Member import (subscription holders only) ─────────────────────────────
+// Club eligibility rule: ONLY active subscription ("plan") holders — NOT
+// punch-cards (session), NOT trial/intro classes, NOT one-off items/services.
+
+export type ArboxMember = {
+  arbox_id: string
+  name: string
+  phone: string          // normalized to 972XXXXXXXXX
+  branch: string | null
+  membership_type_name: string
+}
+
+type MembershipTypeRow = { membership_type_name: string; type: string; active: number | boolean }
+type ActiveMembershipRow = {
+  user_id: number
+  full_name: string
+  phone: string | null
+  membership_type_name: string
+  status: string
+  location_name: string | null
+}
+
+// Intro/trial products can be mis-typed as "plan" in Arbox — exclude by name too.
+const INTRO_NAME = /היכרות|ניסיון|נסיון|trial/i
+// Active-membership statuses that count as current members
+const ACTIVE_STATUSES = new Set(['active', 'activeMemberWithFutureCancel'])
+
+function normalizePhone(raw: string | null | undefined): string {
+  const d = (raw ?? '').replace(/\D/g, '')
+  if (d.startsWith('972')) return d
+  if (d.startsWith('0')) return '972' + d.slice(1)
+  return d
+}
+
+// Returns the set of membership-type NAMES that count as a real subscription.
+async function planTypeNames(): Promise<Set<string>> {
+  const types = await arboxFetchAll<MembershipTypeRow>('/v3/membershipTypes')
+  return new Set(
+    types
+      .filter((t) => t.type === 'plan' && !INTRO_NAME.test(t.membership_type_name))
+      .map((t) => t.membership_type_name),
+  )
+}
+
+// All active subscription holders, deduped by Arbox user id.
+export async function getEligiblePlanMembers(): Promise<ArboxMember[]> {
+  const [planNames, memberships] = await Promise.all([
+    planTypeNames(),
+    arboxFetchAll<ActiveMembershipRow>('/v3/reports/activeMembershipsReport'),
+  ])
+
+  const byUser = new Map<string, ArboxMember>()
+  for (const r of memberships) {
+    if (!ACTIVE_STATUSES.has(r.status)) continue
+    if (!planNames.has(r.membership_type_name)) continue     // plan-only, intro excluded
+    const phone = normalizePhone(r.phone)
+    if (!phone) continue
+    const arbox_id = String(r.user_id)
+    if (byUser.has(arbox_id)) continue
+    byUser.set(arbox_id, {
+      arbox_id,
+      name: (r.full_name || '').trim() || 'חבר/ה',
+      phone,
+      branch: r.location_name,
+      membership_type_name: r.membership_type_name,
+    })
+  }
+  return [...byUser.values()]
 }
 
 // Convenience: window as YYYY-MM-DD strings, clamped to Arbox's limits.
