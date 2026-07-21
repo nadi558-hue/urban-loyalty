@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
-import { getCheckInsSince, arboxConfigured, type ArboxCheckIn } from '@/lib/arbox'
+import {
+  getAttendedCheckIns,
+  getLateCancellations,
+  reportWindow,
+  arboxConfigured,
+  type ArboxEvent,
+} from '@/lib/arbox'
 import { awardPoints, getRules } from '@/lib/points'
 
 // A QR scan may land from 15 min before class start through ~30 min after a
@@ -30,6 +36,7 @@ export async function POST(req: NextRequest) {
     .single()
 
   const since = lastSync?.synced_at ?? new Date(Date.now() - 7 * 86_400_000).toISOString()
+  const { fromDate, toDate } = reportWindow(since)
 
   let checkInsFound = 0
   let coinsAwarded = 0
@@ -39,37 +46,20 @@ export async function POST(req: NextRequest) {
   let errors: string | null = null
 
   try {
-    const checkIns = await getCheckInsSince(since)
-    checkInsFound = checkIns.length
+    const [attended, cancellations] = await Promise.all([
+      getAttendedCheckIns(fromDate, toDate),
+      getLateCancellations(fromDate, toDate),
+    ])
+    checkInsFound = attended.length
 
-    for (const ci of checkIns) {
-      // Idempotency — never process the same Arbox check-in twice
-      const { data: done } = await db
-        .from('processed_checkins')
-        .select('arbox_checkin_id')
-        .eq('arbox_checkin_id', ci.id)
-        .single()
-      if (done) continue
+    // ── Attended check-ins: award only when a QR scan confirms presence ──
+    for (const ev of attended) {
+      if (await alreadyProcessed(db, ev.arbox_checkin_id)) continue
 
-      const { data: member } = await db
-        .from('members')
-        .select('id, current_streak')
-        .eq('arbox_id', ci.customer_id)
-        .single()
+      const member = await findMember(db, ev.arbox_user_id)
       if (!member) continue
 
-      // Late cancel → break streak, no coins, recorded for the member
-      if (ci.status === 'late_cancel') {
-        await handleLateCancel(member.id, ci, db)
-        lateCancels++
-        await markProcessed(db, ci, member.id, false)
-        continue
-      }
-
-      if (ci.status !== 'attended') continue
-
-      // ── CROSS-CHECK: require a matching QR scan (proof of presence) ──
-      const start = new Date(ci.start_time).getTime()
+      const start = new Date(ev.start).getTime()
       const from = new Date(start - SCAN_MATCH_BEFORE_MS).toISOString()
       const to = new Date(start + SCAN_MATCH_AFTER_MS).toISOString()
 
@@ -89,19 +79,18 @@ export async function POST(req: NextRequest) {
         // Attendance marked in Arbox but the member never scanned →
         // possible buddy check-in → NO coins.
         unmatched++
-        await markProcessed(db, ci, member.id, false)
+        await markProcessed(db, ev, member.id, false)
         continue
       }
 
-      // Both sides confirmed → award once
       const base = rules['class_attended'] ?? 1
-      const bonus = await happyHourBonus(ci, db)
+      const bonus = await happyHourBonus(ev, db)
       const pts = base + bonus
 
       await awardPoints(member.id, pts, 'class_attended', {
-        class_name: ci.class_name,
-        branch: ci.branch_name,
-        arbox_checkin_id: ci.id,
+        class_name: ev.class_name,
+        branch: ev.branch,
+        arbox_checkin_id: ev.arbox_checkin_id,
         verified: true,
         ...(bonus > 0 ? { happy_hour_bonus: bonus } : {}),
       })
@@ -112,15 +101,14 @@ export async function POST(req: NextRequest) {
         .from('checkins')
         .update({
           status: 'verified',
-          arbox_checkin_id: ci.id,
+          arbox_checkin_id: ev.arbox_checkin_id,
           coins_awarded: pts,
           verified_at: new Date().toISOString(),
         })
         .eq('id', scan.id)
 
-      await markProcessed(db, ci, member.id, bonus > 0)
+      await markProcessed(db, ev, member.id, bonus > 0)
 
-      // Advance streak, award the 10-in-a-row bonus on multiples of 10
       const newStreak = (member.current_streak ?? 0) + 1
       await db.from('members').update({ current_streak: newStreak }).eq('id', member.id)
       if (newStreak % 10 === 0) {
@@ -131,6 +119,27 @@ export async function POST(req: NextRequest) {
 
       await checkMonthBonus(member.id, rules, db)
     }
+
+    // ── Late cancellations: break streak, no coins, recorded for the member ──
+    for (const ev of cancellations) {
+      if (await alreadyProcessed(db, ev.arbox_checkin_id)) continue
+      const member = await findMember(db, ev.arbox_user_id)
+      if (!member) continue
+
+      await db.from('members').update({ current_streak: 0 }).eq('id', member.id)
+      await db.from('point_ledger').insert({
+        member_id: member.id,
+        points: 0,
+        reason: 'late_cancel',
+        metadata: {
+          class_name: ev.class_name,
+          branch: ev.branch,
+          note: 'ביטול מאוחר — רצף האימונים אופס, ללא נקודות',
+        },
+      })
+      lateCancels++
+      await markProcessed(db, ev, member.id, false)
+    }
   } catch (e) {
     errors = e instanceof Error ? e.message : String(e)
   }
@@ -140,38 +149,42 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, errors })
 }
 
-async function markProcessed(db: any, ci: ArboxCheckIn, memberId: string, isHappyHour: boolean) {
+async function findMember(db: any, arboxUserId: string) {
+  const { data } = await db
+    .from('members')
+    .select('id, current_streak')
+    .eq('arbox_id', arboxUserId)
+    .single()
+  return data as { id: string; current_streak: number } | null
+}
+
+async function alreadyProcessed(db: any, arboxCheckinId: string): Promise<boolean> {
+  const { data } = await db
+    .from('processed_checkins')
+    .select('arbox_checkin_id')
+    .eq('arbox_checkin_id', arboxCheckinId)
+    .single()
+  return !!data
+}
+
+async function markProcessed(db: any, ev: ArboxEvent, memberId: string, isHappyHour: boolean) {
   await db.from('processed_checkins').insert({
-    arbox_checkin_id: ci.id,
+    arbox_checkin_id: ev.arbox_checkin_id,
     member_id: memberId,
     is_happy_hour: isHappyHour,
   })
 }
 
-async function handleLateCancel(memberId: string, ci: ArboxCheckIn, db: any) {
-  await db.from('members').update({ current_streak: 0 }).eq('id', memberId)
-  await db.from('point_ledger').insert({
-    member_id: memberId,
-    points: 0,
-    reason: 'late_cancel',
-    metadata: {
-      class_name: ci.class_name,
-      branch: ci.branch_name,
-      note: 'ביטול מאוחר — רצף האימונים אופס, ללא נקודות',
-    },
-  })
-}
-
 // Bonus coins if the attended class matches an active promoted ("Happy Hour") class
-async function happyHourBonus(ci: ArboxCheckIn, db: any): Promise<number> {
+async function happyHourBonus(ev: ArboxEvent, db: any): Promise<number> {
   const { data: promos } = await db
     .from('promoted_classes')
     .select('title, branch, bonus_coins')
     .eq('active', true)
   if (!promos?.length) return 0
 
-  const name = (ci.class_name ?? '').toLowerCase()
-  const branch = (ci.branch_name ?? '').toLowerCase()
+  const name = (ev.class_name ?? '').toLowerCase()
+  const branch = (ev.branch ?? '').toLowerCase()
   for (const p of promos as { title: string; branch: string | null; bonus_coins: number }[]) {
     const titleMatch = p.title && name.includes(p.title.toLowerCase())
     const branchMatch = !p.branch || branch.includes(p.branch.toLowerCase())
