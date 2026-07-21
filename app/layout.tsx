@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Frank_Ruhl_Libre, Assistant } from 'next/font/google'
 import './globals.css'
+import PwaInstall from '@/components/PwaInstall'
 
 const frankRuhl = Frank_Ruhl_Libre({
   subsets: ['hebrew', 'latin'],
@@ -18,18 +19,36 @@ const assistant = Assistant({
 export const metadata: Metadata = {
   title: 'Urban Studio – מועדון לקוחות',
   description: 'צבור נקודות, עלה ברמה, קבל הטבות בלעדיות',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Urban Club',
+  },
+  icons: {
+    icon: [
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: '/icons/apple-touch-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a2e',
+  themeColor: '#1c1917',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="he" dir="rtl" className={`${frankRuhl.variable} ${assistant.variable}`}>
-      <body className="min-h-dvh" style={{ fontFamily: 'var(--font-assistant), Assistant, sans-serif' }}>{children}</body>
+      <body className="min-h-dvh" style={{ fontFamily: 'var(--font-assistant), Assistant, sans-serif' }}>
+        {children}
+        <PwaInstall />
+      </body>
     </html>
   )
 }
