@@ -2,14 +2,21 @@ import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { createServiceClient } from '@/lib/supabase'
 import { verifyToken } from '@/lib/checkin'
+import { arboxConfigured } from '@/lib/arbox'
 
 export const dynamic = 'force-dynamic'
 
-// Minimum gap between two awarded check-ins for the same member.
-// One class ≈ 50-60 min, so 90 min blocks double-scans / replay within a class.
+// Minimum gap between two scans for the same member (one class ≈ 50-60 min).
 const DEDUPE_MINUTES = 90
 
-// Member scans the kiosk QR → verify freshness → award class coins once.
+// Member scans the kiosk QR → verify freshness → record presence.
+//
+// Two modes:
+//  • Arbox connected  → record a PENDING scan (proof of physical presence);
+//    coins are awarded later by /api/sync only if a matching Arbox 'attended'
+//    check-in confirms it (cross-verification, blocks buddy check-ins).
+//  • Arbox NOT connected → award class coins immediately (keeps the live
+//    feature working until Arbox is wired).
 export async function POST(req: Request) {
   let token = ''
   try {
@@ -24,7 +31,6 @@ export async function POST(req: Request) {
     )
   }
 
-  // Identify the signed-in member
   const supabase = await createSupabaseServerClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user?.phone) {
@@ -42,24 +48,45 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'לא נמצאה רשומת חבר' }, { status: 404 })
   }
 
-  // Dedupe: one awarded scan per class window
+  // Dedupe: one scan per class window
   const since = new Date(Date.now() - DEDUPE_MINUTES * 60_000).toISOString()
   const { data: recent } = await db
     .from('checkins')
-    .select('id, created_at')
+    .select('id, status')
     .eq('member_id', member.id)
     .gte('created_at', since)
-    .limit(1) as { data: { id: string; created_at: string }[] | null }
+    .order('created_at', { ascending: false })
+    .limit(1) as { data: { id: string; status: string }[] | null }
 
   if (recent && recent.length > 0) {
+    const pending = recent[0].status === 'pending'
     return NextResponse.json({
       ok: true,
       alreadyCheckedIn: true,
-      message: 'כבר נרשם לך צ׳ק-אין לשיעור הזה 💪',
+      pending,
+      message: pending
+        ? 'הסריקה נקלטה — הנוכחות תאומת והנקודות יתווספו בקרוב ⏳'
+        : 'כבר נרשם לך צ׳ק-אין לשיעור הזה 💪',
     })
   }
 
-  // How many coins per attended class (admin-configurable rule)
+  // ── Cross-verification mode: record pending, award later via /api/sync ──
+  if (arboxConfigured()) {
+    const { error } = await db
+      .from('checkins')
+      .insert({ member_id: member.id, source: 'qr', status: 'pending', coins_awarded: 0 })
+    if (error) {
+      return NextResponse.json({ ok: false, error: 'שגיאה בשמירת הצ׳ק-אין' }, { status: 500 })
+    }
+    return NextResponse.json({
+      ok: true,
+      pending: true,
+      name: member.name,
+      message: 'הנוכחות שלך נקלטה — הנקודות יתווספו לאחר אימות מול המערכת ⏳',
+    })
+  }
+
+  // ── Immediate-award mode (Arbox not wired yet) ──
   const { data: rule } = await db
     .from('point_rules')
     .select('points')
@@ -69,7 +96,7 @@ export async function POST(req: Request) {
 
   const { error: insertErr } = await db
     .from('checkins')
-    .insert({ member_id: member.id, source: 'qr', coins_awarded: coins })
+    .insert({ member_id: member.id, source: 'qr', status: 'verified', coins_awarded: coins })
   if (insertErr) {
     return NextResponse.json({ ok: false, error: 'שגיאה בשמירת הצ׳ק-אין' }, { status: 500 })
   }

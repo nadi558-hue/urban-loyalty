@@ -8,7 +8,7 @@ type Status =
   | { kind: 'idle' }
   | { kind: 'scanning' }
   | { kind: 'submitting' }
-  | { kind: 'success'; coins: number; already: boolean; message?: string }
+  | { kind: 'success'; coins: number; already: boolean; pending: boolean; message?: string }
   | { kind: 'error'; message: string }
 
 // Extract the check-in token from raw QR content — supports both the raw
@@ -54,6 +54,7 @@ export default function ScanClient() {
           kind: 'success',
           coins: data.coins ?? 0,
           already: Boolean(data.alreadyCheckedIn),
+          pending: Boolean(data.pending),
           message: data.message,
         })
       } else {
@@ -134,12 +135,14 @@ export default function ScanClient() {
           </div>
         ) : status.kind === 'success' ? (
           <div style={{ padding: '32px 0' }}>
-            <p style={{ fontSize: 52 }}>{status.already ? '💪' : '🎉'}</p>
+            <p style={{ fontSize: 52 }}>{status.pending ? '⏳' : status.already ? '💪' : '🎉'}</p>
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#1c1917', marginTop: 10 }}>
-              {status.already ? 'כבר בפנים!' : 'צ׳ק-אין הושלם!'}
+              {status.pending ? 'הנוכחות נקלטה!' : status.already ? 'כבר בפנים!' : 'צ׳ק-אין הושלם!'}
             </p>
             <p style={{ fontSize: 14, color: '#8a7c6a', marginTop: 6 }}>
-              {status.already
+              {status.pending
+                ? (status.message ?? 'הנקודות יתווספו לאחר אימות הנוכחות ⏳')
+                : status.already
                 ? (status.message ?? 'כבר נרשם צ׳ק-אין לשיעור הזה')
                 : <>נוספו לך <b style={{ color: '#b8860b' }}>+{status.coins} UC</b> — אימון נעים 🤍</>}
             </p>

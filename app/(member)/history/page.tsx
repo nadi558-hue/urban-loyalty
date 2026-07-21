@@ -7,6 +7,7 @@ const REASON_LABELS: Record<string, string> = {
   anniversary:          'מתנת שנה',
   manual:               'הוספה ידנית',
   redemption:           'מימוש הטבה',
+  late_cancel:          'ביטול מאוחר · רצף אופס',
 }
 
 const DEMO_LEDGER = [
