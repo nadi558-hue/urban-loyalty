@@ -16,9 +16,27 @@ import { awardPoints, getRules } from '@/lib/points'
 const SCAN_MATCH_BEFORE_MS = 15 * 60 * 1000
 const SCAN_MATCH_AFTER_MS = 90 * 60 * 1000
 
+// Accept both Vercel Cron's `Authorization: Bearer <CRON_SECRET>` (sent
+// automatically when CRON_SECRET is set) and a manual `x-cron-secret` header.
+function authorized(req: NextRequest): boolean {
+  const secret = process.env.CRON_SECRET
+  if (!secret) return false
+  const auth = req.headers.get('authorization')
+  if (auth === `Bearer ${secret}`) return true
+  return req.headers.get('x-cron-secret') === secret
+}
+
+// Vercel Cron invokes the endpoint with a GET request.
+export async function GET(req: NextRequest) {
+  return handleSync(req)
+}
+
 export async function POST(req: NextRequest) {
-  const secret = req.headers.get('x-cron-secret')
-  if (secret !== process.env.CRON_SECRET) {
+  return handleSync(req)
+}
+
+async function handleSync(req: NextRequest) {
+  if (!authorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   if (!arboxConfigured()) {
