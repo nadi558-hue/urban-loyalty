@@ -6,13 +6,16 @@ type BIPEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ out
 
 const DISMISS_KEY = 'urban-a2hs-dismissed'
 
+type Mode =
+  | { kind: 'native'; ev: BIPEvent }   // Android/Chrome real install prompt available
+  | { kind: 'ios' }                    // iOS Safari — manual Add to Home Screen
+  | { kind: 'android-manual' }         // Android but no prompt fired — menu → Install app
+  | { kind: 'inapp' }                  // in-app webview (WhatsApp/IG/FB) — can't install
+
 export default function PwaInstall() {
-  const [deferred, setDeferred] = useState<BIPEvent | null>(null)
-  const [showIosHint, setShowIosHint] = useState(false)
-  const [visible, setVisible] = useState(false)
+  const [mode, setMode] = useState<Mode | null>(null)
 
   useEffect(() => {
-    // Register the service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {})
     }
@@ -24,42 +27,63 @@ export default function PwaInstall() {
     if (standalone) return
     if (localStorage.getItem(DISMISS_KEY)) return
 
-    // Android / Chrome: capture the native prompt
+    const ua = window.navigator.userAgent
+
+    // In-app browsers (WhatsApp / Instagram / Facebook / Messenger / TikTok) cannot
+    // install PWAs at all — the only fix is opening in the real browser.
+    const isInApp = /FBAN|FBAV|Instagram|Line\/|Twitter|WhatsApp|; wv\)|GSA\//i.test(ua)
+
+    const isIos = /iphone|ipad|ipod/i.test(ua)
+    const isSafari = /safari/i.test(ua) && !/crios|fxios|edgios/i.test(ua)
+
+    let bipFired = false
     const onBIP = (e: Event) => {
       e.preventDefault()
-      setDeferred(e as BIPEvent)
-      setVisible(true)
+      bipFired = true
+      setMode({ kind: 'native', ev: e as BIPEvent })
     }
     window.addEventListener('beforeinstallprompt', onBIP)
 
-    // iOS Safari has no beforeinstallprompt → show manual instructions
-    const ua = window.navigator.userAgent
-    const isIos = /iphone|ipad|ipod/i.test(ua)
-    const isSafari = /safari/i.test(ua) && !/crios|fxios|edgios/i.test(ua)
-    const iosTimer = isIos && isSafari
-      ? setTimeout(() => { setShowIosHint(true); setVisible(true) }, 0)
-      : undefined
+    // Decide the fallback after a short delay (gives beforeinstallprompt a chance to fire)
+    const timer = setTimeout(() => {
+      if (bipFired) return
+      if (isInApp) { setMode({ kind: 'inapp' }); return }
+      if (isIos && isSafari) { setMode({ kind: 'ios' }); return }
+      // Android/desktop Chrome that didn't fire the event yet → show manual path
+      if (/android/i.test(ua)) setMode({ kind: 'android-manual' })
+    }, 2500)
+
+    window.addEventListener('appinstalled', () => setMode(null))
 
     return () => {
       window.removeEventListener('beforeinstallprompt', onBIP)
-      if (iosTimer) clearTimeout(iosTimer)
+      clearTimeout(timer)
     }
   }, [])
 
-  if (!visible) return null
+  if (!mode) return null
 
   const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, '1')
-    setVisible(false)
+    setMode(null)
   }
 
   const install = async () => {
-    if (!deferred) return
-    await deferred.prompt()
-    await deferred.userChoice
-    setDeferred(null)
-    setVisible(false)
+    if (mode.kind !== 'native') return
+    await mode.ev.prompt()
+    await mode.ev.userChoice
+    setMode(null)
   }
+
+  const title =
+    mode.kind === 'inapp' ? 'פתחו בדפדפן להתקנה'
+    : 'התקינו את אפליקציית Urban Club'
+
+  const subtitle =
+    mode.kind === 'native'        ? 'גישה מהירה מהמסך הבית — כמו אפליקציה'
+    : mode.kind === 'ios'          ? 'הקישו על ⬆️ שיתוף ואז "הוסף למסך הבית"'
+    : mode.kind === 'android-manual' ? 'תפריט ⋮ בכרום → "התקנת אפליקציה"'
+    : /* inapp */                    'הקישו על ⋮ ואז "פתח בדפדפן" (Chrome), ושם התקינו'
 
   return (
     <div
@@ -78,15 +102,13 @@ export default function PwaInstall() {
         style={{ borderRadius: 10, flexShrink: 0 }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: 14, fontWeight: 700, color: '#F6EFEA', fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          התקינו את אפליקציית Urban Club
+          {title}
         </p>
         <p style={{ fontSize: 12, color: '#B8A99B', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          {showIosHint
-            ? 'הקישו על ⬆️ שיתוף ואז "הוסף למסך הבית"'
-            : 'גישה מהירה מהמסך הבית — כמו אפליקציה'}
+          {subtitle}
         </p>
       </div>
-      {!showIosHint && (
+      {mode.kind === 'native' && (
         <button onClick={install} style={{
           flexShrink: 0, border: 'none', borderRadius: 12, padding: '9px 16px',
           background: 'linear-gradient(135deg,#DBB89C,#C0906F)', color: '#3B2E27',
