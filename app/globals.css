@@ -59,6 +59,7 @@ body {
 
 /* ── Dark header block (shared) ── */
 .urban-header {
-  background: linear-gradient(150deg, #5A473C 0%, #3B2E27 100%);
-  color: #F6EFEA;
+  background: linear-gradient(180deg, #FBF4EE 0%, #F0E2D6 100%);
+  color: #3B2E27;
+  border-bottom: 1px solid rgba(192,144,111,0.18);
 }

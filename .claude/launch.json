@@ -5,7 +5,7 @@
       "name": "urban-loyalty",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "cwd": "C:\\Users\\nadi5\\OneDrive\\Desktop\\AI\\אפליקציה חבר מועדון urban\\urban-loyalty",
+      "cwd": "C:\\Users\\nadi5\\OneDrive\\Desktop\\AI\\clude code test\\urban-app",
       "port": 3000
     }
   ]

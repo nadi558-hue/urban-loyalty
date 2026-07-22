@@ -24,10 +24,11 @@ export default async function ProfilePage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
-      {/* Dark header */}
+      {/* Light sand header */}
       <div style={{
-        background: 'linear-gradient(180deg,#5A473C 0%,#3B2E27 100%)',
+        background: 'linear-gradient(180deg,#FBF4EE 0%,#F0E2D6 100%)',
         padding: '24px 20px 28px', textAlign: 'center',
+        borderBottom: '1px solid rgba(192,144,111,0.18)',
       }}>
         <div style={{
           width: 72, height: 72, borderRadius: '50%', margin: '0 auto 10px',
@@ -38,7 +39,7 @@ export default async function ProfilePage() {
             {member.name[0]}
           </span>
         </div>
-        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#F6EFEA' }}>{member.name}</p>
+        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#3B2E27' }}>{member.name}</p>
       </div>
 
       {/* Details card */}

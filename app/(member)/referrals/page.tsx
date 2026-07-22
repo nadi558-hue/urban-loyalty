@@ -26,13 +26,13 @@ export default function ReferralsPage() {
         <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(192,144,111,0.2) 0%, transparent 70%)' }} />
         <p className="text-xs tracking-[0.28em] uppercase mb-2"
-          style={{ color: 'rgba(192,144,111,0.5)', fontFamily: 'Georgia, serif' }}>
+          style={{ color: '#A66B43', fontFamily: 'Georgia, serif' }}>
           The Booster
         </p>
-        <h1 className="text-4xl font-black" style={{ color: '#F6EFEA', letterSpacing: '-0.03em' }}>
+        <h1 className="text-4xl font-black" style={{ color: '#3B2E27', letterSpacing: '-0.03em' }}>
           הפניות
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'rgba(245,240,230,0.4)' }}>
+        <p className="text-sm mt-1" style={{ color: '#9C8B7F' }}>
           הפוך חברים לשגרירים של Urban
         </p>
       </div>

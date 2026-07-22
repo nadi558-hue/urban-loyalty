@@ -26,15 +26,15 @@ export default async function HistoryPage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh' }}>
 
-      {/* Dark header */}
+      {/* Light sand header */}
       <div className="urban-header px-5 pt-10 pb-6 relative overflow-hidden">
         <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(192,144,111,0.2) 0%, transparent 70%)' }} />
         <p className="text-xs tracking-[0.28em] uppercase mb-2"
-          style={{ color: 'rgba(192,144,111,0.5)', fontFamily: 'Georgia, serif' }}>
+          style={{ color: '#A66B43', fontFamily: 'Georgia, serif' }}>
           Urban Coins
         </p>
-        <h1 className="text-4xl font-black" style={{ color: '#F6EFEA', letterSpacing: '-0.03em' }}>
+        <h1 className="text-4xl font-black" style={{ color: '#3B2E27', letterSpacing: '-0.03em' }}>
           היסטוריה
         </h1>
       </div>

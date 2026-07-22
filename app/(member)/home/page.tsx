@@ -84,41 +84,37 @@ export default async function HomePage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
-      {/* ── Dark header ─────────────────────────── */}
+      {/* ── Light sand header ───────────────────── */}
       <div style={{
-        background: 'linear-gradient(180deg,#5A473C 0%,#3B2E27 100%)',
+        background: 'linear-gradient(180deg,#FBF4EE 0%,#F0E2D6 100%)',
         overflow: 'hidden', position: 'relative', padding: '20px 20px 28px',
+        borderBottom: '1px solid rgba(192,144,111,0.18)',
       }}>
         {/* Faded figure illustration on the left side of the header */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/header-figure.jpg" alt="" aria-hidden
           style={{
             position: 'absolute', top: 0, left: 0, height: '100%', width: 'auto',
-            opacity: 0.16, pointerEvents: 'none',
-            maskImage: 'linear-gradient(90deg, black 55%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(90deg, black 55%, transparent 100%)',
+            opacity: 0.12, pointerEvents: 'none',
+            maskImage: 'linear-gradient(90deg, black 45%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(90deg, black 45%, transparent 100%)',
           }}
         />
-        {/* Dark overlay to keep text readable */}
-        <div aria-hidden style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'linear-gradient(180deg, rgba(59,46,39,0.35) 0%, rgba(59,46,39,0.75) 100%)',
-        }} />
 
         {/* Greeting + tier chip */}
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
           <div>
-            <p style={{ fontSize: 13, color: 'rgba(245,240,230,0.5)', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
-            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#F6EFEA', lineHeight: 1.1 }}>{firstName} {name.split(' ')[1]}</p>
+            <p style={{ fontSize: 13, color: '#9C8B7F', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#3B2E27', lineHeight: 1.1 }}>{firstName} {name.split(' ')[1]}</p>
           </div>
           {/* Tier chip */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
-            borderRadius: 999, border: '1px solid rgba(192,144,111,0.45)',
-            background: 'rgba(255,255,255,0.05)',
+            borderRadius: 999, border: '1px solid rgba(192,144,111,0.4)',
+            background: 'rgba(255,255,255,0.6)',
           }}>
             <TierCoin tier={tier} size={30} />
-            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: arcColor, letterSpacing: '0.12em' }}>{tierLabel}</span>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: '#A66B43', letterSpacing: '0.12em' }}>{tierLabel}</span>
           </div>
         </div>
 
@@ -129,7 +125,7 @@ export default async function HomePage() {
             <path
               d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`}
               fill="none"
-              stroke="rgba(255,255,255,0.10)"
+              stroke="rgba(59,46,39,0.10)"
               strokeWidth="11"
               strokeLinecap="round"
             />
@@ -152,29 +148,29 @@ export default async function HomePage() {
             })()}
             {/* Center number */}
             <text x={cx} y={cy - 8} textAnchor="middle"
-              fontFamily="var(--font-frank,serif)" fontSize="42" fontWeight="900" fill="#FBF6F2">
+              fontFamily="var(--font-frank,serif)" fontSize="42" fontWeight="900" fill="#3B2E27">
               {lifetime_coins}
             </text>
             <text x={cx} y={cy + 8} textAnchor="middle"
-              fontSize="10" fill="rgba(192,144,111,0.7)" letterSpacing="2"
+              fontSize="10" fill="#A66B43" letterSpacing="2"
               fontFamily="var(--font-assistant,sans-serif)">
               UC · סטטוס
             </text>
             {/* Labels */}
             <text x={cx - R - 4} y={cy + 16} textAnchor="end"
-              fontSize="9" fill="rgba(245,240,230,0.4)" fontFamily="var(--font-assistant,sans-serif)">
+              fontSize="9" fill="#9C8B7F" fontFamily="var(--font-assistant,sans-serif)">
               SILVER
             </text>
             <text x={cx + R + 4} y={cy + 16} textAnchor="start"
-              fontSize="9" fill="rgba(192,144,111,0.7)" fontFamily="var(--font-assistant,sans-serif)">
+              fontSize="9" fill="#A66B43" fontFamily="var(--font-assistant,sans-serif)">
               {nextTierName.toUpperCase()}
             </text>
           </svg>
 
           {/* To next label */}
           {toNext > 0 && (
-            <p style={{ fontSize: 12, color: 'rgba(245,240,230,0.55)', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-              עוד <strong style={{ color: arcColor }}>{toNext} UC</strong> ל‑{nextTierName} ✦
+            <p style={{ fontSize: 12, color: '#7A6B60', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName} ✦
             </p>
           )}
         </div>
