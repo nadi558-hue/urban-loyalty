@@ -63,14 +63,13 @@ async function handleSync(req: NextRequest) {
     ])
     checkInsFound = attended.length
 
-    // ── Bulk pre-fetch (avoids per-row round-trips → fast enough for serverless) ──
-    const allEvents = [...attended, ...cancellations]
-    const userIds = [...new Set(allEvents.map((e) => e.arbox_user_id))]
-    const eventIds = [...new Set(allEvents.map((e) => e.arbox_checkin_id))]
-
+    // ── Bulk pre-fetch (avoids per-row round-trips → fast enough for serverless).
+    // Fetch members + processed fully rather than huge .in() lists, which can
+    // exceed PostgREST's URL length limit and fail silently. Both tables are
+    // small: members are bounded (~hundreds), processed holds only awards.
     const [membersRes, processedRes, pendingRes, promosRes] = await Promise.all([
-      db.from('members').select('id, arbox_id, current_streak').in('arbox_id', userIds.length ? userIds : ['—']),
-      db.from('processed_checkins').select('arbox_checkin_id').in('arbox_checkin_id', eventIds.length ? eventIds : ['—']),
+      db.from('members').select('id, arbox_id, current_streak').limit(5000),
+      db.from('processed_checkins').select('arbox_checkin_id').limit(50000),
       db.from('checkins').select('id, member_id, created_at')
         .eq('status', 'pending').is('arbox_checkin_id', null)
         .gte('created_at', new Date(Date.now() - PENDING_LOOKBACK_MS).toISOString()),
