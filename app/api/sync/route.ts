@@ -6,34 +6,32 @@ import {
   getLateCancellations,
   reportWindow,
   arboxConfigured,
-  type ArboxEvent,
 } from '@/lib/arbox'
 import { awardPoints, getRules } from '@/lib/points'
+
+// Allow up to 60s (Vercel Hobby max) — the sync fetches Arbox + reconciles.
+export const maxDuration = 60
 
 // A QR scan may land from 15 min before class start through ~30 min after a
 // ~60 min class ends. An Arbox 'attended' check-in must match a scan inside
 // this window for coins to be awarded.
 const SCAN_MATCH_BEFORE_MS = 15 * 60 * 1000
 const SCAN_MATCH_AFTER_MS = 90 * 60 * 1000
+const PENDING_LOOKBACK_MS = 2 * 86_400_000
 
-// Accept both Vercel Cron's `Authorization: Bearer <CRON_SECRET>` (sent
-// automatically when CRON_SECRET is set) and a manual `x-cron-secret` header.
+// Accept both Vercel Cron's `Authorization: Bearer <CRON_SECRET>` and a manual
+// `x-cron-secret` header.
 function authorized(req: NextRequest): boolean {
   const secret = process.env.CRON_SECRET
   if (!secret) return false
-  const auth = req.headers.get('authorization')
-  if (auth === `Bearer ${secret}`) return true
+  if (req.headers.get('authorization') === `Bearer ${secret}`) return true
   return req.headers.get('x-cron-secret') === secret
 }
 
-// Vercel Cron invokes the endpoint with a GET request.
-export async function GET(req: NextRequest) {
-  return handleSync(req)
-}
+export async function GET(req: NextRequest) { return handleSync(req) }
+export async function POST(req: NextRequest) { return handleSync(req) }
 
-export async function POST(req: NextRequest) {
-  return handleSync(req)
-}
+type PendingScan = { id: string; created_at: string }
 
 async function handleSync(req: NextRequest) {
   if (!authorized(req)) {
@@ -47,20 +45,15 @@ async function handleSync(req: NextRequest) {
   const rules = await getRules()
 
   const { data: lastSync } = await db
-    .from('sync_log')
-    .select('synced_at')
-    .order('synced_at', { ascending: false })
-    .limit(1)
-    .single()
+    .from('sync_log').select('synced_at')
+    .order('synced_at', { ascending: false }).limit(1).single()
 
-  const since = lastSync?.synced_at ?? new Date(Date.now() - 7 * 86_400_000).toISOString()
+  // Default lookback kept short — the cron runs frequently and Arbox reports
+  // are date-granular, so today's check-ins stay in-window all day.
+  const since = lastSync?.synced_at ?? new Date(Date.now() - 2 * 86_400_000).toISOString()
   const { fromDate, toDate } = reportWindow(since)
 
-  let checkInsFound = 0
-  let coinsAwarded = 0
-  let verified = 0
-  let unmatched = 0
-  let lateCancels = 0
+  let checkInsFound = 0, coinsAwarded = 0, verified = 0, unmatched = 0, lateCancels = 0
   let errors: string | null = null
 
   try {
@@ -70,93 +63,103 @@ async function handleSync(req: NextRequest) {
     ])
     checkInsFound = attended.length
 
-    // ── Attended check-ins: award only when a QR scan confirms presence ──
-    for (const ev of attended) {
-      if (await alreadyProcessed(db, ev.arbox_checkin_id)) continue
+    // ── Bulk pre-fetch (avoids per-row round-trips → fast enough for serverless) ──
+    const allEvents = [...attended, ...cancellations]
+    const userIds = [...new Set(allEvents.map((e) => e.arbox_user_id))]
+    const eventIds = [...new Set(allEvents.map((e) => e.arbox_checkin_id))]
 
-      const member = await findMember(db, ev.arbox_user_id)
+    const [membersRes, processedRes, pendingRes, promosRes] = await Promise.all([
+      db.from('members').select('id, arbox_id, current_streak').in('arbox_id', userIds.length ? userIds : ['—']),
+      db.from('processed_checkins').select('arbox_checkin_id').in('arbox_checkin_id', eventIds.length ? eventIds : ['—']),
+      db.from('checkins').select('id, member_id, created_at')
+        .eq('status', 'pending').is('arbox_checkin_id', null)
+        .gte('created_at', new Date(Date.now() - PENDING_LOOKBACK_MS).toISOString()),
+      db.from('promoted_classes').select('title, branch, bonus_coins').eq('active', true),
+    ])
+
+    const memberByArbox = new Map<string, { id: string; arbox_id: string; current_streak: number }>(
+      (membersRes.data ?? []).map((m: any) => [m.arbox_id, m]),
+    )
+    const processed = new Set<string>((processedRes.data ?? []).map((r: any) => r.arbox_checkin_id))
+    const promos = (promosRes.data ?? []) as { title: string; branch: string | null; bonus_coins: number }[]
+
+    const scansByMember = new Map<string, PendingScan[]>()
+    for (const s of (pendingRes.data ?? []) as any[]) {
+      const list = scansByMember.get(s.member_id) ?? []
+      list.push({ id: s.id, created_at: s.created_at })
+      scansByMember.set(s.member_id, list)
+    }
+
+    // ── Attended check-ins: award only when a matching QR scan confirms presence ──
+    for (const ev of attended) {
+      if (processed.has(ev.arbox_checkin_id)) continue
+      const member = memberByArbox.get(ev.arbox_user_id)
       if (!member) continue
 
+      const list = scansByMember.get(member.id) ?? []
       const start = new Date(ev.start).getTime()
-      const from = new Date(start - SCAN_MATCH_BEFORE_MS).toISOString()
-      const to = new Date(start + SCAN_MATCH_AFTER_MS).toISOString()
+      const idx = list.findIndex((s) => {
+        const t = new Date(s.created_at).getTime()
+        return t >= start - SCAN_MATCH_BEFORE_MS && t <= start + SCAN_MATCH_AFTER_MS
+      })
 
-      const { data: scans } = await db
-        .from('checkins')
-        .select('id')
-        .eq('member_id', member.id)
-        .eq('status', 'pending')
-        .is('arbox_checkin_id', null)
-        .gte('created_at', from)
-        .lte('created_at', to)
-        .order('created_at', { ascending: true })
-        .limit(1)
-
-      const scan = scans?.[0]
-      if (!scan) {
-        // Attendance marked in Arbox but the member never scanned →
-        // possible buddy check-in → NO coins.
+      if (idx < 0) {
+        // Attended in Arbox but no QR scan yet → no coins (blocks buddy check-in).
+        // Not marked processed → a later scan today can still match on a next run.
         unmatched++
-        await markProcessed(db, ev, member.id, false)
         continue
       }
 
-      const base = rules['class_attended'] ?? 1
-      const bonus = await happyHourBonus(ev, db)
-      const pts = base + bonus
+      const scan = list.splice(idx, 1)[0] // consume so it can't match twice
+      const bonus = happyHourBonus(ev, promos)
+      const pts = (rules['class_attended'] ?? 1) + bonus
 
       await awardPoints(member.id, pts, 'class_attended', {
-        class_name: ev.class_name,
-        branch: ev.branch,
-        arbox_checkin_id: ev.arbox_checkin_id,
-        verified: true,
+        class_name: ev.class_name, branch: ev.branch,
+        arbox_checkin_id: ev.arbox_checkin_id, verified: true,
         ...(bonus > 0 ? { happy_hour_bonus: bonus } : {}),
       })
       coinsAwarded += pts
       verified++
 
-      await db
-        .from('checkins')
-        .update({
-          status: 'verified',
-          arbox_checkin_id: ev.arbox_checkin_id,
-          coins_awarded: pts,
-          verified_at: new Date().toISOString(),
-        })
-        .eq('id', scan.id)
+      await db.from('checkins').update({
+        status: 'verified', arbox_checkin_id: ev.arbox_checkin_id,
+        coins_awarded: pts, verified_at: new Date().toISOString(),
+      }).eq('id', scan.id)
 
-      await markProcessed(db, ev, member.id, bonus > 0)
+      await db.from('processed_checkins').insert({
+        arbox_checkin_id: ev.arbox_checkin_id, member_id: member.id, is_happy_hour: bonus > 0,
+      })
+      processed.add(ev.arbox_checkin_id)
 
       const newStreak = (member.current_streak ?? 0) + 1
+      member.current_streak = newStreak
       await db.from('members').update({ current_streak: newStreak }).eq('id', member.id)
       if (newStreak % 10 === 0) {
         const streakPts = rules['streak_10'] ?? 10
         await awardPoints(member.id, streakPts, 'streak_10', { streak: newStreak })
         coinsAwarded += streakPts
       }
-
       await checkMonthBonus(member.id, rules, db)
     }
 
     // ── Late cancellations: break streak, no coins, recorded for the member ──
     for (const ev of cancellations) {
-      if (await alreadyProcessed(db, ev.arbox_checkin_id)) continue
-      const member = await findMember(db, ev.arbox_user_id)
+      if (processed.has(ev.arbox_checkin_id)) continue
+      const member = memberByArbox.get(ev.arbox_user_id)
       if (!member) continue
 
+      member.current_streak = 0
       await db.from('members').update({ current_streak: 0 }).eq('id', member.id)
       await db.from('point_ledger').insert({
-        member_id: member.id,
-        points: 0,
-        reason: 'late_cancel',
-        metadata: {
-          class_name: ev.class_name,
-          branch: ev.branch,
-          note: 'ביטול מאוחר — רצף האימונים אופס, ללא נקודות',
-        },
+        member_id: member.id, points: 0, reason: 'late_cancel',
+        metadata: { class_name: ev.class_name, branch: ev.branch, note: 'ביטול מאוחר — רצף האימונים אופס, ללא נקודות' },
       })
+      await db.from('processed_checkins').insert({
+        arbox_checkin_id: ev.arbox_checkin_id, member_id: member.id, is_happy_hour: false,
+      })
+      processed.add(ev.arbox_checkin_id)
       lateCancels++
-      await markProcessed(db, ev, member.id, false)
     }
   } catch (e) {
     errors = e instanceof Error ? e.message : String(e)
@@ -167,43 +170,15 @@ async function handleSync(req: NextRequest) {
   return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, errors })
 }
 
-async function findMember(db: any, arboxUserId: string) {
-  const { data } = await db
-    .from('members')
-    .select('id, current_streak')
-    .eq('arbox_id', arboxUserId)
-    .single()
-  return data as { id: string; current_streak: number } | null
-}
-
-async function alreadyProcessed(db: any, arboxCheckinId: string): Promise<boolean> {
-  const { data } = await db
-    .from('processed_checkins')
-    .select('arbox_checkin_id')
-    .eq('arbox_checkin_id', arboxCheckinId)
-    .single()
-  return !!data
-}
-
-async function markProcessed(db: any, ev: ArboxEvent, memberId: string, isHappyHour: boolean) {
-  await db.from('processed_checkins').insert({
-    arbox_checkin_id: ev.arbox_checkin_id,
-    member_id: memberId,
-    is_happy_hour: isHappyHour,
-  })
-}
-
 // Bonus coins if the attended class matches an active promoted ("Happy Hour") class
-async function happyHourBonus(ev: ArboxEvent, db: any): Promise<number> {
-  const { data: promos } = await db
-    .from('promoted_classes')
-    .select('title, branch, bonus_coins')
-    .eq('active', true)
-  if (!promos?.length) return 0
-
+function happyHourBonus(
+  ev: { class_name: string | null; branch: string | null },
+  promos: { title: string; branch: string | null; bonus_coins: number }[],
+): number {
+  if (!promos.length) return 0
   const name = (ev.class_name ?? '').toLowerCase()
   const branch = (ev.branch ?? '').toLowerCase()
-  for (const p of promos as { title: string; branch: string | null; bonus_coins: number }[]) {
+  for (const p of promos) {
     const titleMatch = p.title && name.includes(p.title.toLowerCase())
     const branchMatch = !p.branch || branch.includes(p.branch.toLowerCase())
     if (titleMatch && branchMatch) return p.bonus_coins ?? 0
@@ -217,19 +192,13 @@ async function checkMonthBonus(memberId: string, rules: Record<string, number>, 
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
 
   const { count: classCount } = await db
-    .from('point_ledger')
-    .select('*', { count: 'exact', head: true })
-    .eq('member_id', memberId)
-    .eq('reason', 'class_attended')
-    .gte('created_at', monthStart)
-    .lte('created_at', monthEnd)
+    .from('point_ledger').select('*', { count: 'exact', head: true })
+    .eq('member_id', memberId).eq('reason', 'class_attended')
+    .gte('created_at', monthStart).lte('created_at', monthEnd)
 
   const { count: alreadyAwarded } = await db
-    .from('point_ledger')
-    .select('*', { count: 'exact', head: true })
-    .eq('member_id', memberId)
-    .eq('reason', 'full_month')
-    .gte('created_at', monthStart)
+    .from('point_ledger').select('*', { count: 'exact', head: true })
+    .eq('member_id', memberId).eq('reason', 'full_month').gte('created_at', monthStart)
 
   if ((classCount ?? 0) >= 12 && (alreadyAwarded ?? 0) === 0) {
     await awardPoints(memberId, rules['full_month'] ?? 30, 'full_month', {
