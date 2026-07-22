@@ -48,7 +48,7 @@ export default async function AdminPage() {
           { label: 'סה״כ חברי מועדון', value: totalMembers },
           { label: 'מימושים ממתינים', value: totalRedemptions },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-white rounded-2xl p-5 border border-[#e8e0d0]">
+          <div key={label} className="bg-white rounded-2xl p-5 border border-[#E7DBD1]">
             <p className="text-3xl font-bold" style={{ color: 'var(--urban-dark)' }}>{value}</p>
             <p className="text-sm text-gray-400 mt-1">{label}</p>
           </div>
@@ -56,7 +56,7 @@ export default async function AdminPage() {
       </div>
 
       {/* Top members */}
-      <div className="bg-white rounded-2xl p-5 border border-[#e8e0d0] mb-6">
+      <div className="bg-white rounded-2xl p-5 border border-[#E7DBD1] mb-6">
         <h2 className="font-bold mb-4" style={{ color: 'var(--urban-dark)' }}>חברים מובילים</h2>
         {topMembers.length === 0 ? (
           <p className="text-sm text-gray-400">אין נתונים עדיין</p>
@@ -81,7 +81,7 @@ export default async function AdminPage() {
       <a
         href="/admin/happy-hour"
         className="block rounded-2xl p-4 mb-3 text-center font-bold transition hover:opacity-90"
-        style={{ background: 'linear-gradient(135deg, #c4905a, #e2bd7e)', color: '#1e1e1e' }}
+        style={{ background: 'linear-gradient(135deg, #C0906F, #DBB89C)', color: '#3B2E27' }}
       >
         🔥 Happy Hour · שיעורים מקודמים
       </a>
@@ -90,7 +90,7 @@ export default async function AdminPage() {
       <a
         href="/admin/kiosk"
         className="block rounded-2xl p-4 mb-3 text-center font-bold transition hover:opacity-90"
-        style={{ background: 'linear-gradient(135deg,#3a342d,#1c1917)', color: '#e8cc88' }}
+        style={{ background: 'linear-gradient(135deg,#5A473C,#3B2E27)', color: '#DBB89C' }}
       >
         📺 מסך צ׳ק-אין לטאבלט (QR מתחלף)
       </a>
@@ -106,7 +106,7 @@ export default async function AdminPage() {
           <a
             key={href}
             href={href}
-            className="bg-white rounded-xl p-4 text-sm font-medium border border-[#e8e0d0] text-center hover:border-[var(--urban-gold)] transition"
+            className="bg-white rounded-xl p-4 text-sm font-medium border border-[#E7DBD1] text-center hover:border-[var(--urban-gold)] transition"
             style={{ color: 'var(--urban-dark)' }}
           >
             {label}

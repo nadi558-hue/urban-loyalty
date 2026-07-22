@@ -18,10 +18,10 @@ const REWARDS_LOCKED: { id: number; icon: IconKey; name: string; cost: number }[
 ]
 
 function RewardIcon({ type, muted = false }: { type: IconKey; muted?: boolean }) {
-  const stroke = muted ? '#a89a86' : '#8a6a20'
+  const stroke = muted ? '#9C8B7F' : '#96613F'
   const bg = muted
-    ? 'linear-gradient(150deg,#efeae2,#e4ddd0)'
-    : 'linear-gradient(150deg,#f7ecce,#e8cc88)'
+    ? 'linear-gradient(150deg,#F3EAE3,#E7DBD1)'
+    : 'linear-gradient(150deg,#FBF1E8,#DBB89C)'
   const paths: Record<IconKey, React.ReactNode> = {
     waitlist: (
       <>
@@ -60,7 +60,7 @@ function RewardIcon({ type, muted = false }: { type: IconKey; muted?: boolean })
     <div style={{
       width: 44, height: 44, borderRadius: '50%', background: bg,
       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-      boxShadow: muted ? 'none' : '0 3px 10px rgba(196,160,90,0.25)',
+      boxShadow: muted ? 'none' : '0 3px 10px rgba(192,144,111,0.25)',
     }}>
       <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={stroke}
         strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -119,46 +119,46 @@ export default function RewardsPage() {
   ]
 
   return (
-    <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#d9d3c7' }}>
+    <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
       <div style={{
-        background: 'linear-gradient(160deg,#f4eee2 0%,#e7dcc6 100%)',
+        background: 'linear-gradient(160deg,#F3EAE3 0%,#E7DBD1 100%)',
         minHeight: 200, overflow: 'hidden', position: 'relative',
         padding: '24px 20px 28px',
       }}>
         <div style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-          <p style={{ fontSize: 11, color: '#c4a05a', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 11, color: '#C0906F', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             מועדון URBAN
           </p>
-          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 28, fontWeight: 900, color: '#1c1917', lineHeight: 1.15, marginBottom: 8 }}>
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 28, fontWeight: 900, color: '#3B2E27', lineHeight: 1.15, marginBottom: 8 }}>
             חנות ההטבות
           </p>
-          <p style={{ fontSize: 12, color: '#8a7c6a', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 12, color: '#8B7A6C', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             ממטבעות Urban להטבות אמיתיות
           </p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1c1917', borderRadius: 999, padding: '7px 14px' }}>
-            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#e8cc88' }}>{uc}</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#3B2E27', borderRadius: 999, padding: '7px 14px' }}>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#DBB89C' }}>{uc}</span>
             <span style={{ fontSize: 12, color: 'rgba(232,204,136,0.7)', fontFamily: 'var(--font-assistant,sans-serif)' }}>UC זמין</span>
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/figure-stretch.png" alt="" aria-hidden
-          style={{ position: 'absolute', bottom: 0, left: 4, height: 182, opacity: 0.5, pointerEvents: 'none', zIndex: 1, filter: 'drop-shadow(0 12px 20px rgba(28,25,23,.16))', WebkitMaskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)', maskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)' }}
+          style={{ position: 'absolute', bottom: 0, left: 4, height: 182, opacity: 0.5, pointerEvents: 'none', zIndex: 1, filter: 'drop-shadow(0 12px 20px rgba(59,46,39,.16))', WebkitMaskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)', maskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)' }}
         />
       </div>
 
       <div style={{ padding: '14px 16px 0' }}>
-        <div style={{ background: 'linear-gradient(135deg,#3a342d 0%,#1c1917 100%)', borderRadius: 20, padding: '18px 20px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(135deg,#5A473C 0%,#3B2E27 100%)', borderRadius: 20, padding: '18px 20px', position: 'relative', overflow: 'hidden' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/wash.png" alt="" aria-hidden
             style={{ position: 'absolute', top: -20, left: -20, width: 180, opacity: 0.35, pointerEvents: 'none' }}
           />
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <p style={{ fontSize: 11, color: '#c4a05a', letterSpacing: '0.15em', marginBottom: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>מומלץ החודש</p>
-            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#f5f0e8', marginBottom: 4 }}>שריון מוקדם · לפני כולם</p>
+            <p style={{ fontSize: 11, color: '#C0906F', letterSpacing: '0.15em', marginBottom: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>מומלץ החודש</p>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#F6EFEA', marginBottom: 4 }}>שריון מוקדם · לפני כולם</p>
             <p style={{ fontSize: 12, color: 'rgba(245,240,230,0.5)', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>פתח את מערכת השעות שבועיים מראש ותפוס מקום בשיעורים המבוקשים</p>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#e8cc88' }}>110 UC</span>
+              <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#DBB89C' }}>110 UC</span>
               <span style={{ fontSize: 12, color: 'rgba(245,240,230,0.4)', fontFamily: 'var(--font-assistant,sans-serif)' }}>חסרים {110 - uc} UC</span>
             </div>
           </div>
@@ -171,8 +171,8 @@ export default function RewardsPage() {
             borderRadius: 999, padding: '7px 16px', fontSize: 13,
             fontFamily: 'var(--font-assistant,sans-serif)',
             fontWeight: f.key === filter ? 700 : 400,
-            background: f.key === filter ? '#1c1917' : 'rgba(255,255,255,0.6)',
-            color: f.key === filter ? '#e8cc88' : '#6f665c',
+            background: f.key === filter ? '#3B2E27' : 'rgba(255,255,255,0.6)',
+            color: f.key === filter ? '#DBB89C' : '#6F625A',
             border: 'none', cursor: 'pointer',
           }}>{f.label}</button>
         ))}
@@ -180,19 +180,19 @@ export default function RewardsPage() {
 
       {showAvailable && (
         <div style={{ padding: '14px 16px 0' }}>
-          <p style={{ fontSize: 11, color: '#94897e', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין עכשיו</p>
+          <p style={{ fontSize: 11, color: '#9C8B7F', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין עכשיו</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {REWARDS_AVAILABLE.map(r => {
               const affordable = uc >= r.cost
               return (
-              <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(196,160,90,0.2)', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}>
+              <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(192,144,111,0.2)', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}>
                 <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} /></div>
-                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#1c1917', marginBottom: 4 }}>{r.name}</p>
-                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#94897e', marginBottom: 10 }}>{r.cost} UC</p>
+                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 4 }}>{r.name}</p>
+                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
                 <button
                   onClick={() => affordable && setConfirming(r)}
                   disabled={!affordable}
-                  style={{ width: '100%', background: affordable ? 'linear-gradient(135deg,#e8cc88,#c4a05a)' : '#f0ebe2', border: 'none', borderRadius: 999, padding: '7px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: affordable ? '#1c1917' : '#94897e', cursor: affordable ? 'pointer' : 'not-allowed' }}
+                  style={{ width: '100%', background: affordable ? 'linear-gradient(135deg,#DBB89C,#C0906F)' : '#F3EAE3', border: 'none', borderRadius: 999, padding: '7px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: affordable ? '#3B2E27' : '#9C8B7F', cursor: affordable ? 'pointer' : 'not-allowed' }}
                 >{affordable ? 'מימוש' : `חסרים ${r.cost - uc} UC`}</button>
               </div>
               )
@@ -203,16 +203,16 @@ export default function RewardsPage() {
 
       {showLocked && (
         <div style={{ padding: '14px 16px 0' }}>
-          <p style={{ fontSize: 11, color: '#94897e', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>בהישג יד</p>
+          <p style={{ fontSize: 11, color: '#9C8B7F', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>בהישג יד</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {REWARDS_LOCKED.map(r => {
               const need = r.cost - uc
               return (
-                <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(196,160,90,0.1)', opacity: 0.85 }}>
+                <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(192,144,111,0.1)', opacity: 0.85 }}>
                   <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} muted /></div>
-                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#6f665c', marginBottom: 4 }}>{r.name}</p>
-                  <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#94897e', marginBottom: 10 }}>{r.cost} UC</p>
-                  <div style={{ width: '100%', background: '#f0ebe2', borderRadius: 999, padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#94897e' }}>
+                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#6F625A', marginBottom: 4 }}>{r.name}</p>
+                  <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
+                  <div style={{ width: '100%', background: '#F3EAE3', borderRadius: 999, padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>
                     חסרים {need} UC
                   </div>
                 </div>
@@ -227,22 +227,22 @@ export default function RewardsPage() {
       {/* Confirm redemption */}
       {confirming && (
         <div onClick={() => setConfirming(null)} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(20,16,12,0.55)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 448, background: '#faf7f0', borderRadius: '24px 24px 0 0', padding: '24px 22px calc(24px + env(safe-area-inset-bottom))' }}>
-            <div style={{ width: 40, height: 4, borderRadius: 999, background: '#d9d0c0', margin: '0 auto 18px' }} />
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 448, background: '#FBF6F2', borderRadius: '24px 24px 0 0', padding: '24px 22px calc(24px + env(safe-area-inset-bottom))' }}>
+            <div style={{ width: 40, height: 4, borderRadius: 999, background: '#E7DBD1', margin: '0 auto 18px' }} />
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><RewardIcon type={confirming.icon} /></div>
-            <p style={{ textAlign: 'center', fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#1c1917', marginBottom: 6 }}>{confirming.name}</p>
-            <p style={{ textAlign: 'center', fontSize: 13, color: '#8a7c6a', marginBottom: 18, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-              המימוש ינכה <strong style={{ color: '#c4a05a' }}>{confirming.cost} UC</strong> מהיתרה שלך · יישאר {uc - confirming.cost} UC
+            <p style={{ textAlign: 'center', fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#3B2E27', marginBottom: 6 }}>{confirming.name}</p>
+            <p style={{ textAlign: 'center', fontSize: 13, color: '#8B7A6C', marginBottom: 18, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              המימוש ינכה <strong style={{ color: '#C0906F' }}>{confirming.cost} UC</strong> מהיתרה שלך · יישאר {uc - confirming.cost} UC
             </p>
             {redeemError && <p style={{ textAlign: 'center', fontSize: 13, color: '#c04040', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>{redeemError}</p>}
             <button
               onClick={() => confirmRedeem(confirming)}
               disabled={redeeming}
-              style={{ width: '100%', background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', border: 'none', borderRadius: 999, padding: '13px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#1c1917', cursor: redeeming ? 'default' : 'pointer', opacity: redeeming ? 0.6 : 1, marginBottom: 8 }}
+              style={{ width: '100%', background: 'linear-gradient(135deg,#DBB89C,#C0906F)', border: 'none', borderRadius: 999, padding: '13px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', cursor: redeeming ? 'default' : 'pointer', opacity: redeeming ? 0.6 : 1, marginBottom: 8 }}
             >{redeeming ? 'מבצע מימוש...' : 'אישור מימוש'}</button>
             <button
               onClick={() => { setConfirming(null); setRedeemError('') }}
-              style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, color: '#94897e', cursor: 'pointer' }}
+              style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, color: '#9C8B7F', cursor: 'pointer' }}
             >ביטול</button>
           </div>
         </div>
@@ -251,23 +251,23 @@ export default function RewardsPage() {
       {/* Redemption success */}
       {redeemed && (
         <div onClick={() => setRedeemed(null)} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(20,16,12,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 340, background: '#faf7f0', borderRadius: 24, padding: '28px 24px', textAlign: 'center' }}>
-            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 340, background: '#FBF6F2', borderRadius: 24, padding: '28px 24px', textAlign: 'center' }}>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'linear-gradient(135deg,#DBB89C,#C0906F)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3B2E27" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
             </div>
-            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#1c1917', marginBottom: 6 }}>ההטבה מומשה!</p>
-            <p style={{ fontSize: 13, color: '#8a7c6a', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#3B2E27', marginBottom: 6 }}>ההטבה מומשה!</p>
+            <p style={{ fontSize: 13, color: '#8B7A6C', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
               {redeemed.name} · הצג את הקוד בדלפק הסטודיו
             </p>
             {redeemedCode && (
-              <div style={{ background: '#1c1917', borderRadius: 14, padding: '12px 0', marginBottom: 16 }}>
+              <div style={{ background: '#3B2E27', borderRadius: 14, padding: '12px 0', marginBottom: 16 }}>
                 <p style={{ fontSize: 10, color: 'rgba(232,204,136,0.6)', letterSpacing: '0.18em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>קוד מימוש</p>
-                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 900, color: '#e8cc88', letterSpacing: '0.25em' }}>{redeemedCode}</p>
+                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 900, color: '#DBB89C', letterSpacing: '0.25em' }}>{redeemedCode}</p>
               </div>
             )}
             <button
               onClick={() => { setRedeemed(null); setRedeemedCode(null) }}
-              style={{ width: '100%', background: '#1c1917', border: 'none', borderRadius: 999, padding: '12px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#e8cc88', cursor: 'pointer' }}
+              style={{ width: '100%', background: '#3B2E27', border: 'none', borderRadius: 999, padding: '12px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#DBB89C', cursor: 'pointer' }}
             >סגירה</button>
           </div>
         </div>

@@ -16,7 +16,7 @@ type Redemption = {
 }
 
 const STATUS_LABEL: Record<string, string> = { pending: 'ממתין', used: 'מומש', cancelled: 'בוטל' }
-const STATUS_COLOR: Record<string, string> = { pending: '#b8860b', used: '#3a8a3a', cancelled: '#b04040' }
+const STATUS_COLOR: Record<string, string> = { pending: '#A66B43', used: '#3a8a3a', cancelled: '#b04040' }
 
 async function getRedemptions(): Promise<Redemption[]> {
   const db = createServiceClient()
@@ -88,7 +88,7 @@ export default async function AdminRedemptionsPage() {
       ) : (
         <div className="space-y-2.5">
           {redemptions.map((r) => (
-            <div key={r.id} className="bg-white rounded-2xl border border-[#e8e0d0] px-4 py-3.5">
+            <div key={r.id} className="bg-white rounded-2xl border border-[#E7DBD1] px-4 py-3.5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold" style={{ color: 'var(--urban-dark)' }}>
@@ -124,7 +124,7 @@ export default async function AdminRedemptionsPage() {
                     <ConfirmButton
                       confirm={`לבטל את המימוש ולהחזיר ${r.coins_spent} UC ל${r.members?.name ?? 'חבר'}?`}
                       className="w-full py-2 rounded-xl text-xs font-bold"
-                      style={{ background: '#f3ede0', color: '#b04040' }}
+                      style={{ background: '#F3EAE3', color: '#b04040' }}
                     >
                       בטל + החזר UC
                     </ConfirmButton>

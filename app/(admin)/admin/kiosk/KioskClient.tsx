@@ -20,7 +20,7 @@ export default function KioskClient() {
       if (canvasRef.current) {
         await QRCode.toCanvas(canvasRef.current, url, {
           width: 420, margin: 1,
-          color: { dark: '#1c1917', light: '#ffffff' },
+          color: { dark: '#3B2E27', light: '#ffffff' },
         })
         // qrcode overrides the canvas inline size each render — keep it responsive
         canvasRef.current.style.width = '100%'
@@ -45,16 +45,16 @@ export default function KioskClient() {
     <main dir="rtl" style={{
       minHeight: '100dvh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', gap: 28,
-      background: 'linear-gradient(180deg,#3a342d 0%,#1c1917 100%)', padding: 24,
+      background: 'linear-gradient(180deg,#5A473C 0%,#3B2E27 100%)', padding: 24,
     }}>
       <div style={{ textAlign: 'center' }}>
-        <p style={{ fontSize: 13, color: '#c4a05a', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+        <p style={{ fontSize: 13, color: '#C0906F', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
           URBAN STUDIO CLUB
         </p>
-        <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 40, fontWeight: 900, color: '#f5f0e8', marginTop: 6 }}>
+        <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 40, fontWeight: 900, color: '#F6EFEA', marginTop: 6 }}>
           צ׳ק-אין לשיעור
         </h1>
-        <p style={{ fontSize: 16, color: '#b5a893', marginTop: 6 }}>
+        <p style={{ fontSize: 16, color: '#B8A99B', marginTop: 6 }}>
           סרקו את הקוד מהאפליקציה לצבירת Urban Coins
         </p>
       </div>
@@ -62,14 +62,14 @@ export default function KioskClient() {
       <div style={{
         background: '#ffffff', borderRadius: 32, padding: 'min(24px, 4vw)',
         width: 'min(82vw, 62vh, 470px)', boxSizing: 'border-box',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.45)', border: '1px solid rgba(196,160,90,0.4)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.45)', border: '1px solid rgba(192,144,111,0.4)',
       }}>
         <canvas ref={canvasRef} style={{ display: 'block', borderRadius: 12, width: '100%', height: 'auto' }} />
       </div>
 
       {error
         ? <p style={{ color: '#e08c8c', fontSize: 15 }}>{error}</p>
-        : <p style={{ color: '#8a7c6a', fontSize: 14 }}>הקוד מתחלף אוטומטית · {clock}</p>}
+        : <p style={{ color: '#8B7A6C', fontSize: 14 }}>הקוד מתחלף אוטומטית · {clock}</p>}
     </main>
   )
 }

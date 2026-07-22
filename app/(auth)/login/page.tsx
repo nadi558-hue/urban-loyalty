@@ -43,7 +43,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col" style={{ background: '#111' }}>
+    <div className="min-h-dvh flex flex-col" style={{ background: '#2A211C' }}>
 
       {/* Hero photo */}
       <div className="relative flex-1" style={{ maxHeight: '62dvh' }}>
@@ -55,7 +55,7 @@ export default function LoginPage() {
           style={{ objectFit: 'cover', objectPosition: 'center top', filter: 'brightness(0.78)' }}
         />
         <div className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, transparent 50%, #111 100%)' }} />
+          style={{ background: 'linear-gradient(to bottom, transparent 50%, #2A211C 100%)' }} />
         <div className="absolute bottom-6 inset-x-0 flex flex-col items-center">
           <div className="text-5xl font-black uppercase" dir="ltr"
             style={{ display: 'flex', alignItems: 'flex-end', gap: '0.07em', lineHeight: 1 }}>
@@ -81,7 +81,7 @@ export default function LoginPage() {
       </div>
 
       {/* Login form */}
-      <div className="px-6 pt-6 pb-10" style={{ background: '#111' }}>
+      <div className="px-6 pt-6 pb-10" style={{ background: '#2A211C' }}>
         <p className="text-center text-sm mb-6" style={{ color: 'rgba(255,255,255,0.4)' }}>
           מועדון לקוחות · התחבר עם מספר הטלפון
         </p>
@@ -117,13 +117,13 @@ export default function LoginPage() {
               <span
                 style={{
                   width: 20, height: 20, borderRadius: 6, flexShrink: 0, marginTop: 1,
-                  border: `1.5px solid ${agreed ? '#e2bd7e' : 'rgba(255,255,255,0.4)'}`,
-                  background: agreed ? 'linear-gradient(135deg,#c4905a,#e2bd7e)' : 'transparent',
+                  border: `1.5px solid ${agreed ? '#DBB89C' : 'rgba(255,255,255,0.4)'}`,
+                  background: agreed ? 'linear-gradient(135deg,#C0906F,#DBB89C)' : 'transparent',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
                 {agreed && (
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1e1e1e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3B2E27" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                 )}
@@ -132,7 +132,7 @@ export default function LoginPage() {
                 קראתי ואני מסכים/ה ל
                 <span onClick={(e) => { e.stopPropagation(); setShowTerms(true) }}
                   className="underline font-bold"
-                  style={{ color: '#e2bd7e' }}>
+                  style={{ color: '#DBB89C' }}>
                   תקנון ותנאי השימוש
                 </span>
                 {' '}של מועדון Urban
@@ -144,7 +144,7 @@ export default function LoginPage() {
               onClick={sendOtp}
               disabled={loading || phone.length < 9}
               className="w-full py-4 rounded-2xl font-bold text-sm transition disabled:opacity-40"
-              style={{ background: 'linear-gradient(135deg, #c4905a, #e2bd7e)', color: '#1e1e1e' }}
+              style={{ background: 'linear-gradient(135deg, #C0906F, #DBB89C)', color: '#3B2E27' }}
             >
               {loading ? '...' : 'שלח קוד אימות'}
             </button>
@@ -175,7 +175,7 @@ export default function LoginPage() {
               onClick={verifyOtp}
               disabled={loading || otp.length !== 6}
               className="w-full py-4 rounded-2xl font-bold text-sm disabled:opacity-40 mb-3"
-              style={{ background: 'linear-gradient(135deg, #c4905a, #e2bd7e)', color: '#1e1e1e' }}
+              style={{ background: 'linear-gradient(135deg, #C0906F, #DBB89C)', color: '#3B2E27' }}
             >
               {loading ? 'מאמת...' : 'כניסה'}
             </button>

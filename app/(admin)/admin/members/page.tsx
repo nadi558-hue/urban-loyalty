@@ -64,12 +64,12 @@ export default async function AdminMembersPage() {
       {members.length === 0 ? (
         <p className="text-sm text-gray-400">אין חברים עדיין</p>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#e8e0d0] overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#E7DBD1] overflow-hidden">
           {members.map((m, i) => (
             <div
               key={m.id}
               className="flex items-center justify-between px-4 py-3"
-              style={{ borderTop: i === 0 ? 'none' : '1px solid #f0eadc' }}
+              style={{ borderTop: i === 0 ? 'none' : '1px solid #F3EAE3' }}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 <span className="text-lg shrink-0">{TIER_BADGE[m.tier] ?? '🥈'}</span>

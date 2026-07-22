@@ -2,23 +2,23 @@
 
 :root {
   /* ── Sand Dusk palette ─────────────────────────── */
-  --urban-dark:     #1c1917;               /* שחור-חום עמוק */
-  --urban-charcoal: #3a3530;               /* כותרות header */
-  --urban-gold:     #c4a05a;               /* זהב ראשי */
-  --urban-gold-br:  #e8cc88;               /* זהב בהיר */
-  --urban-gold-dim: rgba(196,160,90,0.2);  /* גבול זהב עדין */
-  --urban-cream:    #e8e4db;               /* רקע ראשי – חול-אפור */
-  --urban-sand:     #f5f2eb;               /* כרטיסים */
-  --urban-sage:     #d4d8ce;               /* sage */
-  --urban-blush:    #ede8e0;               /* blush חם */
-  --urban-muted:    #9a8e84;               /* טקסט משני */
-  --urban-border:   #dad6ce;              /* גבולות */
+  --urban-dark:     #3B2E27;               /* שחור-חום עמוק */
+  --urban-charcoal: #5A473C;               /* כותרות header */
+  --urban-gold:     #C0906F;               /* זהב ראשי */
+  --urban-gold-br:  #DBB89C;               /* זהב בהיר */
+  --urban-gold-dim: rgba(192,144,111,0.2);  /* גבול זהב עדין */
+  --urban-cream:    #F1E9E3;               /* רקע ראשי – חול-אפור */
+  --urban-sand:     #FBF6F2;               /* כרטיסים */
+  --urban-sage:     #DDC6BC;               /* sage */
+  --urban-blush:    #F3EAE3;               /* blush חם */
+  --urban-muted:    #9C8B7F;               /* טקסט משני */
+  --urban-border:   #E7DBD1;              /* גבולות */
 
   /* ── App tokens ────────────────────────────────── */
-  --background:  #e8e4db;
-  --foreground:  #1c1917;
+  --background:  #F1E9E3;
+  --foreground:  #3B2E27;
   --card-bg:     rgba(255,255,255,0.72);
-  --card-border: rgba(196,160,90,0.18);
+  --card-border: rgba(192,144,111,0.18);
 }
 
 @theme inline {
@@ -33,7 +33,7 @@ body {
   font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
-  background-color: #e8e4db;
+  background-color: #F1E9E3;
   background-attachment: fixed;
 }
 
@@ -47,18 +47,18 @@ body {
 /* ── Card – glass on sand bg ── */
 .urban-card {
   background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(196,160,90,0.18);
+  border: 1px solid rgba(192,144,111,0.18);
   border-radius: 1.25rem;
   backdrop-filter: blur(4px);
 }
 
 /* ── Gold gradient bar ─────────────────────────── */
 .gold-bar {
-  background: linear-gradient(90deg, #c4a05a 0%, #e8cc88 100%);
+  background: linear-gradient(90deg, #C0906F 0%, #DBB89C 100%);
 }
 
 /* ── Dark header block (shared) ── */
 .urban-header {
-  background: linear-gradient(150deg, #3a3530 0%, #1c1917 100%);
-  color: #f5f0e8;
+  background: linear-gradient(150deg, #5A473C 0%, #3B2E27 100%);
+  color: #F6EFEA;
 }

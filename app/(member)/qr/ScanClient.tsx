@@ -113,7 +113,7 @@ export default function ScanClient() {
 
   const card: React.CSSProperties = {
     background: '#ffffff', borderRadius: 24, padding: '28px 24px',
-    border: '1px solid rgba(196,160,90,0.25)',
+    border: '1px solid rgba(192,144,111,0.25)',
     boxShadow: '0 10px 30px rgba(0,0,0,0.1)', textAlign: 'center',
   }
 
@@ -124,33 +124,33 @@ export default function ScanClient() {
           <div style={{ position: 'relative', width: '100%', borderRadius: 16, overflow: 'hidden', background: '#000' }}>
             <video ref={videoRef} playsInline muted style={{ width: '100%', display: 'block' }} />
             <div style={{
-              position: 'absolute', inset: '12%', border: '3px solid rgba(196,160,90,0.9)',
+              position: 'absolute', inset: '12%', border: '3px solid rgba(192,144,111,0.9)',
               borderRadius: 18, pointerEvents: 'none',
             }} />
           </div>
         ) : status.kind === 'submitting' ? (
           <div style={{ padding: '48px 0' }}>
             <p style={{ fontSize: 40 }}>⏳</p>
-            <p style={{ fontSize: 14, color: '#8a7c6a', marginTop: 8 }}>רושם צ׳ק-אין…</p>
+            <p style={{ fontSize: 14, color: '#8B7A6C', marginTop: 8 }}>רושם צ׳ק-אין…</p>
           </div>
         ) : status.kind === 'success' ? (
           <div style={{ padding: '32px 0' }}>
             <p style={{ fontSize: 52 }}>{status.pending ? '⏳' : status.already ? '💪' : '🎉'}</p>
-            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#1c1917', marginTop: 10 }}>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#3B2E27', marginTop: 10 }}>
               {status.pending ? 'הנוכחות נקלטה!' : status.already ? 'כבר בפנים!' : 'צ׳ק-אין הושלם!'}
             </p>
-            <p style={{ fontSize: 14, color: '#8a7c6a', marginTop: 6 }}>
+            <p style={{ fontSize: 14, color: '#8B7A6C', marginTop: 6 }}>
               {status.pending
                 ? (status.message ?? 'הנקודות יתווספו לאחר אימות הנוכחות ⏳')
                 : status.already
                 ? (status.message ?? 'כבר נרשם צ׳ק-אין לשיעור הזה')
-                : <>נוספו לך <b style={{ color: '#b8860b' }}>+{status.coins} UC</b> — אימון נעים 🤍</>}
+                : <>נוספו לך <b style={{ color: '#A66B43' }}>+{status.coins} UC</b> — אימון נעים 🤍</>}
             </p>
           </div>
         ) : (
           <div style={{ padding: '20px 0 8px' }}>
             <p style={{ fontSize: 48 }}>📷</p>
-            <p style={{ fontSize: 14, color: '#8a7c6a', margin: '10px 0 20px', lineHeight: 1.6 }}>
+            <p style={{ fontSize: 14, color: '#8B7A6C', margin: '10px 0 20px', lineHeight: 1.6 }}>
               הגעתם לסטודיו? סרקו את הקוד שמוצג
               <br />על המסך בכניסה לצבירת UC
             </p>
@@ -159,7 +159,7 @@ export default function ScanClient() {
             )}
             <button onClick={startCamera} style={{
               width: '100%', padding: '15px 0', borderRadius: 16, border: 'none',
-              background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', color: '#1c1917',
+              background: 'linear-gradient(135deg,#DBB89C,#C0906F)', color: '#3B2E27',
               fontSize: 16, fontWeight: 800, fontFamily: 'var(--font-assistant,sans-serif)', cursor: 'pointer',
             }}>
               {status.kind === 'error' ? 'נסו שוב' : 'סריקת צ׳ק-אין'}
@@ -168,7 +168,7 @@ export default function ScanClient() {
         )}
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <p style={{ textAlign: 'center', fontSize: 12, color: '#8a7c6a', marginTop: 16 }}>
+      <p style={{ textAlign: 'center', fontSize: 12, color: '#8B7A6C', marginTop: 16 }}>
         הקוד במסך הסטודיו מתחלף כל כמה שניות — הסריקה מאשרת נוכחות
       </p>
     </div>

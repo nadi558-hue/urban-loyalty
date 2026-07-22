@@ -34,7 +34,7 @@ export default async function AdminRulesPage() {
 
       <div className="space-y-2.5">
         {rules.map((r) => (
-          <form key={r.id} action={updateRule} className="bg-white rounded-2xl border border-[#e8e0d0] px-4 py-3.5 flex items-center justify-between gap-3">
+          <form key={r.id} action={updateRule} className="bg-white rounded-2xl border border-[#E7DBD1] px-4 py-3.5 flex items-center justify-between gap-3">
             <input type="hidden" name="id" value={r.id} />
             <div className="min-w-0">
               <p className="text-sm font-semibold" style={{ color: 'var(--urban-dark)' }}>{r.description}</p>
@@ -45,7 +45,7 @@ export default async function AdminRulesPage() {
                 type="number"
                 name="points"
                 defaultValue={r.points}
-                className="w-20 px-2 py-1.5 rounded-lg border border-[#e0d8c8] text-sm text-center outline-none focus:border-[var(--urban-gold)]"
+                className="w-20 px-2 py-1.5 rounded-lg border border-[#E7DBD1] text-sm text-center outline-none focus:border-[var(--urban-gold)]"
               />
               <button type="submit" className="px-4 py-1.5 rounded-lg text-xs font-bold text-white" style={{ background: 'var(--urban-dark)' }}>
                 שמור

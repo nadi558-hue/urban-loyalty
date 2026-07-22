@@ -44,7 +44,7 @@ async function addReward(formData: FormData) {
   revalidatePath('/admin/rewards')
 }
 
-const inputCls = 'w-full px-3 py-2 rounded-lg border border-[#e0d8c8] text-sm outline-none focus:border-[var(--urban-gold)]'
+const inputCls = 'w-full px-3 py-2 rounded-lg border border-[#E7DBD1] text-sm outline-none focus:border-[var(--urban-gold)]'
 
 export default async function AdminRewardsPage() {
   const rewards = await getRewards()
@@ -62,7 +62,7 @@ export default async function AdminRewardsPage() {
           <form
             key={r.id}
             action={updateReward}
-            className="bg-white rounded-2xl border border-[#e8e0d0] px-4 py-3.5"
+            className="bg-white rounded-2xl border border-[#E7DBD1] px-4 py-3.5"
             style={{ opacity: r.active ? 1 : 0.55 }}
           >
             <input type="hidden" name="id" value={r.id} />
@@ -82,7 +82,7 @@ export default async function AdminRewardsPage() {
                   name="cost_coins"
                   defaultValue={r.cost_coins}
                   min={1}
-                  className="w-20 px-2 py-1 rounded-lg border border-[#e0d8c8] text-sm text-center outline-none"
+                  className="w-20 px-2 py-1 rounded-lg border border-[#E7DBD1] text-sm text-center outline-none"
                 />
               </label>
               <label className="flex items-center gap-1.5 text-xs text-gray-500">
@@ -98,11 +98,11 @@ export default async function AdminRewardsPage() {
       </div>
 
       {/* Add new reward */}
-      <form action={addReward} className="bg-[#faf6ee] rounded-2xl border border-[#e8e0d0] p-4">
+      <form action={addReward} className="bg-[#FBF6F2] rounded-2xl border border-[#E7DBD1] p-4">
         <h2 className="font-bold text-sm mb-3" style={{ color: 'var(--urban-dark)' }}>+ הוסף הטבה חדשה</h2>
         <div className="space-y-2.5">
           <div className="flex gap-2">
-            <input name="emoji" placeholder="✨" maxLength={2} className="w-14 text-center px-2 py-2 rounded-lg border border-[#e0d8c8] text-sm outline-none" />
+            <input name="emoji" placeholder="✨" maxLength={2} className="w-14 text-center px-2 py-2 rounded-lg border border-[#E7DBD1] text-sm outline-none" />
             <input name="name" placeholder="שם ההטבה" required className={inputCls} />
           </div>
           <input name="description" placeholder="תיאור קצר" className={inputCls} />

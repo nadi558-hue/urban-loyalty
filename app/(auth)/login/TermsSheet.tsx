@@ -62,14 +62,14 @@ export default function TermsSheet({ onClose, onAgree }: { onClose: () => void; 
         onClick={e => e.stopPropagation()}
         className="max-w-md w-full"
         style={{
-          background: '#161412', borderRadius: '24px 24px 0 0',
+          background: '#2A211C', borderRadius: '24px 24px 0 0',
           maxHeight: '86dvh', display: 'flex', flexDirection: 'column',
-          border: '1px solid rgba(196,160,90,0.2)', borderBottom: 'none',
+          border: '1px solid rgba(192,144,111,0.2)', borderBottom: 'none',
         }}
       >
-        <div style={{ padding: '14px 20px 10px', borderBottom: '1px solid rgba(196,160,90,0.15)' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 999, background: 'rgba(196,160,90,0.3)', margin: '0 auto 14px' }} />
-          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, fontWeight: 700, color: '#f5f0e8', textAlign: 'center' }}>
+        <div style={{ padding: '14px 20px 10px', borderBottom: '1px solid rgba(192,144,111,0.15)' }}>
+          <div style={{ width: 36, height: 4, borderRadius: 999, background: 'rgba(192,144,111,0.3)', margin: '0 auto 14px' }} />
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, fontWeight: 700, color: '#F6EFEA', textAlign: 'center' }}>
             תקנון ותנאי שימוש
           </p>
           <p style={{ fontSize: 11, color: 'rgba(245,240,230,0.4)', textAlign: 'center', marginTop: 2 }}>
@@ -80,7 +80,7 @@ export default function TermsSheet({ onClose, onAgree }: { onClose: () => void; 
         <div style={{ overflowY: 'auto', padding: '16px 20px', flex: 1 }}>
           {SECTIONS.map(sec => (
             <div key={sec.title} style={{ marginBottom: 18 }}>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#e8cc88', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: '#DBB89C', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
                 {sec.title}
               </p>
               {sec.items.map((it, i) => (
@@ -92,11 +92,11 @@ export default function TermsSheet({ onClose, onAgree }: { onClose: () => void; 
           ))}
         </div>
 
-        <div style={{ padding: '14px 20px max(14px, env(safe-area-inset-bottom))', borderTop: '1px solid rgba(196,160,90,0.15)' }}>
+        <div style={{ padding: '14px 20px max(14px, env(safe-area-inset-bottom))', borderTop: '1px solid rgba(192,144,111,0.15)' }}>
           <button
             onClick={onAgree}
             className="w-full py-3.5 rounded-2xl font-bold text-sm"
-            style={{ background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', color: '#1c1917' }}
+            style={{ background: 'linear-gradient(135deg,#DBB89C,#C0906F)', color: '#3B2E27' }}
           >
             קראתי ואני מסכים/ה לתקנון
           </button>

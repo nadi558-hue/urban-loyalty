@@ -29,12 +29,12 @@ export default async function HistoryPage() {
       {/* Dark header */}
       <div className="urban-header px-5 pt-10 pb-6 relative overflow-hidden">
         <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(196,160,90,0.2) 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(192,144,111,0.2) 0%, transparent 70%)' }} />
         <p className="text-xs tracking-[0.28em] uppercase mb-2"
-          style={{ color: 'rgba(196,160,90,0.5)', fontFamily: 'Georgia, serif' }}>
+          style={{ color: 'rgba(192,144,111,0.5)', fontFamily: 'Georgia, serif' }}>
           Urban Coins
         </p>
-        <h1 className="text-4xl font-black" style={{ color: '#f5f0e8', letterSpacing: '-0.03em' }}>
+        <h1 className="text-4xl font-black" style={{ color: '#F6EFEA', letterSpacing: '-0.03em' }}>
           היסטוריה
         </h1>
       </div>
@@ -51,7 +51,7 @@ export default async function HistoryPage() {
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-base shrink-0"
                   style={{
                     background: positive
-                      ? 'rgba(196,160,90,0.15)'
+                      ? 'rgba(192,144,111,0.15)'
                       : 'rgba(180,60,60,0.1)',
                   }}>
                   {positive ? '⭐' : '🔓'}

@@ -67,8 +67,8 @@ export default function PwaInstall() {
       style={{
         position: 'fixed', left: 12, right: 12, bottom: 12, zIndex: 60,
         maxWidth: 420, margin: '0 auto',
-        background: 'linear-gradient(135deg,#3a342d,#1c1917)',
-        border: '1px solid rgba(196,160,90,0.45)', borderRadius: 18,
+        background: 'linear-gradient(135deg,#5A473C,#3B2E27)',
+        border: '1px solid rgba(192,144,111,0.45)', borderRadius: 18,
         boxShadow: '0 12px 40px rgba(0,0,0,0.4)', padding: '14px 16px',
         display: 'flex', alignItems: 'center', gap: 12,
       }}
@@ -77,10 +77,10 @@ export default function PwaInstall() {
       <img src="/icons/icon-192.png" alt="" width={44} height={44}
         style={{ borderRadius: 10, flexShrink: 0 }} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: '#f5f0e8', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 14, fontWeight: 700, color: '#F6EFEA', fontFamily: 'var(--font-assistant,sans-serif)' }}>
           התקינו את אפליקציית Urban Club
         </p>
-        <p style={{ fontSize: 12, color: '#b5a893', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 12, color: '#B8A99B', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           {showIosHint
             ? 'הקישו על ⬆️ שיתוף ואז "הוסף למסך הבית"'
             : 'גישה מהירה מהמסך הבית — כמו אפליקציה'}
@@ -89,14 +89,14 @@ export default function PwaInstall() {
       {!showIosHint && (
         <button onClick={install} style={{
           flexShrink: 0, border: 'none', borderRadius: 12, padding: '9px 16px',
-          background: 'linear-gradient(135deg,#e8cc88,#c4a05a)', color: '#1c1917',
+          background: 'linear-gradient(135deg,#DBB89C,#C0906F)', color: '#3B2E27',
           fontSize: 14, fontWeight: 800, fontFamily: 'var(--font-assistant,sans-serif)', cursor: 'pointer',
         }}>
           התקן
         </button>
       )}
       <button onClick={dismiss} aria-label="סגור" style={{
-        flexShrink: 0, border: 'none', background: 'transparent', color: '#8a7c6a',
+        flexShrink: 0, border: 'none', background: 'transparent', color: '#8B7A6C',
         fontSize: 20, lineHeight: 1, cursor: 'pointer', padding: '0 2px',
       }}>
         ×
