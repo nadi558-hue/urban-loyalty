@@ -121,30 +121,60 @@ export default function RewardsPage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
+      {/* ── Full-bleed hero ─────────────────────── */}
       <div style={{
-        background: 'linear-gradient(160deg,#F3EAE3 0%,#E7DBD1 100%)',
-        minHeight: 200, overflow: 'hidden', position: 'relative',
-        padding: '24px 20px 28px',
+        position: 'relative', height: 300, overflow: 'hidden',
+        background: 'linear-gradient(120deg,#EFE2D8 0%,#E4D0C3 52%,#D8BCA9 100%)',
       }}>
-        <div style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-          <p style={{ fontSize: 11, color: '#C0906F', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        {/* Figure cutout, bottom-left, fading toward the title on the right */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/figure-stretch.png" alt="" aria-hidden
+          style={{
+            position: 'absolute', bottom: 0, left: -12, height: 292, pointerEvents: 'none', zIndex: 1,
+            filter: 'drop-shadow(0 12px 22px rgba(59,46,39,.20))',
+            WebkitMaskImage: 'linear-gradient(90deg,#000 0%,#000 48%,transparent 78%)',
+            maskImage: 'linear-gradient(90deg,#000 0%,#000 48%,transparent 78%)',
+          }}
+        />
+        {/* Soft light glow + bottom fade into the glass card */}
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
+        }} />
+        {/* Title (RTL — reads top-right) */}
+        <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right' }}>
+          <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             מועדון URBAN
           </p>
-          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 28, fontWeight: 900, color: '#3B2E27', lineHeight: 1.15, marginBottom: 8 }}>
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 32, fontWeight: 900, color: '#3B2E27', lineHeight: 1.12, marginBottom: 8 }}>
             חנות ההטבות
           </p>
-          <p style={{ fontSize: 12, color: '#8B7A6C', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 12.5, color: '#7A6B60', maxWidth: 180, marginRight: 0, marginLeft: 'auto', fontFamily: 'var(--font-assistant,sans-serif)' }}>
             ממטבעות Urban להטבות אמיתיות
           </p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#3B2E27', borderRadius: 999, padding: '7px 14px' }}>
-            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#DBB89C' }}>{uc}</span>
-            <span style={{ fontSize: 12, color: 'rgba(232,204,136,0.7)', fontFamily: 'var(--font-assistant,sans-serif)' }}>UC זמין</span>
+        </div>
+      </div>
+
+      {/* ── Glass balance card (overlaps the hero) ── */}
+      <div style={{
+        position: 'relative', zIndex: 3, margin: '-58px 16px 0',
+        background: 'rgba(251,244,238,0.55)',
+        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
+        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
+        padding: '16px 20px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div>
+          <p style={{ fontSize: 11, color: '#8B7A6C', letterSpacing: '0.08em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>היתרה שלך למימוש</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 46, fontWeight: 900, color: '#3B2E27', lineHeight: 1 }}>{uc}</span>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, color: '#A66B43' }}>UC</span>
           </div>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/figure-stretch.png" alt="" aria-hidden
-          style={{ position: 'absolute', bottom: 0, left: 4, height: 182, opacity: 0.5, pointerEvents: 'none', zIndex: 1, filter: 'drop-shadow(0 12px 20px rgba(59,46,39,.16))', WebkitMaskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)', maskImage: 'linear-gradient(90deg,#000 55%,transparent 92%)' }}
-        />
+        <img src="/assets/icons/coin-gold.png" alt="" aria-hidden
+          style={{ height: 50, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 3px 6px rgba(59,46,39,0.22))' }} />
       </div>
 
       <div style={{ padding: '14px 16px 0' }}>
