@@ -29,29 +29,25 @@ export default async function HistoryPage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh' }}>
 
-      {/* ── Full-bleed hero ─────────────────────── */}
-      <div style={{
-        position: 'relative', height: 230, overflow: 'hidden',
-        background: 'linear-gradient(120deg,#EFE2D8 0%,#E4D0C3 52%,#D8BCA9 100%)',
-      }}>
+      {/* ── Full-bleed photo hero ───────────────── */}
+      <div style={{ position: 'relative', height: 250, overflow: 'hidden' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/figure-stretch.png" alt="" aria-hidden
+        <img src="/assets/history-handstand.jpg" alt="" aria-hidden
           style={{
-            position: 'absolute', bottom: 0, left: -12, height: 226, pointerEvents: 'none', zIndex: 1,
-            filter: 'drop-shadow(0 12px 22px rgba(59,46,39,.20))',
-            WebkitMaskImage: 'linear-gradient(90deg,#000 0%,#000 46%,transparent 76%)',
-            maskImage: 'linear-gradient(90deg,#000 0%,#000 46%,transparent 76%)',
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center 30%', pointerEvents: 'none',
           }}
         />
+        {/* Warm scrim: darker at top for the title, fades into the glass card */}
         <div aria-hidden style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
+          background: 'linear-gradient(180deg, rgba(59,46,39,0.38) 0%, rgba(59,46,39,0.06) 32%, rgba(59,46,39,0) 52%, rgba(241,233,227,0.55) 84%, #F1E9E3 100%)',
         }} />
-        <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right' }}>
-          <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
+        <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right', textShadow: '0 1px 10px rgba(30,20,14,0.45)' }}>
+          <p style={{ fontSize: 11, color: 'rgba(219,184,156,0.95)', letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
             Urban Coins
           </p>
-          <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 38, fontWeight: 900, color: '#3B2E27', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+          <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 38, fontWeight: 900, color: '#FBF6F2', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
             היסטוריה
           </h1>
         </div>
