@@ -84,97 +84,102 @@ export default async function HomePage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
-      {/* ── Light sand header ───────────────────── */}
-      <div style={{
-        background: 'linear-gradient(180deg,#FBF4EE 0%,#F0E2D6 100%)',
-        overflow: 'hidden', position: 'relative', padding: '20px 20px 28px',
-        borderBottom: '1px solid rgba(192,144,111,0.18)',
-      }}>
-        {/* Faded figure illustration on the left side of the header */}
+      {/* ── Full-bleed hero ─────────────────────── */}
+      <div style={{ position: 'relative', height: 360, overflow: 'hidden' }}>
+        {/* Hero photo (placeholder — swap for upgraded portrait) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/assets/header-figure.jpg" alt="" aria-hidden
           style={{
-            position: 'absolute', top: 0, left: 0, height: '100%', width: 'auto',
-            opacity: 0.12, pointerEvents: 'none',
-            maskImage: 'linear-gradient(90deg, black 45%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(90deg, black 45%, transparent 100%)',
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center 22%', pointerEvents: 'none',
           }}
         />
+        {/* Warm scrim: darker at top for legible greeting, fades to page bg at the bottom */}
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(180deg, rgba(59,46,39,0.42) 0%, rgba(59,46,39,0.08) 26%, rgba(59,46,39,0) 46%, rgba(241,233,227,0.55) 82%, #F1E9E3 100%)',
+        }} />
 
-        {/* Greeting + tier chip */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-          <div>
-            <p style={{ fontSize: 13, color: '#9C8B7F', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
-            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#3B2E27', lineHeight: 1.1 }}>{firstName} {name.split(' ')[1]}</p>
+        {/* Greeting + tier chip (overlaid on the photo) */}
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '22px 20px' }}>
+          <div style={{ textShadow: '0 1px 10px rgba(30,20,14,0.45)' }}>
+            <p style={{ fontSize: 13, color: 'rgba(246,239,234,0.8)', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 700, color: '#FBF6F2', lineHeight: 1.1 }}>{firstName} {name.split(' ')[1]}</p>
           </div>
-          {/* Tier chip */}
+          {/* Glass tier chip */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
-            borderRadius: 999, border: '1px solid rgba(192,144,111,0.4)',
-            background: 'rgba(255,255,255,0.6)',
+            borderRadius: 999, border: '1px solid rgba(255,255,255,0.4)',
+            background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
           }}>
             <TierCoin tier={tier} size={30} />
-            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: '#A66B43', letterSpacing: '0.12em' }}>{tierLabel}</span>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: '#FBF6F2', letterSpacing: '0.12em' }}>{tierLabel}</span>
           </div>
         </div>
+      </div>
 
-        {/* Arc gauge */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
-          <svg width="160" height="90" viewBox="0 0 160 90" style={{ overflow: 'visible' }}>
-            {/* Track: half circle, left→right, top */}
-            <path
-              d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`}
-              fill="none"
-              stroke="rgba(59,46,39,0.10)"
-              strokeWidth="11"
-              strokeLinecap="round"
-            />
-            {/* Progress fill */}
-            {fillLen > 0 && (() => {
-              // Parametric end point on the semicircle (left→right sweep)
-              const px = cx + R * Math.cos(Math.PI - arcFrac * Math.PI)
-              const py = cy - R * Math.sin(arcFrac * Math.PI)
-              const largeArc = arcFrac > 0.5 ? 1 : 0
-              return (
-                <path
-                  d={`M ${cx - R} ${cy} A ${R} ${R} 0 ${largeArc} 1 ${px.toFixed(2)} ${py.toFixed(2)}`}
-                  fill="none"
-                  stroke={arcColor}
-                  strokeWidth="11"
-                  strokeLinecap="round"
-                  style={{ filter: `drop-shadow(0 0 6px ${arcColor}99)` }}
-                />
-              )
-            })()}
-            {/* Center number */}
-            <text x={cx} y={cy - 8} textAnchor="middle"
-              fontFamily="var(--font-frank,serif)" fontSize="42" fontWeight="900" fill="#3B2E27">
-              {lifetime_coins}
-            </text>
-            <text x={cx} y={cy + 8} textAnchor="middle"
-              fontSize="10" fill="#A66B43" letterSpacing="2"
-              fontFamily="var(--font-assistant,sans-serif)">
-              UC · סטטוס
-            </text>
-            {/* Labels */}
-            <text x={cx - R - 4} y={cy + 16} textAnchor="end"
-              fontSize="9" fill="#9C8B7F" fontFamily="var(--font-assistant,sans-serif)">
-              SILVER
-            </text>
-            <text x={cx + R + 4} y={cy + 16} textAnchor="start"
-              fontSize="9" fill="#A66B43" fontFamily="var(--font-assistant,sans-serif)">
-              {nextTierName.toUpperCase()}
-            </text>
-          </svg>
+      {/* ── Glass stats card (overlaps the hero) ── */}
+      <div style={{
+        position: 'relative', zIndex: 3, margin: '-78px 16px 0',
+        background: 'rgba(251,244,238,0.55)',
+        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 26,
+        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
+        padding: '14px 18px 18px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+      }}>
+        <svg width="160" height="90" viewBox="0 0 160 90" style={{ overflow: 'visible' }}>
+          {/* Track: half circle, left→right, top */}
+          <path
+            d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`}
+            fill="none"
+            stroke="rgba(59,46,39,0.12)"
+            strokeWidth="11"
+            strokeLinecap="round"
+          />
+          {/* Progress fill */}
+          {fillLen > 0 && (() => {
+            const px = cx + R * Math.cos(Math.PI - arcFrac * Math.PI)
+            const py = cy - R * Math.sin(arcFrac * Math.PI)
+            const largeArc = arcFrac > 0.5 ? 1 : 0
+            return (
+              <path
+                d={`M ${cx - R} ${cy} A ${R} ${R} 0 ${largeArc} 1 ${px.toFixed(2)} ${py.toFixed(2)}`}
+                fill="none"
+                stroke={arcColor}
+                strokeWidth="11"
+                strokeLinecap="round"
+                style={{ filter: `drop-shadow(0 0 6px ${arcColor}99)` }}
+              />
+            )
+          })()}
+          {/* Center number */}
+          <text x={cx} y={cy - 8} textAnchor="middle"
+            fontFamily="var(--font-frank,serif)" fontSize="42" fontWeight="900" fill="#3B2E27">
+            {lifetime_coins}
+          </text>
+          <text x={cx} y={cy + 8} textAnchor="middle"
+            fontSize="10" fill="#A66B43" letterSpacing="2"
+            fontFamily="var(--font-assistant,sans-serif)">
+            UC · סטטוס
+          </text>
+          {/* Labels */}
+          <text x={cx - R - 4} y={cy + 16} textAnchor="end"
+            fontSize="9" fill="#9C8B7F" fontFamily="var(--font-assistant,sans-serif)">
+            SILVER
+          </text>
+          <text x={cx + R + 4} y={cy + 16} textAnchor="start"
+            fontSize="9" fill="#A66B43" fontFamily="var(--font-assistant,sans-serif)">
+            {nextTierName.toUpperCase()}
+          </text>
+        </svg>
 
-          {/* To next label */}
-          {toNext > 0 && (
-            <p style={{ fontSize: 12, color: '#7A6B60', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-              עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName} ✦
-            </p>
-          )}
-        </div>
-
+        {/* To next label */}
+        {toNext > 0 && (
+          <p style={{ fontSize: 12, color: '#7A6B60', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName} ✦
+          </p>
+        )}
       </div>
 
       {/* ── Available UC card (gold) ─────────────── */}
