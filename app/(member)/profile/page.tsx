@@ -21,25 +21,82 @@ export default async function ProfilePage() {
     { label: 'חבר/ה מאז', value: memberSinceLabel(member.created_at) },
   ]
 
+  const tierLabel = TIER_LABELS[member.tier] ?? member.tier
+  const coinSrc =
+    member.tier === 'platinum' ? '/assets/icons/coin-platinum.png'
+    : member.tier === 'gold'   ? '/assets/icons/coin-gold.png'
+    :                            '/assets/icons/coin-silver.png'
+  const tierRing =
+    member.tier === 'platinum' ? 'linear-gradient(135deg,#c0c0d8,#9a9ab8)'
+    : member.tier === 'gold'   ? 'linear-gradient(135deg,#DBB89C,#C0906F)'
+    :                            'linear-gradient(135deg,#D8CFC6,#B7A99C)'
+  const stats = [
+    { label: 'זמין למימוש', value: member.total_coins },
+    { label: 'לכל החיים', value: member.lifetime_coins },
+    { label: 'רמה', value: tierLabel },
+  ]
+
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
-      {/* Light sand header */}
+      {/* ── Full-bleed hero ─────────────────────── */}
       <div style={{
-        background: 'linear-gradient(180deg,#FBF4EE 0%,#F0E2D6 100%)',
-        padding: '24px 20px 28px', textAlign: 'center',
-        borderBottom: '1px solid rgba(192,144,111,0.18)',
+        position: 'relative', overflow: 'hidden', padding: '32px 20px 58px', textAlign: 'center',
+        background: 'linear-gradient(160deg,#EFE2D8 0%,#E4D0C3 55%,#D8BCA9 100%)',
       }}>
-        <div style={{
-          width: 72, height: 72, borderRadius: '50%', margin: '0 auto 10px',
-          background: 'linear-gradient(135deg,#DBB89C,#C0906F)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 28, fontWeight: 700, color: '#3B2E27' }}>
-            {member.name[0]}
-          </span>
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,0.42), transparent 60%), linear-gradient(180deg, transparent 60%, rgba(241,233,227,0.5) 100%)',
+        }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          {/* Avatar with tier-colored ring */}
+          <div style={{
+            width: 94, height: 94, borderRadius: '50%', margin: '0 auto 12px', padding: 3,
+            background: tierRing, boxShadow: '0 10px 24px -8px rgba(59,46,39,0.4)',
+          }}>
+            <div style={{
+              width: '100%', height: '100%', borderRadius: '50%',
+              background: 'linear-gradient(135deg,#DBB89C,#C0906F)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '2px solid rgba(255,255,255,0.7)',
+            }}>
+              <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 36, fontWeight: 700, color: '#3B2E27' }}>
+                {member.name[0]}
+              </span>
+            </div>
+          </div>
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 25, fontWeight: 700, color: '#3B2E27', marginBottom: 8 }}>{member.name}</p>
+          {/* Tier chip */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px',
+            borderRadius: 999, border: '1px solid rgba(255,255,255,0.5)',
+            background: 'rgba(255,255,255,0.35)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
+          }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={coinSrc} alt="" aria-hidden style={{ height: 22, width: 'auto', objectFit: 'contain' }} />
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: '#A66B43', letterSpacing: '0.12em' }}>{tierLabel}</span>
+          </div>
         </div>
-        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 24, fontWeight: 700, color: '#3B2E27' }}>{member.name}</p>
+      </div>
+
+      {/* ── Glass stat card (overlaps the hero) ── */}
+      <div style={{
+        position: 'relative', zIndex: 3, margin: '-42px 16px 0',
+        background: 'rgba(251,244,238,0.55)',
+        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
+        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
+        padding: '14px 10px', display: 'flex', alignItems: 'stretch',
+      }}>
+        {stats.map((s, i) => (
+          <div key={s.label} style={{
+            flex: 1, textAlign: 'center',
+            borderLeft: i < stats.length - 1 ? '1px solid rgba(192,144,111,0.25)' : undefined,
+          }}>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#3B2E27', lineHeight: 1.1 }}>{s.value}</p>
+            <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>{s.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Details card */}
