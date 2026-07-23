@@ -23,20 +23,57 @@ function formatDate(iso: string) {
 }
 
 export default async function HistoryPage() {
+  const earned = DEMO_LEDGER.filter(e => e.points > 0).reduce((s, e) => s + e.points, 0)
+  const redeemed = DEMO_LEDGER.filter(e => e.points < 0).reduce((s, e) => s - e.points, 0)
+
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh' }}>
 
-      {/* Light sand header */}
-      <div className="urban-header px-5 pt-10 pb-6 relative overflow-hidden">
-        <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(192,144,111,0.2) 0%, transparent 70%)' }} />
-        <p className="text-xs tracking-[0.28em] uppercase mb-2"
-          style={{ color: '#A66B43', fontFamily: 'Georgia, serif' }}>
-          Urban Coins
-        </p>
-        <h1 className="text-4xl font-black" style={{ color: '#3B2E27', letterSpacing: '-0.03em' }}>
-          היסטוריה
-        </h1>
+      {/* ── Full-bleed hero ─────────────────────── */}
+      <div style={{
+        position: 'relative', height: 230, overflow: 'hidden',
+        background: 'linear-gradient(120deg,#EFE2D8 0%,#E4D0C3 52%,#D8BCA9 100%)',
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/figure-stretch.png" alt="" aria-hidden
+          style={{
+            position: 'absolute', bottom: 0, left: -12, height: 226, pointerEvents: 'none', zIndex: 1,
+            filter: 'drop-shadow(0 12px 22px rgba(59,46,39,.20))',
+            WebkitMaskImage: 'linear-gradient(90deg,#000 0%,#000 46%,transparent 76%)',
+            maskImage: 'linear-gradient(90deg,#000 0%,#000 46%,transparent 76%)',
+          }}
+        />
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
+        }} />
+        <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right' }}>
+          <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
+            Urban Coins
+          </p>
+          <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 38, fontWeight: 900, color: '#3B2E27', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            היסטוריה
+          </h1>
+        </div>
+      </div>
+
+      {/* ── Glass summary card (overlaps the hero) ── */}
+      <div style={{
+        position: 'relative', zIndex: 3, margin: '-42px 16px 0',
+        background: 'rgba(251,244,238,0.55)',
+        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
+        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
+        padding: '14px 10px', display: 'flex', alignItems: 'stretch',
+      }}>
+        <div style={{ flex: 1, textAlign: 'center', borderLeft: '1px solid rgba(192,144,111,0.25)' }}>
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#3f8f5e', lineHeight: 1.1 }}>+{earned}</p>
+          <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>סה״כ צברת</p>
+        </div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#A66B43', lineHeight: 1.1 }}>{redeemed}</p>
+          <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>מימשת</p>
+        </div>
       </div>
 
       {/* Ledger entries — newest first */}

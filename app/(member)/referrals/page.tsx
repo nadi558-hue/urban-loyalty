@@ -13,6 +13,12 @@ export default function ReferralsPage() {
   const [copied, setCopied] = useState(false)
   const link = `https://club.urbanstudio.co.il/join?ref=${DEMO_REFERRAL_CODE}`
 
+  const refStats = [
+    { label: 'הזמנות', value: DEMO_REFERRALS.length },
+    { label: 'הצטרפו', value: DEMO_REFERRALS.filter(r => r.status !== 'pending').length },
+    { label: 'UC הרווחת', value: DEMO_REFERRALS.reduce((s, r) => s + r.coins, 0) },
+  ]
+
   async function copy() {
     await navigator.clipboard.writeText(link)
     setCopied(true)
@@ -22,19 +28,55 @@ export default function ReferralsPage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh' }}>
 
-      <div className="urban-header px-5 pt-10 pb-6 relative overflow-hidden">
-        <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(192,144,111,0.2) 0%, transparent 70%)' }} />
-        <p className="text-xs tracking-[0.28em] uppercase mb-2"
-          style={{ color: '#A66B43', fontFamily: 'Georgia, serif' }}>
-          The Booster
-        </p>
-        <h1 className="text-4xl font-black" style={{ color: '#3B2E27', letterSpacing: '-0.03em' }}>
-          הפניות
-        </h1>
-        <p className="text-sm mt-1" style={{ color: '#9C8B7F' }}>
-          הפוך חברים לשגרירים של Urban
-        </p>
+      {/* ── Full-bleed hero ─────────────────────── */}
+      <div style={{
+        position: 'relative', height: 210, overflow: 'hidden',
+        background: 'linear-gradient(120deg,#EFE2D8 0%,#E4D0C3 52%,#D8BCA9 100%)',
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/figure-reach.png" alt="" aria-hidden
+          style={{
+            position: 'absolute', bottom: 0, left: -10, height: 206, pointerEvents: 'none', zIndex: 1,
+            filter: 'drop-shadow(0 12px 22px rgba(59,46,39,.20))',
+            WebkitMaskImage: 'linear-gradient(90deg,#000 0%,#000 44%,transparent 74%)',
+            maskImage: 'linear-gradient(90deg,#000 0%,#000 44%,transparent 74%)',
+          }}
+        />
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
+        }} />
+        <div style={{ position: 'relative', zIndex: 2, padding: '26px 22px', textAlign: 'right' }}>
+          <p className="uppercase" style={{ fontSize: 11, letterSpacing: '0.28em', color: '#A66B43', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
+            The Booster
+          </p>
+          <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 38, fontWeight: 900, color: '#3B2E27', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            הפניות
+          </h1>
+          <p style={{ fontSize: 13, marginTop: 4, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            הפוך חברים לשגרירים של Urban
+          </p>
+        </div>
+      </div>
+
+      {/* ── Glass stat card (overlaps the hero) ── */}
+      <div style={{
+        position: 'relative', zIndex: 3, margin: '-40px 16px 0',
+        background: 'rgba(251,244,238,0.55)',
+        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
+        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
+        padding: '14px 10px', display: 'flex', alignItems: 'stretch',
+      }}>
+        {refStats.map((s, i) => (
+          <div key={s.label} style={{
+            flex: 1, textAlign: 'center',
+            borderLeft: i < refStats.length - 1 ? '1px solid rgba(192,144,111,0.25)' : undefined,
+          }}>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#3B2E27', lineHeight: 1.1 }}>{s.value}</p>
+            <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>{s.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Invite banner — light card with the illustration */}

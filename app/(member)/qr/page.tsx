@@ -14,26 +14,44 @@ export default async function QrPage() {
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
 
-      {/* Light sand header */}
+      {/* ── Full-bleed hero ─────────────────────── */}
       <div style={{
-        background: 'linear-gradient(180deg,#FBF4EE 0%,#F0E2D6 100%)',
-        padding: '24px 20px 28px', textAlign: 'center',
-        borderBottom: '1px solid rgba(192,144,111,0.18)',
+        position: 'relative', height: 240, overflow: 'hidden',
+        background: 'linear-gradient(120deg,#EFE2D8 0%,#E4D0C3 52%,#D8BCA9 100%)',
       }}>
-        <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          צ׳ק-אין בסטודיו
-        </p>
-        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 900, color: '#3B2E27' }}>
-          סרקו את המסך בכניסה
-        </p>
-        <p style={{ fontSize: 12, color: '#9C8B7F', marginTop: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          {member.name} · {memberId} · {tier}
-        </p>
+        {/* Figure cutout, bottom-left, fading toward the title on the right */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/figure-reach.png" alt="" aria-hidden
+          style={{
+            position: 'absolute', bottom: 0, left: -8, height: 236, pointerEvents: 'none', zIndex: 1,
+            filter: 'drop-shadow(0 12px 22px rgba(59,46,39,.20))',
+            WebkitMaskImage: 'linear-gradient(90deg,#000 0%,#000 46%,transparent 76%)',
+            maskImage: 'linear-gradient(90deg,#000 0%,#000 46%,transparent 76%)',
+          }}
+        />
+        <div aria-hidden style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
+        }} />
+        <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right' }}>
+          <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            צ׳ק-אין בסטודיו
+          </p>
+          <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 30, fontWeight: 900, color: '#3B2E27', lineHeight: 1.12 }}>
+            סרקו את המסך בכניסה
+          </p>
+          <p style={{ fontSize: 12, color: '#7A6B60', marginTop: 8, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            {member.name} · {memberId} · {tier}
+          </p>
+        </div>
       </div>
 
-      <Suspense>
-        <ScanClient />
-      </Suspense>
+      {/* Scan card pulled up to overlap the hero */}
+      <div style={{ position: 'relative', zIndex: 3, marginTop: -30 }}>
+        <Suspense>
+          <ScanClient />
+        </Suspense>
+      </div>
 
       <div style={{ height: 100 }} />
     </main>
