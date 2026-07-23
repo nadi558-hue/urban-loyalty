@@ -43,10 +43,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col" style={{ background: '#2A211C' }}>
+    <div className="min-h-dvh flex justify-center" style={{ background: '#2A211C' }}>
+     <div className="w-full flex flex-col" style={{ maxWidth: 448, minHeight: '100dvh' }}>
 
       {/* Hero photo */}
-      <div className="relative flex-1" style={{ maxHeight: '62dvh' }}>
+      <div className="relative flex-1" style={{ maxHeight: '52dvh', minHeight: 240 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/splash.jpg"
@@ -189,6 +190,8 @@ export default function LoginPage() {
           </>
         )}
       </div>
+
+     </div>
 
       {showTerms && (
         <TermsSheet
