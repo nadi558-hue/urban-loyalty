@@ -1,7 +1,7 @@
 import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import Link from 'next/link'
-import { ArrowLeft2, Star1, Flash, CalendarTick } from 'iconsax-reactjs'
+import { ArrowLeft2, Star1, Flash, CalendarTick, Instagram, Profile2User } from 'iconsax-reactjs'
 
 type Member = {
   name: string
@@ -33,6 +33,13 @@ const DEMO: Member = { name: 'מאיה לוי', total_coins: 47, lifetime_coins:
 const CHALLENGES = [
   { Icon: Flash, title: 'רצף שיעורים', current: 7, goal: 10, reward: '+10 UC', note: 'עוד 3 ברצף' },
   { Icon: CalendarTick, title: 'חודש מלא', current: 8, goal: 12, reward: '+30 UC', note: 'עוד 4 החודש' },
+]
+
+// The two earning routes that have no other way in — /share was only reachable
+// from /referrals, and nothing linked to /referrals at all.
+const EARN = [
+  { Icon: Instagram, title: 'שיתוף סטורי', href: '/share', reward: '+7 UC', note: 'תייגו אותנו בסטורי ושלחו צילום מסך' },
+  { Icon: Profile2User, title: 'חבר מביא חבר', href: '/referrals', reward: '+50 UC', note: 'שתפו את הקוד האישי שלכם' },
 ]
 
 const ACTIVITY = [
@@ -211,6 +218,36 @@ export default async function HomePage() {
               <ArrowLeft2 size={15} variant="Linear" color="#DBB89C" />
             </div>
           </Link>
+        </div>
+      </div>
+
+      {/* ── Ways to earn ─────────────────────────── */}
+      <div style={{ padding: '20px 16px 0' }}>
+        <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>איך צוברים עוד</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {EARN.map(e => (
+            <Link key={e.href} href={e.href} className="clay-sm" style={{
+              padding: '14px 14px 12px', display: 'block', textDecoration: 'none',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                  background: 'linear-gradient(150deg,#FBF1E8,#DBB89C)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 3px 10px rgba(192,144,111,0.25)',
+                }}>
+                  <e.Icon size={20} variant="Bulk" color="#96613F" />
+                </div>
+                <span style={{
+                  fontSize: 11, fontWeight: 700, color: '#96613F',
+                  background: '#FBF1E8', borderRadius: 999, padding: '2px 8px',
+                  fontFamily: 'var(--font-assistant,sans-serif)',
+                }}>{e.reward}</span>
+              </div>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 3 }}>{e.title}</p>
+              <p style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', lineHeight: 1.35 }}>{e.note}</p>
+            </Link>
+          ))}
         </div>
       </div>
 

@@ -72,6 +72,33 @@ async function buildBoxes({ file, key, boxes, outDir }) {
   console.log(`${outDir}: ${boxes.length} poses`)
 }
 
+/**
+ * Rows of tight per-cell windows, padded to a uniform cell height and aligned
+ * on the baseline. Used when the sheet's rows are a clean grid but sit at
+ * uneven heights — cropping tight and padding keeps every figure at its true
+ * relative scale (a lotus pose really is shorter than a standing one) without
+ * letting a neighbouring row's feet leak into the top of a crop.
+ */
+async function buildRowsPadded({ file, key, rows, cellH, outDir }) {
+  const img = await keyed(file, key)
+  let n = 0
+  for (const { y0, y1, cells } of rows) {
+    const h = y1 - y0
+    for (const { name, x0, x1 } of cells) {
+      if (!name) continue
+      await sharp(img)
+        .extract({ left: x0, top: y0, width: x1 - x0, height: h })
+        // Bottom-aligned: every pose stands on the same line.
+        .extend({ top: cellH - h, background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .resize({ height: TARGET_H })
+        .png({ compressionLevel: 9 })
+        .toFile(`${OUT}${outDir}/${name}.png`)
+      n++
+    }
+  }
+  console.log(`${outDir}: ${n} poses`)
+}
+
 const P16 = [
   'basic', 'energetic', 'empathetic', 'celebrate',
   'streak_flame', 'trophy', 'clap', 'thumbs_up',
@@ -82,29 +109,29 @@ const P16 = [
 await buildGrid({ file: 'maya sheet 1.png', key: keyGreen, cols: 4, rows: 4, names: P16, outDir: 'maya' })
 await buildGrid({ file: 'sara sheet 1.png', key: keyWhite, cols: 4, rows: 4, names: P16, outDir: 'sara' })
 
-// idan's sheet came back 6x2 rather than the 4x4 asked for, the generator chose
-// its own subset, and the figures don't sit on an even grid — in row 1 the
-// celebrate figure's raised arms touch its neighbour, so an even split cuts it
-// in half. These x-windows were measured from each row's alpha profile.
-// Row 1 cell 4 is a second hand-on-chest variant, dropped rather than shipped
-// as a near-duplicate of empathetic.
-const R1 = { top: 0, height: 896 }
-const R2 = { top: 896, height: 896 }
-await buildBoxes({
-  file: 'idan sheet 1.png', key: keyGreen, outDir: 'idan',
-  boxes: [
-    { name: 'basic',      x0: 81,   x1: 358,  ...R1 },
-    { name: 'energetic',  x0: 395,  x1: 944,  ...R1 },
-    { name: 'empathetic', x0: 962,  x1: 1235, ...R1 },
-    // Body sits at 1668-1848 but the raised arms reach out to either side,
-    // so the window has to be much wider than the torso.
-    { name: 'celebrate',  x0: 1550, x1: 1980, ...R1 },
-    { name: 'trophy',     x0: 1986, x1: 2364, ...R1 },
-    { name: 'wave',       x0: 67,   x1: 399,  ...R2 },
-    { name: 'lets_go',    x0: 448,  x1: 775,  ...R2 },
-    { name: 'wink',       x0: 825,  x1: 1121, ...R2 },
-    { name: 'offer_hand', x0: 1245, x1: 1599, ...R2 },
-    { name: 'rest',       x0: 1643, x1: 1943, ...R2 },
-    { name: 'meditate',   x0: 1978, x1: 2375, ...R2 },
+// idan's second sheet is a clean separated 4x4, but the four rows sit at
+// different heights and the vertical gaps between them are only ~50px — an
+// even split would clip row 1's feet, and a uniform-height window would pull a
+// neighbouring row's heads into the crop. So each cell is measured tight from
+// its row's alpha profile and padded up to a shared cell height instead.
+await buildRowsPadded({
+  file: 'idan sheet 1.png', key: keyGreen, outDir: 'idan', cellH: 610,
+  rows: [
+    { y0: 45, y1: 648, cells: [
+      { name: 'basic', x0: 57, x1: 399 }, { name: 'energetic', x0: 431, x1: 873 },
+      { name: 'empathetic', x0: 940, x1: 1290 }, { name: 'celebrate', x0: 1302, x1: 1742 },
+    ] },
+    { y0: 699, y1: 1228, cells: [
+      { name: 'streak_flame', x0: 56, x1: 492 }, { name: 'trophy', x0: 535, x1: 908 },
+      { name: 'clap', x0: 963, x1: 1271 }, { name: 'thumbs_up', x0: 1346, x1: 1704 },
+    ] },
+    { y0: 1278, y1: 1808, cells: [
+      { name: 'wave', x0: 36, x1: 428 }, { name: 'lets_go', x0: 514, x1: 849 },
+      { name: 'wink', x0: 926, x1: 1280 }, { name: 'offer_hand', x0: 1332, x1: 1709 },
+    ] },
+    { y0: 1829, y1: 2376, cells: [
+      { name: 'streak_lost', x0: 14, x1: 484 }, { name: 'rest', x0: 495, x1: 848 },
+      { name: 'level_up', x0: 869, x1: 1278 }, { name: 'meditate', x0: 1307, x1: 1746 },
+    ] },
   ],
 })
