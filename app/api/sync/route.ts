@@ -9,6 +9,7 @@ import {
 } from '@/lib/arbox'
 import { awardPoints, getRules } from '@/lib/points'
 import { grantDateBonuses } from '@/lib/bonuses'
+import { payReferral } from '@/lib/referrals'
 
 // Allow up to 60s (Vercel Hobby max) — the sync fetches Arbox + reconciles.
 export const maxDuration = 60
@@ -54,7 +55,7 @@ async function handleSync(req: NextRequest) {
   const since = lastSync?.synced_at ?? new Date(Date.now() - 2 * 86_400_000).toISOString()
   const { fromDate, toDate } = reportWindow(since)
 
-  let checkInsFound = 0, coinsAwarded = 0, verified = 0, unmatched = 0, lateCancels = 0
+  let checkInsFound = 0, coinsAwarded = 0, verified = 0, unmatched = 0, lateCancels = 0, referralsPaid = 0
   let errors: string | null = null
 
   try {
@@ -69,7 +70,7 @@ async function handleSync(req: NextRequest) {
     // exceed PostgREST's URL length limit and fail silently. Both tables are
     // small: members are bounded (~hundreds), processed holds only awards.
     const [membersRes, processedRes, pendingRes, promosRes] = await Promise.all([
-      db.from('members').select('id, arbox_id, current_streak').limit(5000),
+      db.from('members').select('id, arbox_id, current_streak, referred_by').limit(5000),
       db.from('processed_checkins').select('arbox_checkin_id').limit(50000),
       db.from('checkins').select('id, member_id, created_at')
         .eq('status', 'pending').is('arbox_checkin_id', null)
@@ -77,7 +78,7 @@ async function handleSync(req: NextRequest) {
       db.from('promoted_classes').select('title, branch, bonus_coins').eq('active', true),
     ])
 
-    const memberByArbox = new Map<string, { id: string; arbox_id: string; current_streak: number }>(
+    const memberByArbox = new Map<string, { id: string; arbox_id: string; current_streak: number; referred_by: string | null }>(
       (membersRes.data ?? []).map((m: any) => [m.arbox_id, m]),
     )
     const processed = new Set<string>((processedRes.data ?? []).map((r: any) => r.arbox_checkin_id))
@@ -141,6 +142,13 @@ async function handleSync(req: NextRequest) {
         coinsAwarded += streakPts
       }
       await checkMonthBonus(member.id, rules, db)
+
+      // First verified class by someone who arrived through a referral link
+      // pays both sides. payReferral is a no-op on later classes.
+      if (member.referred_by && await payReferral(member, 'referral_trial')) {
+        coinsAwarded += (rules['referral_trial'] ?? 50) * 2
+        referralsPaid++
+      }
     }
 
     // ── Late cancellations: break streak, no coins, recorded for the member ──
@@ -176,7 +184,7 @@ async function handleSync(req: NextRequest) {
 
   await db.from('sync_log').insert({ check_ins_found: checkInsFound, coins_awarded: coinsAwarded, errors })
 
-  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, dateBonuses, errors })
+  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, errors })
 }
 
 // Bonus coins if the attended class matches an active promoted ("Happy Hour") class

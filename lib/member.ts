@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { grantWelcomeBonus } from '@/lib/bonuses'
+import { attachReferrer } from '@/lib/referrals'
 
 export type Member = {
   id: string
@@ -48,6 +49,9 @@ export async function getCurrentMember(): Promise<Member | null> {
       .single()
     const member = (data as Member) ?? null
     if (!member) return null
+
+    // If they arrived through a friend's /join link, record who invited them.
+    await attachReferrer(member.id)
 
     // First time this member opens the app — grant the joining bonus and
     // reflect it right away, so the balance on screen already includes it.
