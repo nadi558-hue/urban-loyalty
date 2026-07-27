@@ -1,7 +1,7 @@
 import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import Link from 'next/link'
-import { ArrowLeft2, Star1 } from 'iconsax-reactjs'
+import { ArrowLeft2, Star1, Flash, CalendarTick } from 'iconsax-reactjs'
 
 type Member = {
   name: string
@@ -31,8 +31,8 @@ async function getMember(): Promise<Member | null> {
 const DEMO: Member = { name: 'מאיה לוי', total_coins: 47, lifetime_coins: 147, tier: 'silver' }
 
 const CHALLENGES = [
-  { icon: '/assets/icons/fire.png', title: 'רצף שיעורים', current: 7, goal: 10, reward: '+10 UC', note: 'עוד 3 ברצף' },
-  { icon: '/assets/icons/calendar.png', title: 'חודש מלא', current: 8, goal: 12, reward: '+30 UC', note: 'עוד 4 החודש' },
+  { Icon: Flash, title: 'רצף שיעורים', current: 7, goal: 10, reward: '+10 UC', note: 'עוד 3 ברצף' },
+  { Icon: CalendarTick, title: 'חודש מלא', current: 8, goal: 12, reward: '+30 UC', note: 'עוד 4 החודש' },
 ]
 
 const ACTIVITY = [
@@ -257,8 +257,14 @@ export default async function HomePage() {
           {CHALLENGES.map(ch => (
             <div key={ch.title} className="clay-sm" style={{ padding: '14px 14px 12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={ch.icon} alt="" aria-hidden style={{ height: 42, width: 'auto', objectFit: 'contain' }} />
+                <div style={{
+                  width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                  background: 'linear-gradient(150deg,#FBF1E8,#DBB89C)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 3px 10px rgba(192,144,111,0.25)',
+                }}>
+                  <ch.Icon size={20} variant="Bulk" color="#96613F" />
+                </div>
                 <span style={{
                   fontSize: 11, fontWeight: 700, color: '#96613F',
                   background: '#FBF1E8', borderRadius: 999, padding: '2px 8px',

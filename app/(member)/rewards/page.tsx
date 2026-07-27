@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { Rank, CalendarAdd, DiscountShape, TicketStar, type Icon } from 'iconsax-reactjs'
 
 const DEMO_UC = 47
 
@@ -17,55 +18,26 @@ const REWARDS_LOCKED: { id: number; icon: IconKey; name: string; cost: number }[
   { id: 6, icon: 'single_class', name: 'שיעור בודד מעבר למכסה', cost: 120 },
 ]
 
+const REWARD_ICONS: Record<IconKey, Icon> = {
+  waitlist:     Rank,          // bumped to the front of the queue
+  early:        CalendarAdd,   // booking ahead of time
+  discount:     DiscountShape,
+  single_class: TicketStar,    // one bonus class beyond the plan
+}
+
 function RewardIcon({ type, muted = false }: { type: IconKey; muted?: boolean }) {
-  const stroke = muted ? '#9C8B7F' : '#96613F'
+  const color = muted ? '#9C8B7F' : '#96613F'
   const bg = muted
     ? 'linear-gradient(150deg,#F3EAE3,#E7DBD1)'
     : 'linear-gradient(150deg,#FBF1E8,#DBB89C)'
-  const paths: Record<IconKey, React.ReactNode> = {
-    waitlist: (
-      <>
-        <path d="M4 7.5h9" />
-        <path d="M4 12h9" />
-        <path d="M4 16.5h5.5" />
-        <path d="M17.5 20V10.5" />
-        <path d="M14.3 13.7l3.2-3.2 3.2 3.2" />
-      </>
-    ),
-    early: (
-      <>
-        <rect x="4" y="6" width="16" height="14" rx="2.2" />
-        <path d="M4 10h16" />
-        <path d="M8.5 4v3.2M15.5 4v3.2" />
-        <path d="M12 12.4l.85 1.72 1.9.28-1.37 1.34.32 1.9L12 16.96l-1.7.9.32-1.9-1.37-1.34 1.9-.28z"
-          fill={stroke} stroke="none" />
-      </>
-    ),
-    discount: (
-      <>
-        <circle cx="8.6" cy="8.6" r="1.9" />
-        <circle cx="15.4" cy="15.4" r="1.9" />
-        <path d="M16.5 7.5l-9 9" />
-      </>
-    ),
-    single_class: (
-      <>
-        <rect x="3.5" y="7.5" width="11.5" height="9" rx="2" />
-        <path d="M11 7.5v9" strokeDasharray="1.6 1.8" />
-        <path d="M19 8.5v6M16 11.5h6" />
-      </>
-    ),
-  }
+  const Glyph = REWARD_ICONS[type]
   return (
     <div style={{
       width: 44, height: 44, borderRadius: '50%', background: bg,
       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       boxShadow: muted ? 'none' : '0 3px 10px rgba(192,144,111,0.25)',
     }}>
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={stroke}
-        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        {paths[type]}
-      </svg>
+      <Glyph size={22} variant="Bulk" color={color} />
     </div>
   )
 }
