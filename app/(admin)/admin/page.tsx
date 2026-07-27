@@ -101,6 +101,7 @@ export default async function AdminPage() {
           { label: '⚙️ כללי נקודות', href: '/admin/rules' },
           { label: '🎁 ניהול הטבות', href: '/admin/rewards' },
           { label: '📋 כל המימושים', href: '/admin/redemptions' },
+          { label: '📸 שיתופי סטורי', href: '/admin/shares' },
           { label: '👥 כל החברים', href: '/admin/members' },
         ].map(({ label, href }) => (
           <a

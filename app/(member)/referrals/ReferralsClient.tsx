@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { Instagram } from 'iconsax-reactjs'
 import type { ReferralRow } from './referrals-data'
 
 export default function ReferralsClient({
@@ -196,20 +198,16 @@ export default function ReferralsClient({
             </a>
             {' '}ושתף כאן – קבל 7 UC (פעם בשבוע)
           </p>
-          <a href="https://www.instagram.com/urban_studio_official/" target="_blank" rel="noopener noreferrer"
+          <Link href="/share"
             className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
             style={{
               background: 'linear-gradient(135deg, #5A473C 0%, #3B2E27 100%)',
               color: '#DBB89C',
               border: '1px solid rgba(192,144,111,0.25)',
             }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DBB89C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-            </svg>
-            עקוב ותייג – קבל 7 UC
-          </a>
+            <Instagram size={17} variant="Bulk" color="#DBB89C" />
+            העלאת סטורי – קבלת 7 UC
+          </Link>
         </div>
 
       </div>

@@ -49,6 +49,7 @@ export const config = {
     '/rewards/:path*',
     '/history/:path*',
     '/referrals/:path*',
+    '/share/:path*',
     '/qr/:path*',
     '/profile/:path*',
     '/admin/:path*',
