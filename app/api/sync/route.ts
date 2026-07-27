@@ -10,6 +10,7 @@ import {
 import { awardPoints, getRules } from '@/lib/points'
 import { grantDateBonuses } from '@/lib/bonuses'
 import { payReferral } from '@/lib/referrals'
+import { registerAttendance, breakStreak, runStreakRollover, type RolloverResult, type StreakMember } from '@/lib/streak'
 
 // Allow up to 60s (Vercel Hobby max) — the sync fetches Arbox + reconciles.
 export const maxDuration = 60
@@ -70,7 +71,9 @@ async function handleSync(req: NextRequest) {
     // exceed PostgREST's URL length limit and fail silently. Both tables are
     // small: members are bounded (~hundreds), processed holds only awards.
     const [membersRes, processedRes, pendingRes, promosRes] = await Promise.all([
-      db.from('members').select('id, arbox_id, current_streak, referred_by').limit(5000),
+      db.from('members')
+        .select('id, arbox_id, current_streak, longest_streak, last_active_date, referred_by')
+        .limit(5000),
       db.from('processed_checkins').select('arbox_checkin_id').limit(50000),
       db.from('checkins').select('id, member_id, created_at')
         .eq('status', 'pending').is('arbox_checkin_id', null)
@@ -78,7 +81,8 @@ async function handleSync(req: NextRequest) {
       db.from('promoted_classes').select('title, branch, bonus_coins').eq('active', true),
     ])
 
-    const memberByArbox = new Map<string, { id: string; arbox_id: string; current_streak: number; referred_by: string | null }>(
+    type SyncMember = StreakMember & { arbox_id: string; referred_by: string | null }
+    const memberByArbox = new Map<string, SyncMember>(
       (membersRes.data ?? []).map((m: any) => [m.arbox_id, m]),
     )
     const processed = new Set<string>((processedRes.data ?? []).map((r: any) => r.arbox_checkin_id))
@@ -133,10 +137,10 @@ async function handleSync(req: NextRequest) {
       })
       processed.add(ev.arbox_checkin_id)
 
-      const newStreak = (member.current_streak ?? 0) + 1
-      member.current_streak = newStreak
-      await db.from('members').update({ current_streak: newStreak }).eq('id', member.id)
-      if (newStreak % 10 === 0) {
+      // Streaks count active DAYS — a second class today doesn't advance it,
+      // and doesn't pay the milestone a second time.
+      const { streak: newStreak, milestone } = await registerAttendance(db, member)
+      if (milestone) {
         const streakPts = rules['streak_10'] ?? 10
         await awardPoints(member.id, streakPts, 'streak_10', { streak: newStreak })
         coinsAwarded += streakPts
@@ -157,8 +161,7 @@ async function handleSync(req: NextRequest) {
       const member = memberByArbox.get(ev.arbox_user_id)
       if (!member) continue
 
-      member.current_streak = 0
-      await db.from('members').update({ current_streak: 0 }).eq('id', member.id)
+      await breakStreak(db, member)
       await db.from('point_ledger').insert({
         member_id: member.id, points: 0, reason: 'late_cancel',
         metadata: { class_name: ev.class_name, branch: ev.branch, note: 'ביטול מאוחר — רצף האימונים אופס, ללא נקודות' },
@@ -182,9 +185,20 @@ async function handleSync(req: NextRequest) {
     errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
   }
 
+  // Daily decay. Must run last: it expires anyone who didn't train yesterday,
+  // and the loop above has already credited today's classes, so a member who
+  // came in this run is safe. Kept outside the try for the same reason as the
+  // date bonuses — a lapsed streak has to expire even if Arbox was down.
+  let streaks: RolloverResult = { broken: 0, frozen: 0 }
+  try {
+    streaks = await runStreakRollover(db)
+  } catch (e) {
+    errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
+  }
+
   await db.from('sync_log').insert({ check_ins_found: checkInsFound, coins_awarded: coinsAwarded, errors })
 
-  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, errors })
+  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, errors })
 }
 
 // Bonus coins if the attended class matches an active promoted ("Happy Hour") class
