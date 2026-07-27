@@ -22,6 +22,10 @@ export const REASON_LABELS: Record<string, string> = {
   manual:              'הוספה ידנית',
   redemption:          'מימוש הטבה',
   late_cancel:         'ביטול מאוחר · רצף אופס',
+  // Written once by supabase/migration_opening_balance.sql, for members whose
+  // balance predates the ledger.
+  opening_balance:     'יתרת פתיחה',
+  opening_redemption:  'מימושים קודמים',
 }
 
 export function reasonLabel(reason: string) {
