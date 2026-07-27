@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import jsQR from 'jsqr'
+import { ScanBarcode, Timer1, TickCircle, Verify } from 'iconsax-reactjs'
 
 type Status =
   | { kind: 'idle' }
@@ -128,12 +129,16 @@ export default function ScanClient() {
           </div>
         ) : status.kind === 'submitting' ? (
           <div style={{ padding: '48px 0' }}>
-            <p style={{ fontSize: 40 }}>⏳</p>
+            <Timer1 size={44} variant="Bulk" color="#C0906F" />
             <p style={{ fontSize: 14, color: '#8B7A6C', marginTop: 8 }}>רושם צ׳ק-אין…</p>
           </div>
         ) : status.kind === 'success' ? (
           <div style={{ padding: '32px 0' }}>
-            <p style={{ fontSize: 52 }}>{status.pending ? '⏳' : status.already ? '💪' : '🎉'}</p>
+            {status.pending
+              ? <Timer1 size={56} variant="Bulk" color="#C0906F" />
+              : status.already
+              ? <Verify size={56} variant="Bulk" color="#C0906F" />
+              : <TickCircle size={56} variant="Bulk" color="#3f8f5e" />}
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#3B2E27', marginTop: 10 }}>
               {status.pending ? 'הנוכחות נקלטה!' : status.already ? 'כבר בפנים!' : 'צ׳ק-אין הושלם!'}
             </p>
@@ -147,7 +152,7 @@ export default function ScanClient() {
           </div>
         ) : (
           <div style={{ padding: '20px 0 8px' }}>
-            <p style={{ fontSize: 48 }}>📷</p>
+            <ScanBarcode size={52} variant="Bulk" color="#C0906F" />
             <p style={{ fontSize: 14, color: '#8B7A6C', margin: '10px 0 20px', lineHeight: 1.6 }}>
               הגעתם לסטודיו? סרקו את הקוד שמוצג
               <br />על המסך בכניסה לצבירת UC

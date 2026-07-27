@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Home2, Gift, ScanBarcode, Clock, User, type Icon } from 'iconsax-reactjs'
 
-const tabs = [
-  { label: 'בית', icon: '⌂', href: '/home' },
-  { label: 'הטבות', icon: '✦', href: '/rewards' },
-  { label: 'QR', icon: '▦', href: '/qr', center: true },
-  { label: 'היסטוריה', icon: '◷', href: '/history' },
-  { label: 'פרופיל', icon: '◎', href: '/profile' },
+const tabs: { label: string; Icon: Icon; href: string; center?: boolean }[] = [
+  { label: 'בית', Icon: Home2, href: '/home' },
+  { label: 'הטבות', Icon: Gift, href: '/rewards' },
+  { label: 'QR', Icon: ScanBarcode, href: '/qr', center: true },
+  { label: 'היסטוריה', Icon: Clock, href: '/history' },
+  { label: 'פרופיל', Icon: User, href: '/profile' },
 ]
 
 export default function BottomNav() {
@@ -46,7 +47,7 @@ export default function BottomNav() {
                   ].join(','),
                   marginTop: -18,
                 }}>
-                  <span style={{ fontSize: 20, color: '#3B2E27' }}>{tab.icon}</span>
+                  <tab.Icon size={24} variant="Bulk" color="#3B2E27" />
                 </div>
                 <span style={{ fontSize: 10, color: active ? '#C0906F' : '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', fontWeight: active ? 700 : 400 }}>{tab.label}</span>
               </div>
@@ -55,8 +56,12 @@ export default function BottomNav() {
         }
         return (
           <Link key={tab.href} href={tab.href} style={{ textDecoration: 'none' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 44 }}>
-              <span style={{ fontSize: 18, color: active ? '#C0906F' : '#9C8B7F' }}>{tab.icon}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, minWidth: 44 }}>
+              <tab.Icon
+                size={23}
+                variant={active ? 'Bulk' : 'Linear'}
+                color={active ? '#C0906F' : '#9C8B7F'}
+              />
               <span style={{ fontSize: 10, color: active ? '#C0906F' : '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', fontWeight: active ? 700 : 400 }}>{tab.label}</span>
             </div>
           </Link>
