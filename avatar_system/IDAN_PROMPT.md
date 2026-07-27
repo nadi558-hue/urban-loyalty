@@ -1,95 +1,139 @@
-# עידן — פרומפט מוכן להעתקה (Nano Banana / Gemini)
+# עידן — גיליון פוזות מלא (Nano Banana / Gemini)
 
-## מצב נוכחי
+הדוחף. שיער כהה גלי, גופייה קרם ומכנס פחם.
 
-יש **6 פוזות**, מתוכן 5 נקיות. חסרות **10**, ואחת צריכה יצירה מחדש.
-
-| קיים ותקין | צריך יצירה מחדש | חסר לגמרי |
-|---|---|---|
-| `basic` `empathetic` `celebrate` `lets_go` `rest` | `energetic` | `streak_flame` `trophy` `clap` `thumbs_up` `wave` `wink` `offer_hand` `streak_lost` `level_up` `meditate` |
-
-**למה `energetic` צריך יצירה מחדש:** ההילה הזהובה חצי-שקופה, ומתחתיה נראו
-משבצות הרקע. כיוון שהפיקסלים האלה מקבלים גוון זהוב הם כבר לא אפור נייטרלי,
-ולכן מסיר הרקע לא יכול לחתוך אותם. עם alpha אמיתי הבעיה נעלמת.
+> יש כבר 6 פוזות של עידן ב-`public/avatars/idan/`, מתוכן 5 נקיות.
+> ה-`energetic` שלו יצא עם שאריות משבצות **בתוך ההילה הזהובה** — הזוהר
+> חצי-שקוף מעל הרקע, אז הפיקסלים שם מקבלים גוון זהוב ואי אפשר לחתוך אותם
+> כאפור נייטרלי. עם alpha אמיתי הבעיה נעלמת מעצמה.
 
 ---
 
-## ⚠️ הכלל היחיד שחייב להשתנות
+## ⚠️ שלושת הכללים שנכשלו בפעם הקודמת
 
-הגיליון הקודם יוצא עם משבצות השקיפות **מצוירות כפיקסלים אפורים** — 0% מהקובץ
-היה שקוף באמת. בקש **alpha אמיתי**. אם אי אפשר, בקש **רקע ירוק אחיד `#00B140`**
-— הוא רחוק מכל צבע בציור ונחתך מושלם.
-
----
-
-## שלב 1 — נעילת הזהות
-
-**יש לך כבר `basic` תקין.** אל תייצר אותו מחדש — **העלה אותו כתמונת רפרנס**
-לכל פוזה חדשה. זה מה שמונע מהדמות להשתנות בין הפאנלים.
-
-הקובץ: `public/avatars/idan/basic.png`
+1. **רקע** — הגיליון יצא עם משבצות שקיפות **מצוירות כפיקסלים אפורים**.
+   0% מהקובץ היה שקוף. בקש **alpha אמיתי**, או **ירוק אחיד `#00B140`**.
+2. **טקסט** — היו שמות פוזות מוטבעים מעל ומתחת לשורות. **אפס טקסט.**
+3. **עקביות** — הפתרון במסלול א׳.
 
 ---
 
-## שלב 2 — תבנית לכל פוזה
+# מסלול א׳ — הבטוח (מומלץ)
 
-העלה את `basic` כרפרנס, ואז:
+## שלב 1 — צור רק את `basic`
 
 ```
-Keep this EXACT same person — identical face, hairstyle, hair colour, skin tone,
-light stubble, body and outfit. Change ONLY the pose to:
+Hand-painted watercolor illustration with delicate ink line-art outlines,
+soft muted warm palette, subtle paper texture, calm premium boutique-fitness look.
+Single character, full body, centered, facing the viewer, even soft front
+lighting, no harsh shadows.
 
-<<< הדבק כאן שורת פוזה מהרשימה למטה >>>
+CHARACTER: A man in his early 30s, friendly approachable face, light-medium
+skin, light stubble along the jaw, warm dark eyes, easy confident smile.
+Dark brown-almost-black wavy medium-length hair, slightly tousled with natural
+volume. Fit athletic build with defined shoulders and arms.
+OUTFIT: cream-white ribbed tank top and charcoal-grey training shorts,
+dark trainers.
+PRESENCE: confident, motivating, warm — the one who gets you moving.
 
-Same watercolor and ink style. Same canvas size, same character scale, same
-vertical position on the canvas as the reference.
-Fully transparent background with a real alpha channel — do NOT draw a
-checkerboard pattern. If transparency is unavailable use flat solid #00B140.
-No text, no words, no labels, no UI, no floor, no ground shadow,
-no props except those named in the pose.
+POSE: relaxed grounded standing, weight even on both feet, hands loosely
+clasped in front at the waist, easy confident smile.
+
+BACKGROUND: fully transparent, real alpha channel.
+If transparency is unavailable, use a flat solid green #00B140 fill.
+Do NOT draw a checkerboard pattern.
+
+STRICT: no text, no words, no labels, no numbers, no UI, no phone frame,
+no navigation bar, no floor, no ground shadow, no props.
 Portrait 3:4, high detail, at least 1024px wide.
 ```
 
-### שורות הפוזות
+בחר את הכי טוב. **זו נועלת את הזהות.**
+(או פשוט העלה את `public/avatars/idan/basic.png` הקיים.)
 
-| שם קובץ | שורת הפוזה להדבקה |
-|---|---|
-| `energetic` ⚠️ | dynamic powerful low lunge holding a single kettlebell in one hand, energised determined expression, surrounded by a soft painterly golden glow and a few sparkle accents — keep the glow soft, not neon |
-| `streak_flame` | excited grin, one hand gesturing toward a single small warm flame beside him |
-| `trophy` | holding up a small gold trophy with both hands, proud beaming smile |
-| `clap` | clapping hands together, cheerful encouraging expression |
-| `thumbs_up` | one confident thumbs-up, friendly smile |
-| `wave` | friendly wave hello with one hand, welcoming smile |
-| `wink` | playful wink with a bright smile, light and delightful |
-| `offer_hand` | extending an open hand toward the viewer, warm and inviting |
-| `streak_lost` | soft disappointed-but-kind expression, small reassuring shrug |
-| `level_up` | triumphant proud pose, a few sparkles and a subtle small crown motif above the head |
-| `meditate` | seated cross-legged in lotus, eyes closed, serene peaceful smile |
+## שלב 2 — הגיליון
 
-**סדר עדיפויות** — אם אתה מייצר מעט: `energetic` (תיקון), `streak_flame`,
-`thumbs_up`, `wave`. אלה מכסים את רוב הרגעים באפליקציה.
+**העלה את `basic` כרפרנס**, ואז:
+
+```
+Using this EXACT same man as reference — identical face, hairstyle, hair colour,
+stubble, skin tone, body and outfit in every single panel — create ONE image
+containing a 4x4 grid of 16 poses of him.
+
+Read left to right, top to bottom, the 16 poses are:
+1  relaxed standing, hands loosely clasped at the waist, easy confident smile
+2  dynamic powerful low lunge holding a single kettlebell in one hand,
+   energised determined expression, surrounded by a soft painterly golden glow
+   and a few sparkle accents — keep the glow soft, not neon
+3  one hand resting gently over his heart, head slightly tilted, warm caring look
+4  both arms raised in a joyful V, big open happy smile, mid-celebration
+5  excited grin, one hand gesturing toward a single small warm flame beside him
+6  holding up a small gold trophy with both hands, proud beaming smile
+7  clapping his hands together, cheerful encouraging expression
+8  one confident thumbs-up, friendly smile
+9  friendly wave hello with one hand, welcoming smile
+10 beckoning "come with me", pointing slightly forward, energised motivating look
+11 playful wink with a bright smile
+12 extending an open hand toward the viewer, warm and inviting
+13 soft disappointed-but-kind expression, small reassuring shrug
+14 relaxed, holding a water bottle, easy calm smile
+15 triumphant proud pose, a few sparkles and a subtle small crown above his head
+16 seated cross-legged in lotus, eyes closed, serene peaceful expression
+
+LAYOUT RULES — these matter more than anything else:
+- Every panel uses the SAME character scale and the SAME vertical position,
+  so his head and feet line up across all 16 cells.
+- Even 4x4 grid, equal cell sizes, generous even margins.
+- No gridlines, no borders, no frames between cells.
+
+BACKGROUND: fully transparent, real alpha channel.
+If transparency is unavailable, use a flat solid green #00B140 fill.
+Do NOT draw a checkerboard pattern. The golden glow in panel 2 must sit on
+transparency, not over any drawn background pattern.
+
+ABSOLUTELY NO TEXT: no pose names, no numbers, no captions, no labels,
+no watermark anywhere in the image.
+
+Same watercolor and ink style throughout. Very high resolution.
+```
 
 ---
 
-## אם הרפרנס לא עובד — ה-DNA המלא
+# מסלול ב׳ — הזריז
 
-השתמש בזה רק אם אתה מייצר את עידן מאפס:
+הרצה אחת: קח את בלוק ה-**CHARACTER + OUTFIT** משלב 1, הדבק לתוך פרומפט
+הגיליון במקום `Using this EXACT same man as reference`, והוסף:
 
 ```
-A man in his early 30s, friendly approachable face, light-medium skin,
-light stubble. Dark brown-black wavy medium-length slightly-tousled hair.
-Fit athletic build with defined shoulders and arms. Outfit: cream-white ribbed
-tank top and charcoal-grey training shorts, dark trainers.
-Confident, motivating, warm presence.
+The SAME man must appear in all 16 panels — identical face, hair, stubble and
+outfit in every cell. Do not vary his age, hairstyle, hair colour or clothing.
 ```
+
+מהיר, אבל זה מה שנכשל בעבר. אם יוצא לא עקבי — עבור למסלול א׳.
 
 ---
 
-## שלב 3 — שלח לי
+## סט מינימלי של 8
 
-לתיקיית `Avatar`, באחת משתיים:
+`basic, energetic, empathetic, celebrate, streak_flame, wave, thumbs_up, rest`
 
-- **קבצים נפרדים** — `idan_energetic.png`, `idan_wave.png` … (הכי קל לי)
-- **גיליון אחד** — רשת אחידה, **בלי תוויות טקסט**, ותגיד לי כמה שורות ועמודות
+רשת 4x2. שנה בפרומפט `4x4 grid of 16` ל-`4x2 grid of 8` והשאר את השורות
+1, 2, 3, 4, 5, 9, 8, 14 בסדר הזה.
 
-אני חותך, מסיר רקע אם צריך, ומעדכן את `public/avatars/idan/`.
+**אם אתה מייצר מעט מאוד** — `energetic` לבדו הוא התיקון הכי דחוף, כי זו
+הפוזה היחידה שלו שלא שמישה כרגע.
+
+---
+
+## בדיקה לפני ששולח לי
+
+- [ ] אין שום טקסט בתמונה
+- [ ] אותו גבר בכל התאים — פנים, זקן קל, גופייה קרם, מכנס פחם
+- [ ] הראש והרגליים בערך באותו גובה בכל תא
+- [ ] הרקע שקוף באמת (או ירוק אחיד), לא משבצות מצוירות
+- [ ] **ההילה בפוזה 2 יושבת על שקיפות**, לא על דפוס מצויר
+
+## שליחה
+
+לתיקיית `Avatar`, בשם `idan_sheet.png`, ותגיד לי **כמה שורות ועמודות**.
+אני חותך ומכניס ל-`public/avatars/idan/`.
