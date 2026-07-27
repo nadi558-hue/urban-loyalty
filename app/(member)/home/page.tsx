@@ -1,39 +1,13 @@
-import { createServiceClient } from '@/lib/supabase'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { ArrowLeft2, Star1, Flash, CalendarTick, Instagram, Profile2User } from 'iconsax-reactjs'
+import { getCurrentMember, DEMO_MEMBER } from '@/lib/member'
+import { getLedger, countClassesThisMonth, reasonLabel } from '@/lib/ledger'
+import { getRules } from '@/lib/points'
 
-type Member = {
-  name: string
-  total_coins: number
-  lifetime_coins: number
-  tier: 'silver' | 'gold' | 'platinum'
-}
+export const dynamic = 'force-dynamic'
 
-async function getMember(): Promise<Member | null> {
-  if (
-    !process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY.includes('placeholder')
-  ) return null
-  try {
-    const authClient = await createSupabaseServerClient()
-    const { data: { user } } = await authClient.auth.getUser()
-    if (!user?.phone) return null
-    const db = createServiceClient()
-    const { data } = await db.from('members')
-      .select('name, total_coins, lifetime_coins, tier')
-      .eq('phone', user.phone)
-      .single()
-    return data as Member | null
-  } catch { return null }
-}
-
-const DEMO: Member = { name: 'מאיה לוי', total_coins: 47, lifetime_coins: 147, tier: 'silver' }
-
-const CHALLENGES = [
-  { Icon: Flash, title: 'רצף שיעורים', current: 7, goal: 10, reward: '+10 UC', note: 'עוד 3 ברצף' },
-  { Icon: CalendarTick, title: 'חודש מלא', current: 8, goal: 12, reward: '+30 UC', note: 'עוד 4 החודש' },
-]
+const STREAK_GOAL = 10
+const MONTH_GOAL = 12
 
 // The two earning routes that have no other way in — /share was only reachable
 // from /referrals, and nothing linked to /referrals at all.
@@ -42,12 +16,19 @@ const EARN = [
   { Icon: Profile2User, title: 'חבר מביא חבר', href: '/referrals', reward: '+50 UC', note: 'שתפו את הקוד האישי שלכם' },
 ]
 
-const ACTIVITY = [
-  { title: 'Reformer · סוקולוב', meta: 'היום · 09:00', delta: 1 },
-  { title: 'Happy Hour', meta: 'היום · 07:30', delta: 2 },
-  { title: 'בונוס רצף 10 שיעורים', meta: 'אמש', delta: 10 },
-  { title: 'הפניית חברה', meta: 'לפני יומיים', delta: 50 },
-]
+/** "היום · 09:00", "אמש · 19:30", otherwise "12 ביולי · 09:00". */
+function activityMeta(iso: string): string {
+  const d = new Date(iso)
+  const time = d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })
+  const startOfToday = new Date()
+  startOfToday.setHours(0, 0, 0, 0)
+  const daysAgo = Math.floor((startOfToday.getTime() - d.getTime()) / 86400000) + 1
+  const day =
+    daysAgo <= 0 ? 'היום'
+    : daysAgo === 1 ? 'אמש'
+    : d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long' })
+  return `${day} · ${time}`
+}
 
 function TierCoin({ tier, size = 22 }: { tier: string; size?: number }) {
   const src =
@@ -63,9 +44,31 @@ function TierCoin({ tier, size = 22 }: { tier: string; size?: number }) {
 }
 
 export default async function HomePage() {
-  const member = (await getMember()) ?? DEMO
+  const member = (await getCurrentMember()) ?? DEMO_MEMBER
   const { name, total_coins, lifetime_coins, tier } = member
   const firstName = name.split(' ')[0]
+
+  const [rules, ledger, classesThisMonth] = await Promise.all([
+    getRules(),
+    getLedger(member.id, 4),
+    countClassesThisMonth(member.id),
+  ])
+
+  const streak = member.current_streak ?? 0
+  const CHALLENGES = [
+    {
+      Icon: Flash, title: 'רצף שיעורים',
+      current: Math.min(streak, STREAK_GOAL), goal: STREAK_GOAL,
+      reward: `+${rules['streak_10'] ?? 10} UC`,
+      note: streak >= STREAK_GOAL ? 'הושלם!' : `עוד ${STREAK_GOAL - streak} ברצף`,
+    },
+    {
+      Icon: CalendarTick, title: 'חודש מלא',
+      current: Math.min(classesThisMonth, MONTH_GOAL), goal: MONTH_GOAL,
+      reward: `+${rules['full_month'] ?? 30} UC`,
+      note: classesThisMonth >= MONTH_GOAL ? 'הושלם!' : `עוד ${MONTH_GOAL - classesThisMonth} החודש`,
+    },
+  ]
 
   const tierCap = tier === 'silver' ? 500 : tier === 'gold' ? 1500 : Infinity
   const tierFloor = tier === 'silver' ? 0 : tier === 'gold' ? 500 : 1500
@@ -320,21 +323,39 @@ export default async function HomePage() {
 
       {/* ── Recent activity ──────────────────────── */}
       <div style={{ padding: '20px 16px 100px' }}>
-        <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>פעילות אחרונה</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+          <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>פעילות אחרונה</p>
+          {ledger.length > 0 && (
+            <Link href="/history" style={{ fontSize: 12, color: '#A66B43', textDecoration: 'none', fontFamily: 'var(--font-assistant,sans-serif)' }}>הכל</Link>
+          )}
+        </div>
         <div className="clay-sm" style={{ overflow: 'hidden' }}>
-          {ACTIVITY.map((a, i) => (
-            <div key={i} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '12px 16px',
-              borderBottom: i < ACTIVITY.length - 1 ? '1px solid #F3EAE3' : undefined,
-            }}>
-              <div>
-                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 600, color: '#3B2E27' }}>{a.title}</p>
-                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>{a.meta}</p>
+          {ledger.length === 0 && (
+            <p style={{ padding: '22px 16px', textAlign: 'center', fontSize: 12.5, color: '#9C8B7F', lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              עדיין אין תנועות. השיעור הבא שלכם יופיע כאן.
+            </p>
+          )}
+          {ledger.map((a, i) => {
+            const className = typeof a.metadata?.class_name === 'string' ? a.metadata.class_name : null
+            const note = typeof a.metadata?.note === 'string' ? a.metadata.note : null
+            return (
+              <div key={a.id} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '12px 16px',
+                borderBottom: i < ledger.length - 1 ? '1px solid #F3EAE3' : undefined,
+              }}>
+                <div>
+                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 600, color: '#3B2E27' }}>
+                    {className ?? note ?? reasonLabel(a.reason)}
+                  </p>
+                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>{activityMeta(a.created_at)}</p>
+                </div>
+                <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: a.points > 0 ? '#3f8f5e' : '#c04040' }}>
+                  {a.points > 0 ? '+' : ''}{a.points}
+                </span>
               </div>
-              <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#3f8f5e' }}>+{a.delta}</span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

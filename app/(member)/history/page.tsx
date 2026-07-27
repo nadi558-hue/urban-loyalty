@@ -1,32 +1,19 @@
 import { Star1, ReceiptDiscount } from 'iconsax-reactjs'
+import { getCurrentMember, DEMO_MEMBER } from '@/lib/member'
+import { getLedger, reasonLabel } from '@/lib/ledger'
 
-const REASON_LABELS: Record<string, string> = {
-  class_attended:       'שיעור הושלם',
-  streak_10:            'בונוס רצף 10 שיעורים',
-  full_month:           'בונוס נוכחות מלאה',
-  referral_subscribed:  'הפניית חבר',
-  birthday:             'מתנת יום הולדת',
-  anniversary:          'מתנת שנה',
-  manual:               'הוספה ידנית',
-  redemption:           'מימוש הטבה',
-  late_cancel:          'ביטול מאוחר · רצף אופס',
-}
-
-const DEMO_LEDGER = [
-  { id: '1', reason: 'full_month',     points: 100, created_at: new Date(Date.now() - 2 * 86400000).toISOString(), metadata: null },
-  { id: '2', reason: 'class_attended', points: 10,  created_at: new Date(Date.now() - 1 * 86400000).toISOString(), metadata: { class_name: 'Reformer – סוקולוב' } },
-  { id: '3', reason: 'class_attended', points: 10,  created_at: new Date().toISOString(), metadata: { class_name: 'Mat Pilates – יעקב כהן' } },
-  { id: '4', reason: 'streak_10',      points: 50,  created_at: new Date(Date.now() - 5 * 86400000).toISOString(), metadata: null },
-  { id: '5', reason: 'redemption',     points: -300, created_at: new Date(Date.now() - 10 * 86400000).toISOString(), metadata: { note: 'מימוש: כרטיסייה לחברי מועדון' } },
-]
+export const dynamic = 'force-dynamic'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('he-IL', { day: 'numeric', month: 'long' })
 }
 
 export default async function HistoryPage() {
-  const earned = DEMO_LEDGER.filter(e => e.points > 0).reduce((s, e) => s + e.points, 0)
-  const redeemed = DEMO_LEDGER.filter(e => e.points < 0).reduce((s, e) => s - e.points, 0)
+  const member = (await getCurrentMember()) ?? DEMO_MEMBER
+  const ledger = await getLedger(member.id)
+
+  const earned = ledger.filter(e => e.points > 0).reduce((s, e) => s + e.points, 0)
+  const redeemed = ledger.filter(e => e.points < 0).reduce((s, e) => s - e.points, 0)
 
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh' }}>
@@ -70,11 +57,19 @@ export default async function HistoryPage() {
         </div>
       </div>
 
-      {/* Ledger entries — newest first */}
+      {/* Ledger entries — already newest first from the query */}
       <div className="px-5 pt-5 pb-6 space-y-2.5">
-        {[...DEMO_LEDGER]
-          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          .map((entry) => {
+        {ledger.length === 0 && (
+          <div className="clay-sm" style={{ padding: '28px 20px', textAlign: 'center' }}>
+            <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#3B2E27', marginBottom: 6 }}>
+              עדיין אין תנועות
+            </p>
+            <p style={{ fontSize: 12.5, color: '#9C8B7F', lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              כל שיעור, בונוס ומימוש יופיעו כאן ברגע שייקלטו.
+            </p>
+          </div>
+        )}
+        {ledger.map((entry) => {
           const positive = entry.points > 0
           return (
             <div key={entry.id} className="urban-card px-4 py-3.5 flex items-center justify-between">
@@ -91,16 +86,16 @@ export default async function HistoryPage() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold" style={{ color: 'var(--urban-dark)' }}>
-                    {REASON_LABELS[entry.reason] ?? entry.reason}
+                    {reasonLabel(entry.reason)}
                   </p>
-                  {entry.metadata?.class_name && (
+                  {typeof entry.metadata?.class_name === 'string' && (
                     <p className="text-xs" style={{ color: 'var(--urban-muted)' }}>
-                      {entry.metadata.class_name as string}
+                      {entry.metadata.class_name}
                     </p>
                   )}
-                  {entry.metadata?.note && (
+                  {typeof entry.metadata?.note === 'string' && (
                     <p className="text-xs" style={{ color: 'var(--urban-muted)' }}>
-                      {entry.metadata.note as string}
+                      {entry.metadata.note}
                     </p>
                   )}
                   <p className="text-xs" style={{ color: 'rgba(154,142,132,0.6)' }}>

@@ -14,6 +14,7 @@ export type Member = {
   referral_code: string
   birth_date: string | null
   created_at: string
+  current_streak: number
 }
 
 // Demo fallback — used locally when Supabase isn't configured, so every
@@ -28,6 +29,7 @@ export const DEMO_MEMBER: Member = {
   preferred_branch: 'סוקולוב',
   referral_code: 'URBAN6',
   birth_date: null,
+  current_streak: 0,
   created_at: '2026-01-15T00:00:00.000Z',
 }
 
@@ -44,7 +46,7 @@ export async function getCurrentMember(): Promise<Member | null> {
     if (!user?.phone) return null
     const db = createServiceClient()
     const { data } = await db.from('members')
-      .select('id, name, phone, tier, total_coins, lifetime_coins, preferred_branch, referral_code, birth_date, created_at')
+      .select('id, name, phone, tier, total_coins, lifetime_coins, preferred_branch, referral_code, birth_date, created_at, current_streak')
       .eq('phone', user.phone)
       .single()
     const member = (data as Member) ?? null
