@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
+import { grantWelcomeBonus } from '@/lib/bonuses'
 
 export type Member = {
   id: string
@@ -10,6 +11,7 @@ export type Member = {
   lifetime_coins: number
   preferred_branch: string | null
   referral_code: string
+  birth_date: string | null
   created_at: string
 }
 
@@ -24,6 +26,7 @@ export const DEMO_MEMBER: Member = {
   lifetime_coins: 147,
   preferred_branch: 'סוקולוב',
   referral_code: 'URBAN6',
+  birth_date: null,
   created_at: '2026-01-15T00:00:00.000Z',
 }
 
@@ -40,10 +43,23 @@ export async function getCurrentMember(): Promise<Member | null> {
     if (!user?.phone) return null
     const db = createServiceClient()
     const { data } = await db.from('members')
-      .select('id, name, phone, tier, total_coins, lifetime_coins, preferred_branch, referral_code, created_at')
+      .select('id, name, phone, tier, total_coins, lifetime_coins, preferred_branch, referral_code, birth_date, created_at')
       .eq('phone', user.phone)
       .single()
-    return (data as Member) ?? null
+    const member = (data as Member) ?? null
+    if (!member) return null
+
+    // First time this member opens the app — grant the joining bonus and
+    // reflect it right away, so the balance on screen already includes it.
+    const welcome = await grantWelcomeBonus(member.id)
+    if (welcome) {
+      return {
+        ...member,
+        total_coins: member.total_coins + welcome,
+        lifetime_coins: member.lifetime_coins + welcome,
+      }
+    }
+    return member
   } catch { return null }
 }
 

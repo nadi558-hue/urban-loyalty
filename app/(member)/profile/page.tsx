@@ -3,6 +3,8 @@ import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { isAdminPhone } from '@/lib/admin'
 import Link from 'next/link'
 import { ArrowLeft2, Setting2 } from 'iconsax-reactjs'
+import { getRules } from '@/lib/points'
+import BirthdayField from './BirthdayField'
 
 const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
@@ -15,6 +17,9 @@ export default async function ProfilePage() {
     const { data: { user } } = await authClient.auth.getUser()
     isAdmin = isAdminPhone(user?.phone)
   } catch { /* not configured / not signed in */ }
+
+  const birthdayBonus = (await getRules())['birthday'] ?? 50
+
   const rows = [
     { label: 'טלפון', value: member.phone },
     { label: 'סניף מועדף', value: member.preferred_branch ?? '—' },
@@ -115,6 +120,9 @@ export default async function ProfilePage() {
       {/* Settings */}
       <div style={{ padding: '16px 16px 0' }}>
         <div className="clay-sm" style={{ overflow: 'hidden' }}>
+          <div style={{ borderBottom: '1px solid #F3EAE3' }}>
+            <BirthdayField current={member.birth_date} bonus={birthdayBonus} />
+          </div>
           {['התראות ותזכורות', 'תקנון ותנאי שימוש', 'יצירת קשר עם הסטודיו'].map((label, i) => (
             <div key={label} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',

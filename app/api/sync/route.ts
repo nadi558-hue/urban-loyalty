@@ -8,6 +8,7 @@ import {
   arboxConfigured,
 } from '@/lib/arbox'
 import { awardPoints, getRules } from '@/lib/points'
+import { grantDateBonuses } from '@/lib/bonuses'
 
 // Allow up to 60s (Vercel Hobby max) — the sync fetches Arbox + reconciles.
 export const maxDuration = 60
@@ -164,9 +165,18 @@ async function handleSync(req: NextRequest) {
     errors = e instanceof Error ? e.message : String(e)
   }
 
+  // Once-a-year date bonuses. Kept outside the try above so a failure in the
+  // Arbox reconciliation doesn't skip them, and vice versa.
+  let dateBonuses = { birthday: 0, anniversary: 0 }
+  try {
+    dateBonuses = await grantDateBonuses()
+  } catch (e) {
+    errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
+  }
+
   await db.from('sync_log').insert({ check_ins_found: checkInsFound, coins_awarded: coinsAwarded, errors })
 
-  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, errors })
+  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, dateBonuses, errors })
 }
 
 // Bonus coins if the attended class matches an active promoted ("Happy Hour") class
