@@ -4,56 +4,107 @@ const sharp = require('sharp')
 
 const SRC = 'C:/Users/nadi5/OneDrive/Desktop/AI/אפליקציה חבר מועדון urban/Avatar/'
 const OUT = 'C:/Users/nadi5/OneDrive/Desktop/AI/clude code test/urban-app/public/avatars/'
-const TARGET_H = 640
+const TARGET_H = 700
 
 /**
- * Both sheets were exported with the transparency checkerboard rendered as real
- * pixels — 0% of either file is actually transparent. The pattern is only ever
- * neutral grey and the artwork is warm-toned throughout (even the cream tank
- * top reads warm, not neutral), so keying on strict neutrality within the
- * checker's brightness range removes the background without eating the figure.
+ * Chroma-key the green backdrop.
+ *
+ * Green only leads the other channels in the backdrop — skin, the burgundy and
+ * olive kit, the gold trophy and the warm glow are all red-dominant. Keeping the
+ * test at `g >= r` is what lets the semi-transparent golden aura survive while
+ * its green-blended fringe is removed.
  */
-async function keyOut(file, lo, hi) {
-  const { data, info } = await sharp(SRC + file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
-  const ch = info.channels
+function keyGreen(data, ch) {
   for (let i = 0; i < data.length; i += ch) {
     const r = data[i], g = data[i + 1], b = data[i + 2]
-    const neutral = Math.abs(r - g) < 6 && Math.abs(g - b) < 6 && Math.abs(r - b) < 6
-    if (neutral && r >= lo && r <= hi) data[i + 3] = 0
+    if (g > 70 && g >= r * 1.02 && g > b * 1.20) data[i + 3] = 0
   }
-  return sharp(data, { raw: { width: info.width, height: info.height, channels: ch } }).png().toBuffer()
 }
 
-async function build({ file, lo, hi, cells, outDir }) {
-  const keyed = await keyOut(file, lo, hi)
-  for (const { name, left, top, width, height } of cells) {
-    await sharp(keyed)
-      .extract({ left, top, width, height })
-      .resize({ width: Math.round(width * (TARGET_H / height)), height: TARGET_H })
+/** Key a white backdrop — tight, so sparkles and skin highlights survive. */
+function keyWhite(data, ch) {
+  for (let i = 0; i < data.length; i += ch) {
+    const r = data[i], g = data[i + 1], b = data[i + 2]
+    if (r > 246 && g > 246 && b > 244 && Math.abs(r - g) < 5 && Math.abs(g - b) < 6) data[i + 3] = 0
+  }
+}
+
+async function keyed(file, key) {
+  const { data, info } = await sharp(SRC + file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  key(data, info.channels)
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
+    .png().toBuffer()
+}
+
+/** Even grid — poses share a cell size, so scale and baseline match. */
+async function buildGrid({ file, key, cols, rows, names, outDir }) {
+  const img = await keyed(file, key)
+  const { width, height } = await sharp(img).metadata()
+  const cw = Math.floor(width / cols)
+  const ch = Math.floor(height / rows)
+  let n = 0
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const name = names[r * cols + c]
+      if (!name) continue
+      await sharp(img)
+        .extract({ left: c * cw, top: r * ch, width: cw, height: ch })
+        .resize({ width: Math.round(cw * (TARGET_H / ch)), height: TARGET_H })
+        .png({ compressionLevel: 9 })
+        .toFile(`${OUT}${outDir}/${name}.png`)
+      n++
+    }
+  }
+  console.log(`${outDir}: ${n} poses (cell ${cw}x${ch})`)
+}
+
+/** Explicit x-windows for sheets whose figures don't sit on an even grid.
+ *  Row height stays fixed so vertical scale and baseline still match. */
+async function buildBoxes({ file, key, boxes, outDir }) {
+  const img = await keyed(file, key)
+  for (const { name, x0, x1, top, height } of boxes) {
+    await sharp(img)
+      .extract({ left: x0, top, width: x1 - x0, height })
+      .resize({ width: Math.round((x1 - x0) * (TARGET_H / height)), height: TARGET_H })
       .png({ compressionLevel: 9 })
       .toFile(`${OUT}${outDir}/${name}.png`)
   }
-  console.log(`${outDir}: ${cells.length} poses`)
+  console.log(`${outDir}: ${boxes.length} poses`)
 }
 
-const MAYA_NAMES = [
-  'basic','energetic','empathetic','celebrate',
-  'streak_flame','trophy','clap','thumbs_up',
-  'wave','lets_go','wink','offer_hand',
-  'streak_lost','rest','level_up','meditate',
-]
-const CW = 448, CH = 600, BAND = 75
-const mayaCells = MAYA_NAMES.map((name, i) => ({
-  name, left: (i % 4) * CW, top: Math.floor(i / 4) * CH, width: CW, height: CH - BAND,
-}))
-
-const IW = 512, IH = 1010
-const idanCells = [
-  ...['basic','energetic','empathetic'].map((name, c) => ({ name, left: c*IW, top: 175,  width: IW, height: IH })),
-  ...['celebrate','lets_go','rest'].map((name, c)   => ({ name, left: c*IW, top: 1540, width: IW, height: IH })),
+const P16 = [
+  'basic', 'energetic', 'empathetic', 'celebrate',
+  'streak_flame', 'trophy', 'clap', 'thumbs_up',
+  'wave', 'lets_go', 'wink', 'offer_hand',
+  'streak_lost', 'rest', 'level_up', 'meditate',
 ]
 
-// maya's checker is a tight light pair; idan's export is more compressed so its
-// squares have blurred edges spanning the whole range between the two greys.
-await build({ file: 'maya1.png',  lo: 214, hi: 250, cells: mayaCells, outDir: 'maya' })
-await build({ file: 'idan 1.png', lo: 126, hi: 219, cells: idanCells, outDir: 'idan' })
+await buildGrid({ file: 'maya sheet 1.png', key: keyGreen, cols: 4, rows: 4, names: P16, outDir: 'maya' })
+await buildGrid({ file: 'sara sheet 1.png', key: keyWhite, cols: 4, rows: 4, names: P16, outDir: 'sara' })
+
+// idan's sheet came back 6x2 rather than the 4x4 asked for, the generator chose
+// its own subset, and the figures don't sit on an even grid — in row 1 the
+// celebrate figure's raised arms touch its neighbour, so an even split cuts it
+// in half. These x-windows were measured from each row's alpha profile.
+// Row 1 cell 4 is a second hand-on-chest variant, dropped rather than shipped
+// as a near-duplicate of empathetic.
+const R1 = { top: 0, height: 896 }
+const R2 = { top: 896, height: 896 }
+await buildBoxes({
+  file: 'idan sheet 1.png', key: keyGreen, outDir: 'idan',
+  boxes: [
+    { name: 'basic',      x0: 81,   x1: 358,  ...R1 },
+    { name: 'energetic',  x0: 395,  x1: 944,  ...R1 },
+    { name: 'empathetic', x0: 962,  x1: 1235, ...R1 },
+    // Body sits at 1668-1848 but the raised arms reach out to either side,
+    // so the window has to be much wider than the torso.
+    { name: 'celebrate',  x0: 1550, x1: 1980, ...R1 },
+    { name: 'trophy',     x0: 1986, x1: 2364, ...R1 },
+    { name: 'wave',       x0: 67,   x1: 399,  ...R2 },
+    { name: 'lets_go',    x0: 448,  x1: 775,  ...R2 },
+    { name: 'wink',       x0: 825,  x1: 1121, ...R2 },
+    { name: 'offer_hand', x0: 1245, x1: 1599, ...R2 },
+    { name: 'rest',       x0: 1643, x1: 1943, ...R2 },
+    { name: 'meditate',   x0: 1978, x1: 2375, ...R2 },
+  ],
+})
