@@ -19,6 +19,29 @@
   --foreground:  #3B2E27;
   --card-bg:     rgba(255,255,255,0.72);
   --card-border: rgba(192,144,111,0.18);
+
+  /* ── Claymorphism ──────────────────────────────────
+     Puffy clay surfaces: a warm-tinted outer lift plus a two-tone inner
+     bevel (light from the top, warm shadow from the bottom). Shadows are
+     tinted with the sand palette rather than black, so surfaces read as
+     soft clay instead of floating glass. */
+  --clay-radius:     30px;
+  --clay-radius-sm:  20px;
+  --clay-face:       rgba(251,244,238,0.92);  /* card fill */
+  --clay-light:      rgba(255,255,255,0.92);  /* inner top highlight */
+  --clay-shade:      rgba(150,110,85,0.16);   /* inner bottom shade */
+  --clay-lift:       rgba(139,100,74,0.28);   /* outer drop */
+
+  --clay-shadow:
+    0 18px 36px -14px var(--clay-lift),
+    0 4px 10px -6px rgba(139,100,74,0.18),
+    inset 0 6px 12px -4px var(--clay-light),
+    inset 0 -7px 14px -6px var(--clay-shade);
+
+  /* pressed / recessed variant — bevel inverted */
+  --clay-shadow-inset:
+    inset 0 5px 12px -4px var(--clay-shade),
+    inset 0 -5px 10px -6px var(--clay-light);
 }
 
 @theme inline {
@@ -44,12 +67,65 @@ body {
   line-height: 1.1;
 }
 
-/* ── Card – glass on sand bg ── */
-.urban-card {
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(192,144,111,0.18);
-  border-radius: 1.25rem;
-  backdrop-filter: blur(4px);
+/* ── Card – clay on sand bg ── */
+.urban-card,
+.clay {
+  background: var(--clay-face);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: var(--clay-radius);
+  box-shadow: var(--clay-shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* smaller clay surface — chips, list rows, tiles */
+.clay-sm {
+  background: var(--clay-face);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: var(--clay-radius-sm);
+  box-shadow:
+    0 10px 20px -12px var(--clay-lift),
+    inset 0 4px 8px -3px var(--clay-light),
+    inset 0 -5px 10px -5px var(--clay-shade);
+}
+
+/* recessed well — for tracks, inputs, empty states */
+.clay-inset {
+  background: rgba(233,221,211,0.75);
+  border-radius: var(--clay-radius-sm);
+  box-shadow: var(--clay-shadow-inset);
+}
+
+/* recessed progress-bar track */
+.clay-track {
+  background: #EADFD6;
+  border-radius: 999px;
+  box-shadow: inset 0 2px 4px -1px rgba(150,110,85,0.3);
+  overflow: hidden;
+}
+
+/* clay pill/button — gold face, presses in on tap */
+.clay-btn {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #DBB89C, #C0906F);
+  color: #3B2E27;
+  box-shadow:
+    0 14px 26px -12px rgba(139,100,74,0.55),
+    inset 0 4px 8px -3px rgba(255,255,255,0.65),
+    inset 0 -6px 12px -6px rgba(120,85,62,0.4);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.clay-btn:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 6px 14px -10px rgba(139,100,74,0.5),
+    inset 0 5px 10px -3px rgba(120,85,62,0.35),
+    inset 0 -3px 8px -5px rgba(255,255,255,0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clay-btn { transition: none; }
 }
 
 /* ── Gold gradient bar ─────────────────────────── */

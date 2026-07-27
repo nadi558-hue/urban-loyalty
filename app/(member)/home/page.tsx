@@ -118,13 +118,9 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* ── Glass stats card (overlaps the hero) ── */}
-      <div style={{
+      {/* ── Clay stats card (overlaps the hero) ── */}
+      <div className="clay" style={{
         position: 'relative', zIndex: 3, margin: '-78px 16px 0',
-        background: 'rgba(251,244,238,0.55)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 26,
-        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
         padding: '14px 18px 18px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
@@ -186,8 +182,12 @@ export default async function HomePage() {
       <div style={{ padding: '16px 16px 0' }}>
         <div style={{
           background: 'linear-gradient(135deg,#DBB89C 0%,#C0906F 100%)',
-          borderRadius: 20, padding: '18px 20px',
-          boxShadow: '0 14px 28px -12px rgba(192,144,111,.6)',
+          borderRadius: 26, padding: '18px 20px',
+          boxShadow: [
+            '0 16px 30px -12px rgba(139,100,74,0.55)',
+            'inset 0 5px 10px -3px rgba(255,255,255,0.6)',
+            'inset 0 -7px 14px -6px rgba(120,85,62,0.4)',
+          ].join(','),
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
@@ -211,10 +211,7 @@ export default async function HomePage() {
       {/* ── Tier progress card ───────────────────── */}
       {tierCap !== Infinity && (
         <div style={{ padding: '12px 16px 0' }}>
-          <div style={{
-            background: '#ffffff', borderRadius: 20, padding: '16px 18px',
-            border: '1px solid rgba(192,144,111,0.2)',
-          }}>
+          <div className="clay-sm" style={{ padding: '16px 18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#3B2E27' }}>המסלול ל‑{nextTierName}</p>
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#6F625A' }}>
@@ -222,7 +219,7 @@ export default async function HomePage() {
               </p>
             </div>
             {/* Progress bar */}
-            <div style={{ height: 6, borderRadius: 999, background: '#F3EAE3', marginBottom: 10 }}>
+            <div className="clay-track" style={{ height: 6, marginBottom: 10 }}>
               <div style={{ height: '100%', borderRadius: 999, width: `${progressPct}%`, background: 'linear-gradient(90deg,#DBB89C,#C0906F)' }} />
             </div>
             {/* Labels */}
@@ -233,11 +230,11 @@ export default async function HomePage() {
             {/* Perk preview */}
             {nextPerk && (
               <div style={{ marginTop: 12, display: 'flex', gap: 16 }}>
-                <div style={{ flex: 1, textAlign: 'center', background: '#FBF6F2', borderRadius: 12, padding: '8px 4px' }}>
+                <div className="clay-inset" style={{ flex: 1, textAlign: 'center', padding: '8px 4px' }}>
                   <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile1}</p>
                   <p style={{ fontSize: 10, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>הנחה קבועה</p>
                 </div>
-                <div style={{ flex: 1, textAlign: 'center', background: '#FBF6F2', borderRadius: 12, padding: '8px 4px' }}>
+                <div className="clay-inset" style={{ flex: 1, textAlign: 'center', padding: '8px 4px' }}>
                   <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile2.value}</p>
                   <p style={{ fontSize: 10, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextPerkTile2.label}</p>
                 </div>
@@ -252,10 +249,7 @@ export default async function HomePage() {
         <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>אתגרים פעילים</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {CHALLENGES.map(ch => (
-            <div key={ch.title} style={{
-              background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px',
-              border: '1px solid rgba(192,144,111,0.15)',
-            }}>
+            <div key={ch.title} className="clay-sm" style={{ padding: '14px 14px 12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={ch.icon} alt="" aria-hidden style={{ height: 42, width: 'auto', objectFit: 'contain' }} />
@@ -266,7 +260,7 @@ export default async function HomePage() {
                 }}>{ch.reward}</span>
               </div>
               <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 8 }}>{ch.title}</p>
-              <div style={{ height: 4, borderRadius: 999, background: '#F3EAE3', marginBottom: 6 }}>
+              <div className="clay-track" style={{ height: 4, marginBottom: 6 }}>
                 <div style={{ height: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#DBB89C,#C0906F)', width: `${Math.round((ch.current / ch.goal) * 100)}%` }} />
               </div>
               <p style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{ch.current} / {ch.goal} · {ch.note}</p>
@@ -278,7 +272,7 @@ export default async function HomePage() {
       {/* ── Recent activity ──────────────────────── */}
       <div style={{ padding: '20px 16px 100px' }}>
         <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>פעילות אחרונה</p>
-        <div style={{ background: '#ffffff', borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(192,144,111,0.15)' }}>
+        <div className="clay-sm" style={{ overflow: 'hidden' }}>
           {ACTIVITY.map((a, i) => (
             <div key={i} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',

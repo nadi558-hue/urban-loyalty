@@ -112,14 +112,12 @@ export default function ScanClient() {
   useEffect(() => stopCamera, [stopCamera])
 
   const card: React.CSSProperties = {
-    background: '#ffffff', borderRadius: 24, padding: '28px 24px',
-    border: '1px solid rgba(192,144,111,0.25)',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.1)', textAlign: 'center',
+    padding: '28px 24px', textAlign: 'center',
   }
 
   return (
     <div style={{ padding: '24px 24px 0' }}>
-      <div style={card}>
+      <div className="clay" style={card}>
         {status.kind === 'scanning' ? (
           <div style={{ position: 'relative', width: '100%', borderRadius: 16, overflow: 'hidden', background: '#000' }}>
             <video ref={videoRef} playsInline muted style={{ width: '100%', display: 'block' }} />
@@ -157,9 +155,8 @@ export default function ScanClient() {
             {status.kind === 'error' && (
               <p style={{ fontSize: 13, color: '#b04040', marginBottom: 14 }}>{status.message}</p>
             )}
-            <button onClick={startCamera} style={{
-              width: '100%', padding: '15px 0', borderRadius: 16, border: 'none',
-              background: 'linear-gradient(135deg,#DBB89C,#C0906F)', color: '#3B2E27',
+            <button onClick={startCamera} className="clay-btn" style={{
+              width: '100%', padding: '15px 0',
               fontSize: 16, fontWeight: 800, fontFamily: 'var(--font-assistant,sans-serif)', cursor: 'pointer',
             }}>
               {status.kind === 'error' ? 'נסו שוב' : 'סריקת צ׳ק-אין'}

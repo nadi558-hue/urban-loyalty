@@ -53,13 +53,9 @@ export default async function HistoryPage() {
         </div>
       </div>
 
-      {/* ── Glass summary card (overlaps the hero) ── */}
-      <div style={{
+      {/* ── Clay summary card (overlaps the hero) ── */}
+      <div className="clay" style={{
         position: 'relative', zIndex: 3, margin: '-42px 16px 0',
-        background: 'rgba(251,244,238,0.55)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
-        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
         padding: '14px 10px', display: 'flex', alignItems: 'stretch',
       }}>
         <div style={{ flex: 1, textAlign: 'center', borderLeft: '1px solid rgba(192,144,111,0.25)' }}>

@@ -79,13 +79,9 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      {/* ── Glass stat card (overlaps the hero) ── */}
-      <div style={{
+      {/* ── Clay stat card (overlaps the hero) ── */}
+      <div className="clay" style={{
         position: 'relative', zIndex: 3, margin: '-42px 16px 0',
-        background: 'rgba(251,244,238,0.55)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
-        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
         padding: '14px 10px', display: 'flex', alignItems: 'stretch',
       }}>
         {stats.map((s, i) => (
@@ -101,7 +97,7 @@ export default async function ProfilePage() {
 
       {/* Details card */}
       <div style={{ padding: '20px 16px 0' }}>
-        <div style={{ background: '#ffffff', borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(192,144,111,0.2)' }}>
+        <div className="clay-sm" style={{ overflow: 'hidden' }}>
           {rows.map((r, i) => (
             <div key={r.label} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -117,7 +113,7 @@ export default async function ProfilePage() {
 
       {/* Settings */}
       <div style={{ padding: '16px 16px 0' }}>
-        <div style={{ background: '#ffffff', borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(192,144,111,0.2)' }}>
+        <div className="clay-sm" style={{ overflow: 'hidden' }}>
           {['התראות ותזכורות', 'תקנון ותנאי שימוש', 'יצירת קשר עם הסטודיו'].map((label, i) => (
             <div key={label} style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -136,9 +132,13 @@ export default async function ProfilePage() {
         <div style={{ padding: '16px 16px 0' }}>
           <Link href="/admin" style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '15px 18px', borderRadius: 18, textDecoration: 'none',
+            padding: '15px 18px', borderRadius: 20, textDecoration: 'none',
             background: 'linear-gradient(135deg,#5A473C,#3B2E27)',
-            border: '1px solid rgba(192,144,111,0.45)',
+            boxShadow: [
+              '0 12px 24px -14px rgba(59,46,39,0.7)',
+              'inset 0 4px 8px -4px rgba(219,184,156,0.45)',
+              'inset 0 -5px 10px -6px rgba(0,0,0,0.5)',
+            ].join(','),
           }}>
             <span style={{ fontSize: 14, fontWeight: 700, color: '#DBB89C', fontFamily: 'var(--font-assistant,sans-serif)' }}>
               🛠️ ניהול מועדון

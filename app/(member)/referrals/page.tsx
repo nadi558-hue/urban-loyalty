@@ -59,13 +59,9 @@ export default function ReferralsPage() {
         </div>
       </div>
 
-      {/* ── Glass stat card (overlaps the hero) ── */}
-      <div style={{
+      {/* ── Clay stat card (overlaps the hero) ── */}
+      <div className="clay" style={{
         position: 'relative', zIndex: 3, margin: '-40px 16px 0',
-        background: 'rgba(251,244,238,0.55)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
-        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
         padding: '14px 10px', display: 'flex', alignItems: 'stretch',
       }}>
         {refStats.map((s, i) => (
@@ -81,10 +77,8 @@ export default function ReferralsPage() {
 
       {/* Invite banner — light card with the illustration */}
       <div className="px-5 pt-5">
-        <div style={{
-          background: 'linear-gradient(135deg,#FBF6F2,#F3EAE3)',
-          borderRadius: 20, padding: '14px 18px',
-          border: '1px solid rgba(192,144,111,0.25)',
+        <div className="clay-sm" style={{
+          padding: '14px 18px',
           display: 'flex', alignItems: 'center', gap: 12, overflow: 'hidden',
         }}>
           <div style={{ flex: 1 }}>

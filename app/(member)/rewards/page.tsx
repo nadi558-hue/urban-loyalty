@@ -155,13 +155,9 @@ export default function RewardsPage() {
         </div>
       </div>
 
-      {/* ── Glass balance card (overlaps the hero) ── */}
-      <div style={{
+      {/* ── Clay balance card (overlaps the hero) ── */}
+      <div className="clay" style={{
         position: 'relative', zIndex: 3, margin: '-58px 16px 0',
-        background: 'rgba(251,244,238,0.55)',
-        backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
-        border: '1px solid rgba(255,255,255,0.6)', borderRadius: 24,
-        boxShadow: '0 16px 40px -16px rgba(59,46,39,0.35)',
         padding: '16px 20px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
@@ -215,7 +211,7 @@ export default function RewardsPage() {
             {REWARDS_AVAILABLE.map(r => {
               const affordable = uc >= r.cost
               return (
-              <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(192,144,111,0.2)', boxShadow: '0 4px 14px rgba(0,0,0,0.06)' }}>
+              <div key={r.id} className="clay-sm" style={{ padding: '14px 14px 12px' }}>
                 <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} /></div>
                 <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 4 }}>{r.name}</p>
                 <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
@@ -238,11 +234,11 @@ export default function RewardsPage() {
             {REWARDS_LOCKED.map(r => {
               const need = r.cost - uc
               return (
-                <div key={r.id} style={{ background: '#ffffff', borderRadius: 18, padding: '14px 14px 12px', border: '1px solid rgba(192,144,111,0.1)', opacity: 0.85 }}>
+                <div key={r.id} className="clay-sm" style={{ padding: '14px 14px 12px', opacity: 0.85 }}>
                   <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} muted /></div>
                   <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#6F625A', marginBottom: 4 }}>{r.name}</p>
                   <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
-                  <div style={{ width: '100%', background: '#F3EAE3', borderRadius: 999, padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>
+                  <div className="clay-track" style={{ width: '100%', padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>
                     חסרים {need} UC
                   </div>
                 </div>

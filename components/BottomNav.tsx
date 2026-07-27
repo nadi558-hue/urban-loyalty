@@ -18,8 +18,13 @@ export default function BottomNav() {
     <nav style={{
       position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
       width: '100%', maxWidth: 448,
-      background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)',
-      borderTop: '1px solid rgba(192,144,111,0.2)',
+      background: 'rgba(252,247,243,0.94)', backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      borderRadius: '26px 26px 0 0',
+      boxShadow: [
+        '0 -10px 30px -14px rgba(139,100,74,0.4)',
+        'inset 0 3px 8px -4px rgba(255,255,255,0.95)',
+      ].join(','),
       display: 'flex', alignItems: 'center', justifyContent: 'space-around',
       padding: '8px 0 max(8px, env(safe-area-inset-bottom))',
       zIndex: 50,
@@ -34,7 +39,11 @@ export default function BottomNav() {
                   width: 52, height: 52, borderRadius: '50%',
                   background: 'linear-gradient(135deg,#DBB89C,#C0906F)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 10px 22px -6px rgba(192,144,111,.7)',
+                  boxShadow: [
+                    '0 12px 22px -8px rgba(139,100,74,0.65)',
+                    'inset 0 4px 8px -3px rgba(255,255,255,0.7)',
+                    'inset 0 -6px 12px -6px rgba(120,85,62,0.45)',
+                  ].join(','),
                   marginTop: -18,
                 }}>
                   <span style={{ fontSize: 20, color: '#3B2E27' }}>{tab.icon}</span>

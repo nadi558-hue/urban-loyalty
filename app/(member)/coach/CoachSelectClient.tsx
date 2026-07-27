@@ -56,12 +56,12 @@ export default function CoachSelectClient({ current }: { current: CoachId }) {
               key={c.id}
               onClick={() => setSelected(c.id)}
               aria-pressed={active}
+              className="clay-sm"
               style={{
                 display: 'flex', alignItems: 'stretch', gap: 14, textAlign: 'right',
-                padding: 10, borderRadius: 22, cursor: 'pointer', width: '100%',
-                background: active ? 'rgba(192,144,111,0.14)' : '#ffffff',
-                border: active ? '2px solid #C0906F' : '2px solid rgba(192,144,111,0.18)',
-                boxShadow: active ? '0 12px 28px -14px rgba(192,144,111,0.7)' : '0 6px 18px -14px rgba(59,46,39,0.4)',
+                padding: 10, cursor: 'pointer', width: '100%',
+                background: active ? 'rgba(226,196,172,0.55)' : undefined,
+                border: active ? '2px solid #C0906F' : undefined,
                 transition: 'all .18s ease',
               }}
             >
@@ -105,13 +105,13 @@ export default function CoachSelectClient({ current }: { current: CoachId }) {
         <button
           onClick={confirm}
           disabled={saving || saved}
+          className="clay-btn"
           style={{
-            width: '100%', padding: '16px 0', borderRadius: 18, border: 'none',
+            width: '100%', padding: '16px 0',
             fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 16, fontWeight: 800,
-            color: '#3B2E27', cursor: saving ? 'default' : 'pointer',
-            background: saved ? 'linear-gradient(135deg,#8FbF9f,#3f8f5e)' : 'linear-gradient(135deg,#DBB89C,#C0906F)',
-            boxShadow: '0 12px 28px -12px rgba(192,144,111,0.8)',
-            opacity: saving ? 0.7 : 1, transition: 'all .2s ease',
+            cursor: saving ? 'default' : 'pointer',
+            background: saved ? 'linear-gradient(135deg,#8FbF9f,#3f8f5e)' : undefined,
+            opacity: saving ? 0.7 : 1,
           }}
         >
           {saved ? '✓ המאמן/ת נבחר/ה!' : saving ? '...' : `בחרתי ב${COACHES.find(c => c.id === selected)?.name} ←`}
