@@ -80,10 +80,29 @@ export async function grantDateBonuses(): Promise<{ birthday: number; anniversar
  * nothing and this is a single cheap no-op query.
  */
 export async function grantWelcomeBonus(memberId: string): Promise<number | null> {
-  const db = createServiceClient()
-  let claimedHere = false
-
   try {
+    const db = createServiceClient()
+
+    // The ledger is the source of truth, not the flag. An earlier version
+    // released the flag when the award failed so it could be retried, which
+    // turned every page load into another attempt and wrote a duplicate ledger
+    // row each time. Checking for the payment itself makes this idempotent
+    // however many times it runs, and whatever state the flag is in.
+    const { count, error: countErr } = await db
+      .from('point_ledger')
+      .select('*', { count: 'exact', head: true })
+      .eq('member_id', memberId)
+      .eq('reason', 'welcome_bonus')
+
+    // Can't confirm it hasn't been paid — do nothing rather than risk a double.
+    if (countErr) return null
+    if ((count ?? 0) > 0) {
+      // Already paid; make sure the flag agrees so we stop re-checking.
+      await db.from('members').update({ welcome_bonus_given: true }).eq('id', memberId)
+      return null
+    }
+
+    // Still gate on the flag so concurrent loads can't both get past here.
     const { data: claimed } = await db
       .from('members')
       .update({ welcome_bonus_given: true })
@@ -92,22 +111,14 @@ export async function grantWelcomeBonus(memberId: string): Promise<number | null
       .select('id')
 
     if (!claimed || claimed.length === 0) return null
-    claimedHere = true
 
     const rules = await getRules()
     const points = rules['welcome_bonus'] ?? 20
     await awardPoints(memberId, points, 'welcome_bonus')
     return points
   } catch {
-    // The flag is committed before the award, so a failure here would
-    // otherwise deny the bonus forever. Release the claim so the next page
-    // load retries it.
-    if (claimedHere) {
-      try {
-        await db.from('members').update({ welcome_bonus_given: false }).eq('id', memberId)
-      } catch { /* nothing more we can do */ }
-    }
-    // Never let a bonus failure break page rendering.
+    // Never let a bonus failure break page rendering. The flag stays set: a
+    // missed bonus is recoverable by hand, a duplicated one is not.
     return null
   }
 }
