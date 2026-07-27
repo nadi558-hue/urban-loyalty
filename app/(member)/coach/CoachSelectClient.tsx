@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveCoach, type CoachId } from './actions'
+import { ArrowLeft2, TickCircle } from 'iconsax-reactjs'
 
 type Coach = { id: CoachId; name: string; tagline: string }
 
@@ -112,9 +113,14 @@ export default function CoachSelectClient({ current }: { current: CoachId }) {
             cursor: saving ? 'default' : 'pointer',
             background: saved ? 'linear-gradient(135deg,#8FbF9f,#3f8f5e)' : undefined,
             opacity: saving ? 0.7 : 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
         >
-          {saved ? '✓ המאמן/ת נבחר/ה!' : saving ? '...' : `בחרתי ב${COACHES.find(c => c.id === selected)?.name} ←`}
+          {saved ? (
+            <><TickCircle size={19} variant="Bulk" color="#3B2E27" />המאמן/ת נבחר/ה!</>
+          ) : saving ? '...' : (
+            <>בחרתי ב{COACHES.find(c => c.id === selected)?.name}<ArrowLeft2 size={17} variant="Linear" color="#3B2E27" /></>
+          )}
         </button>
       </div>
     </main>

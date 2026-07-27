@@ -2,6 +2,7 @@ import { getCurrentMember, DEMO_MEMBER, memberSinceLabel } from '@/lib/member'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { isAdminPhone } from '@/lib/admin'
 import Link from 'next/link'
+import { ArrowLeft2, Setting2 } from 'iconsax-reactjs'
 
 const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
@@ -121,7 +122,7 @@ export default async function ProfilePage() {
               borderBottom: i < 2 ? '1px solid #F3EAE3' : undefined,
             }}>
               <span style={{ fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{label}</span>
-              <span style={{ color: '#C0906F' }}>‹</span>
+              <ArrowLeft2 size={17} variant="Linear" color="#C0906F" />
             </div>
           ))}
         </div>
@@ -140,10 +141,14 @@ export default async function ProfilePage() {
               'inset 0 -5px 10px -6px rgba(0,0,0,0.5)',
             ].join(','),
           }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#DBB89C', fontFamily: 'var(--font-assistant,sans-serif)' }}>
-              🛠️ ניהול מועדון
+            <span style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              fontSize: 14, fontWeight: 700, color: '#DBB89C', fontFamily: 'var(--font-assistant,sans-serif)',
+            }}>
+              <Setting2 size={19} variant="Bulk" color="#DBB89C" />
+              ניהול מועדון
             </span>
-            <span style={{ color: '#C0906F' }}>‹</span>
+            <ArrowLeft2 size={17} variant="Linear" color="#C0906F" />
           </Link>
         </div>
       )}

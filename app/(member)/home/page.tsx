@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import Link from 'next/link'
+import { ArrowLeft2, Star1 } from 'iconsax-reactjs'
 
 type Member = {
   name: string
@@ -172,8 +173,12 @@ export default async function HomePage() {
 
         {/* To next label */}
         {toNext > 0 && (
-          <p style={{ fontSize: 12, color: '#7A6B60', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-            עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName} ✦
+          <p style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            fontSize: 12, color: '#7A6B60', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)',
+          }}>
+            עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName}
+            <Star1 size={13} variant="Bulk" color="#C0906F" />
           </p>
         )}
       </div>
@@ -202,7 +207,8 @@ export default async function HomePage() {
               background: '#3B2E27', borderRadius: 999, padding: '10px 18px',
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
-              <span style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#DBB89C' }}>מימוש ←</span>
+              <span style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#DBB89C' }}>מימוש</span>
+              <ArrowLeft2 size={15} variant="Linear" color="#DBB89C" />
             </div>
           </Link>
         </div>

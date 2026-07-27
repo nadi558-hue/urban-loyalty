@@ -144,10 +144,10 @@ export default function ScanClient() {
             </p>
             <p style={{ fontSize: 14, color: '#8B7A6C', marginTop: 6 }}>
               {status.pending
-                ? (status.message ?? 'הנקודות יתווספו לאחר אימות הנוכחות ⏳')
+                ? (status.message ?? 'הנקודות יתווספו לאחר אימות הנוכחות')
                 : status.already
                 ? (status.message ?? 'כבר נרשם צ׳ק-אין לשיעור הזה')
-                : <>נוספו לך <b style={{ color: '#A66B43' }}>+{status.coins} UC</b> — אימון נעים 🤍</>}
+                : <>נוספו לך <b style={{ color: '#A66B43' }}>+{status.coins} UC</b> — אימון נעים</>}
             </p>
           </div>
         ) : (

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { CloseCircle } from 'iconsax-reactjs'
 
 type BIPEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> }
 
@@ -118,10 +119,10 @@ export default function PwaInstall() {
         </button>
       )}
       <button onClick={dismiss} aria-label="סגור" style={{
-        flexShrink: 0, border: 'none', background: 'transparent', color: '#8B7A6C',
-        fontSize: 20, lineHeight: 1, cursor: 'pointer', padding: '0 2px',
+        flexShrink: 0, border: 'none', background: 'transparent',
+        display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '0 2px',
       }}>
-        ×
+        <CloseCircle size={20} variant="Linear" color="#8B7A6C" />
       </button>
     </div>
   )

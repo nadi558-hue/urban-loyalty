@@ -1,3 +1,5 @@
+import { Star1, ReceiptDiscount } from 'iconsax-reactjs'
+
 const REASON_LABELS: Record<string, string> = {
   class_attended:       'שיעור הושלם',
   streak_10:            'בונוס רצף 10 שיעורים',
@@ -83,7 +85,9 @@ export default async function HistoryPage() {
                       ? 'rgba(192,144,111,0.15)'
                       : 'rgba(180,60,60,0.1)',
                   }}>
-                  {positive ? '⭐' : '🔓'}
+                  {positive
+                    ? <Star1 size={20} variant="Bulk" color="#C0906F" />
+                    : <ReceiptDiscount size={20} variant="Bulk" color="#B43C3C" />}
                 </div>
                 <div>
                   <p className="text-sm font-semibold" style={{ color: 'var(--urban-dark)' }}>
