@@ -20,6 +20,7 @@ export type Member = {
   streak_freezes: number
   streak_frozen_on: string | null
   preferred_coach: 'maya' | 'sara' | 'idan'
+  gender: 'female' | 'male' | 'unspecified'
 }
 
 // Demo fallback — used locally when Supabase isn't configured, so every
@@ -40,6 +41,7 @@ export const DEMO_MEMBER: Member = {
   streak_freezes: 0,
   streak_frozen_on: null,
   preferred_coach: 'maya',
+  gender: 'unspecified',
   created_at: '2026-01-15T00:00:00.000Z',
 }
 
@@ -56,7 +58,9 @@ export async function getCurrentMember(): Promise<Member | null> {
     if (!user?.phone) return null
     const db = createServiceClient()
     const { data } = await db.from('members')
-      .select('id, name, phone, tier, total_coins, lifetime_coins, preferred_branch, referral_code, birth_date, created_at, current_streak, longest_streak, last_active_date, streak_freezes, streak_frozen_on, preferred_coach')
+      .select('*')  // '*' rather than a column list: a member row is small, and
+                    // naming columns means any not-yet-run migration fails the
+                    // query and silently drops every member to DEMO_MEMBER.
       .eq('phone', user.phone)
       .single()
     const member = (data as Member) ?? null

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { saveCoach, type CoachId } from './actions'
+import { savePreferences, type CoachId, type Gender } from './actions'
 import { ArrowLeft2, TickCircle } from 'iconsax-reactjs'
 
 type Coach = { id: CoachId; name: string; tagline: string }
@@ -13,8 +13,17 @@ const COACHES: Coach[] = [
   { id: 'idan', name: 'עידן', tagline: 'הדוחף שלך — נחוש, ממוקד ומעודד' },
 ]
 
-export default function CoachSelectClient({ current }: { current: CoachId }) {
+const GENDER_OPTIONS: { id: Gender; label: string; sample: string }[] = [
+  { id: 'female',      label: 'בלשון נקבה', sample: 'מוכנה?' },
+  { id: 'male',        label: 'בלשון זכר',  sample: 'מוכן?' },
+  { id: 'unspecified', label: 'ניטרלי',     sample: 'מוכנים?' },
+]
+
+export default function CoachSelectClient(
+  { current, currentGender }: { current: CoachId; currentGender: Gender },
+) {
   const [selected, setSelected] = useState<CoachId>(current)
+  const [gender, setGender] = useState<Gender>(currentGender)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const router = useRouter()
@@ -22,7 +31,7 @@ export default function CoachSelectClient({ current }: { current: CoachId }) {
   async function confirm() {
     setSaving(true)
     try { localStorage.setItem('urban-coach', selected) } catch { /* ignore */ }
-    await saveCoach(selected)  // best-effort DB persist
+    await savePreferences(selected, gender)  // best-effort DB persist
     setSaving(false)
     setSaved(true)
     setTimeout(() => router.push('/home'), 900)
@@ -98,6 +107,38 @@ export default function CoachSelectClient({ current }: { current: CoachId }) {
             </button>
           )
         })}
+      </div>
+
+      {/* ── How the coach should address you ─────── */}
+      <div style={{ padding: '22px 16px 0' }}>
+        <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          איך לפנות אליכם
+        </p>
+        <p style={{ fontSize: 12.5, color: '#7A6B60', marginBottom: 10, lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          עברית מטה את הפנייה, אז נשמח לדעת. אם לא תבחרו — נשארים בניסוח ניטרלי.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+          {GENDER_OPTIONS.map(g => {
+            const on = gender === g.id
+            return (
+              <button
+                key={g.id}
+                onClick={() => setGender(g.id)}
+                aria-pressed={on}
+                className="clay-sm"
+                style={{
+                  padding: '11px 4px', cursor: 'pointer', textAlign: 'center',
+                  background: on ? 'rgba(226,196,172,0.55)' : undefined,
+                  border: on ? '2px solid #C0906F' : undefined,
+                  transition: 'all .18s ease',
+                }}
+              >
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{g.label}</p>
+                <p style={{ fontSize: 11, color: '#9C8B7F', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>{g.sample}</p>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* ── Sticky confirm ───────────────────────── */}
