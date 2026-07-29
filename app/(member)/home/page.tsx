@@ -3,6 +3,8 @@ import { ArrowLeft2, Star1, Flash, CalendarTick, Instagram, Profile2User } from 
 import { getCurrentMember, DEMO_MEMBER } from '@/lib/member'
 import { getLedger, countClassesThisMonth, reasonLabel } from '@/lib/ledger'
 import { getRules } from '@/lib/points'
+import { getCoachView } from '@/lib/coach'
+import CoachCard from '@/components/CoachCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -222,6 +224,11 @@ export default async function HomePage() {
             </div>
           </Link>
         </div>
+      </div>
+
+      {/* ── Coach ────────────────────────────────── */}
+      <div style={{ paddingTop: 18 }}>
+        <CoachCard view={getCoachView(member)} />
       </div>
 
       {/* ── Ways to earn ─────────────────────────── */}

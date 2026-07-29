@@ -51,6 +51,7 @@ export const config = {
     '/referrals/:path*',
     '/share/:path*',
     '/qr/:path*',
+    '/coach/:path*',
     '/profile/:path*',
     '/admin/:path*',
   ],

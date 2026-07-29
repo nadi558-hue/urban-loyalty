@@ -66,14 +66,16 @@ export default function CoachSelectClient({ current }: { current: CoachId }) {
                 transition: 'all .18s ease',
               }}
             >
-              {/* Portrait */}
+              {/* Portrait — the same watercolor figure the home screen shows, not
+                  a stock photo, so what you pick is what you get. */}
               <div style={{
-                position: 'relative', width: 104, flexShrink: 0, borderRadius: 16, overflow: 'hidden',
-                background: 'linear-gradient(160deg,#3B2E27,#241C17)',
+                position: 'relative', width: 104, minHeight: 118, flexShrink: 0,
+                borderRadius: 16, overflow: 'hidden',
+                background: 'linear-gradient(165deg,#FBF4EE,#EADFD4)',
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/coaches/${c.id}.jpg`} alt={c.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                <img src={`/avatars/${c.id}/basic.png`} alt={c.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom' }} />
                 {active && (
                   <div style={{
                     position: 'absolute', top: 6, insetInlineEnd: 6,
