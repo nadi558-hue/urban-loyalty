@@ -9,6 +9,6 @@ export default async function RewardsPage() {
     getCurrentMember(),
     getRewards(),
   ])
-  const uc = (member ?? DEMO_MEMBER).total_coins
-  return <RewardsClient uc={uc} rewards={rewards} />
+  const m = member ?? DEMO_MEMBER
+  return <RewardsClient uc={m.total_coins} tier={m.tier} rewards={rewards} />
 }

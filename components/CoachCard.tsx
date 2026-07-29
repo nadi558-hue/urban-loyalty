@@ -26,7 +26,7 @@ export default function CoachCard({ view }: { view: CoachView }) {
                 fontFamily: 'var(--font-frank,serif)', fontSize: 12, fontWeight: 700,
                 color: '#A66B43', letterSpacing: '0.02em',
               }}>
-                {streak} ימים ברצף
+                {streak} שיעורים ברצף
               </span>
             </div>
           )}

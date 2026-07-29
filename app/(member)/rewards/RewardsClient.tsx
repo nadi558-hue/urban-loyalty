@@ -29,7 +29,12 @@ function RewardIcon({ type, muted = false }: { type: IconKey; muted?: boolean })
 
 type Filter = 'all' | 'available' | 'soon'
 
-export default function RewardsClient({ uc, rewards }: { uc: number; rewards: Reward[] }) {
+const TIER_NAME: Record<string, string> = { silver: 'כסף', gold: 'זהב', platinum: 'פלטינום' }
+const TIER_RANK: Record<string, number> = { silver: 0, gold: 1, platinum: 2 }
+
+export default function RewardsClient(
+  { uc, tier, rewards }: { uc: number; tier: string; rewards: Reward[] },
+) {
   const [filter, setFilter] = useState<Filter>('all')
   const [confirming, setConfirming] = useState<Reward | null>(null)
   const [redeemed, setRedeemed] = useState<Reward | null>(null)
@@ -38,8 +43,13 @@ export default function RewardsClient({ uc, rewards }: { uc: number; rewards: Re
   const [redeemError, setRedeemError] = useState('')
 
   // Split by what the member can actually afford right now.
-  const available = rewards.filter(r => uc >= r.cost)
-  const locked = rewards.filter(r => uc < r.cost)
+  // Two different kinds of "can't have this": not enough coins, which is a
+  // matter of time, and the wrong tier, which coins alone won't fix. They read
+  // differently on the card so a member isn't left saving toward something
+  // that would still be refused.
+  const tierOk = (r: Reward) => (TIER_RANK[tier] ?? 0) >= (TIER_RANK[r.minTier] ?? 0)
+  const available = rewards.filter(r => uc >= r.cost && tierOk(r))
+  const locked = rewards.filter(r => uc < r.cost || !tierOk(r))
 
   // Feature the cheapest reward still out of reach — the most attainable
   // next goal. Falls back to the priciest one once everything is affordable.
@@ -201,7 +211,7 @@ export default function RewardsClient({ uc, rewards }: { uc: number; rewards: Re
                 <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#6F625A', marginBottom: 4 }}>{r.name}</p>
                 <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
                 <div className="clay-track" style={{ width: '100%', padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>
-                  חסרים {r.cost - uc} UC
+                  {!tierOk(r) ? `שמור לדרגת ${TIER_NAME[r.minTier] ?? r.minTier}` : `חסרים ${r.cost - uc} UC`}
                 </div>
               </div>
             ))}

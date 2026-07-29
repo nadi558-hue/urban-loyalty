@@ -86,11 +86,14 @@ export default async function HomePage() {
     },
   ]
 
+  // Tier tracks the rolling 12-month total, not the all-time one — coins age
+  // out of it, which is what allows a tier to fall.
+  const qualifying = member.qualifying_coins ?? lifetime_coins
   const tierCap = tier === 'silver' ? 500 : tier === 'gold' ? 1500 : Infinity
   const tierFloor = tier === 'silver' ? 0 : tier === 'gold' ? 500 : 1500
   const nextTierName = tier === 'silver' ? 'Gold' : tier === 'gold' ? 'Platinum' : ''
-  const toNext = tierCap === Infinity ? 0 : tierCap - lifetime_coins
-  const progressPct = tierCap === Infinity ? 100 : Math.min(100, ((lifetime_coins - tierFloor) / (tierCap - tierFloor)) * 100)
+  const toNext = tierCap === Infinity ? 0 : Math.max(0, tierCap - qualifying)
+  const progressPct = tierCap === Infinity ? 100 : Math.min(100, Math.max(0, ((qualifying - tierFloor) / (tierCap - tierFloor)) * 100))
   const tierLabel = tier === 'platinum' ? 'PLATINUM' : tier === 'gold' ? 'GOLD' : 'SILVER'
 
   // Arc gauge SVG (semicircle, 180°)
@@ -179,7 +182,7 @@ export default async function HomePage() {
           {/* Center number */}
           <text x={cx} y={cy - 8} textAnchor="middle"
             fontFamily="var(--font-frank,serif)" fontSize="42" fontWeight="900" fill="#3B2E27">
-            {lifetime_coins}
+            {qualifying}
           </text>
           <text x={cx} y={cy + 8} textAnchor="middle"
             fontSize="10" fill="#A66B43" letterSpacing="2"
@@ -309,7 +312,7 @@ export default async function HomePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#3B2E27' }}>המסלול ל‑{nextTierName}</p>
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#6F625A' }}>
-                <span style={{ color: '#C0906F', fontWeight: 700 }}>{lifetime_coins}</span> / {tierCap}
+                <span style={{ color: '#C0906F', fontWeight: 700 }}>{qualifying}</span> / {tierCap}
               </p>
             </div>
             {/* Progress bar */}

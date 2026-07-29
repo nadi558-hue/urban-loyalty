@@ -21,6 +21,8 @@ export type Member = {
   streak_frozen_on: string | null
   preferred_coach: 'maya' | 'sara' | 'idan'
   gender: 'female' | 'male' | 'unspecified'
+  qualifying_coins: number
+  tier_reviewed_at: string | null
 }
 
 /** True when a real Supabase project is wired up, as opposed to local demo mode. */
@@ -78,6 +80,8 @@ export const DEMO_MEMBER: Member = {
   streak_frozen_on: null,
   preferred_coach: 'maya',
   gender: 'unspecified',
+  qualifying_coins: 147,
+  tier_reviewed_at: null,
   created_at: '2026-01-15T00:00:00.000Z',
 }
 

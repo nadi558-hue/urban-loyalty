@@ -13,6 +13,7 @@ import {
 } from '@/lib/attendance'
 import { grantDateBonuses } from '@/lib/bonuses'
 import { syncPlanMembers, type MemberSyncResult } from '@/lib/member-sync'
+import { runTierReview, type TierReviewResult } from '@/lib/tiers'
 import { payReferral } from '@/lib/referrals'
 import { registerAttendance, breakStreak, runStreakRollover, type RolloverResult, type StreakMember } from '@/lib/streak'
 
@@ -170,8 +171,18 @@ async function handleSync(req: NextRequest) {
     errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
   }
 
+  // Tier review last, after every coin this run could award has landed. Coins
+  // ageing out of the 12-month window are the only thing that moves a member
+  // down, so nothing else in the app can do this.
+  let tiers: TierReviewResult = { reviewed: 0, promoted: 0, demoted: 0, pending: 0 }
+  try {
+    tiers = await runTierReview()
+  } catch (e) {
+    errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
+  }
+
   await db.from('sync_log').insert({ check_ins_found: checkInsFound, coins_awarded: coinsAwarded, errors })
 
-  return NextResponse.json({ ok: true, members, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, errors })
+  return NextResponse.json({ ok: true, members, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, tiers, errors })
 }
 

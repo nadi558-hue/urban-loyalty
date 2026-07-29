@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createServiceClient } from '@/lib/supabase'
-import { deductPoints } from '@/lib/points'
+import { deductPoints, tierMeets } from '@/lib/points'
 
 export async function POST(req: NextRequest) {
   // Verify authenticated session
@@ -27,14 +27,14 @@ export async function POST(req: NextRequest) {
 
   const db = createServiceClient()
 
-  type MemberRow = { id: string; total_coins: number; name: string }
-  type RewardRow = { id: string; name: string; cost_coins: number; active: boolean }
+  type MemberRow = { id: string; total_coins: number; name: string; tier: string }
+  type RewardRow = { id: string; name: string; cost_coins: number; active: boolean; min_tier: string | null }
 
   // Resolve the member from the authenticated phone — never trust a
   // client-supplied member id.
-  const rewardQuery = db.from('rewards').select('id, name, cost_coins, active').eq('active', true)
+  const rewardQuery = db.from('rewards').select('*').eq('active', true)
   const [memberRes, rewardRes] = await Promise.all([
-    db.from('members').select('id, total_coins, name').eq('phone', user.phone).single(),
+    db.from('members').select('*').eq('phone', user.phone).single(),
     (reward_id ? rewardQuery.eq('id', reward_id) : rewardQuery.eq('name', reward_name)).single(),
   ])
 
@@ -45,6 +45,11 @@ export async function POST(req: NextRequest) {
   if (!reward) return NextResponse.json({ error: 'הטבה לא נמצאה' }, { status: 404 })
   if (member.total_coins < reward.cost_coins) {
     return NextResponse.json({ error: 'אין מספיק מטבעות' }, { status: 400 })
+  }
+  // Checked here and not only in the UI — the client sends a reward id, and a
+  // locked card being hidden is not the same as it being unavailable.
+  if (!tierMeets(member.tier, reward.min_tier ?? 'silver')) {
+    return NextResponse.json({ error: 'ההטבה שמורה לדרגה גבוהה יותר' }, { status: 403 })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

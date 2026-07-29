@@ -3,8 +3,14 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 /**
  * ─── Streak engine ────────────────────────────────────────────────────────
  *
- * A streak counts CONSECUTIVE ACTIVE DAYS, not classes. Two classes in one day
- * advance it once; a doubles-day does not buy a free tomorrow.
+ * A streak counts CONSECUTIVE CLASSES, which is what the point rule promises:
+ * "בונוס על 10 שיעורים רצופים ללא ביטול". Counting consecutive days instead
+ * would never pay anyone here — members train two to four times a week, so a
+ * day-based chain resets on the rest day between every session.
+ *
+ * A streak is broken by a late cancellation, or by going STREAK_GRACE_DAYS
+ * without training at all. Without that second rule a member who simply stops
+ * coming keeps their streak forever, since nothing else would ever reset it.
  *
  * Two halves, and both are required:
  *
@@ -49,11 +55,22 @@ export type StreakMember = {
 export const STREAK_BONUS_EVERY = 10
 
 /**
- * Record that a member trained today. Returns the streak after the visit and
- * whether this visit crossed a bonus milestone.
+ * Days of total inactivity before a streak lapses.
  *
- * Idempotent within a day: a second class today returns the current streak
- * untouched and reports no milestone, so the bonus can't be paid twice.
+ * Has to clear the longest ordinary gap between sessions. A once-a-week member
+ * leaves 7 days, so 14 gives a full missed week of slack — illness, reserve
+ * duty, a holiday — without letting a streak survive a genuine drop-off.
+ */
+export const STREAK_GRACE_DAYS = 14
+
+/**
+ * Record one attended class. Returns the streak after it and whether this class
+ * crossed a bonus milestone.
+ *
+ * Every awarded class advances the streak, including a second one on the same
+ * day — ten classes is ten classes. Double-counting is prevented upstream:
+ * processed_checkins makes each Arbox check-in payable exactly once, so this is
+ * only ever reached for a class not yet credited.
  */
 export async function registerAttendance(
   db: SupabaseClient,
@@ -62,13 +79,10 @@ export async function registerAttendance(
 ): Promise<{ streak: number; milestone: boolean }> {
   const last = member.last_active_date ?? null
 
-  if (last === today) {
-    return { streak: member.current_streak ?? 0, milestone: false }
-  }
-
-  // Yesterday counts as continuous. A consumed freeze leaves last_active_date
-  // parked on the covered day, so a frozen gap continues through here.
-  const streak = last === addDays(today, -1) ? (member.current_streak ?? 0) + 1 : 1
+  // Continue the chain unless they had already lapsed before this class. The
+  // nightly rollover normally resets those, but a class can arrive first.
+  const lapsed = last !== null && last < addDays(today, -STREAK_GRACE_DAYS)
+  const streak = lapsed ? 1 : (member.current_streak ?? 0) + 1
   const longest = Math.max(member.longest_streak ?? 0, streak)
 
   await db.from('members').update({
@@ -100,20 +114,19 @@ export async function breakStreak(db: SupabaseClient, member: StreakMember) {
 export type RolloverResult = { broken: number; frozen: number }
 
 /**
- * Daily decay. A streak survives while the member trained today or yesterday —
- * today is still in progress, so it is never counted against them.
+ * Daily lapse check. A streak survives while the member has trained within the
+ * last STREAK_GRACE_DAYS; past that it is gone.
  *
- * One missed day is covered by a streak freeze if they hold one. The freeze is
- * recorded on the day it covered and moves last_active_date onto that day, so
- * the chain reads as unbroken to registerAttendance. A freeze covers a single
- * day only: miss two in a row and the streak goes regardless.
+ * A streak freeze buys one extra day at the edge of that window, for the member
+ * who is one day away from lapsing. It is spent on the day it covers and moves
+ * last_active_date forward, so the chain reads as unbroken. It buys a day, not
+ * a reprieve — the next day the same check applies again.
  */
 export async function runStreakRollover(
   db: SupabaseClient,
   today: string = localDate(),
 ): Promise<RolloverResult> {
-  const yesterday = addDays(today, -1)
-  const dayBefore = addDays(today, -2)
+  const cutoff = addDays(today, -STREAK_GRACE_DAYS)
 
   const { data, error } = await db.from('members')
     .select('id, current_streak, longest_streak, last_active_date, streak_freezes, streak_frozen_on')
@@ -126,21 +139,21 @@ export async function runStreakRollover(
   for (const m of data as StreakMember[]) {
     const last = m.last_active_date ?? null
 
-    // Trained today or yesterday — still alive.
-    if (last === today || last === yesterday) continue
+    // Still inside the window.
+    if (last !== null && last >= cutoff) continue
 
-    // Missed exactly yesterday, and holds a freeze.
-    if (last === dayBefore && (m.streak_freezes ?? 0) > 0) {
+    // Exactly one day past it, and they hold a freeze.
+    if (last !== null && last === addDays(cutoff, -1) && (m.streak_freezes ?? 0) > 0) {
       await db.from('members').update({
         streak_freezes: (m.streak_freezes ?? 0) - 1,
-        streak_frozen_on: yesterday,
-        last_active_date: yesterday,
+        streak_frozen_on: today,
+        last_active_date: cutoff,
       }).eq('id', m.id)
       frozen++
       continue
     }
 
-    // Gone. A streak carrying no date at all is stale data and also resets.
+    // Lapsed. A streak carrying no date at all is stale data and also resets.
     await db.from('members').update({
       current_streak: 0,
       streak_frozen_on: null,

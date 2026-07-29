@@ -23,7 +23,7 @@ export type CoachPose =
   | 'wave' | 'basic' | 'energetic' | 'empathetic'
   | 'celebrate' | 'streak_flame' | 'streak_lost'
 
-/** Day 3 of a live streak is where it starts feeling like a habit. */
+/** Three classes in is where a streak starts feeling like a habit. */
 export const ENERGETIC_MIN = 3
 export const MILESTONES = [3, 7, 14, 30, 60, 100]
 
@@ -67,12 +67,12 @@ const MESSAGES: Record<CoachPose, Line[]> = {
   ],
   energetic: [
     {
-      n: 'רצף של {streak} ימים! כושר שיא. שאפו!',
-      f: 'רצף של {streak} ימים! את בכושר שיא. שאפו!',
-      m: 'רצף של {streak} ימים! אתה בכושר שיא. שאפו!',
+      n: 'רצף של {streak} שיעורים! כושר שיא. שאפו!',
+      f: 'רצף של {streak} שיעורים! את בכושר שיא. שאפו!',
+      m: 'רצף של {streak} שיעורים! אתה בכושר שיא. שאפו!',
     },
-    'האנרגיה שלך מדבקת! {streak} ימים ברצף ועוד היד נטויה.',
-    'התמדה משתלמת — {streak} ימים ברצף. גאה בך!',
+    'האנרגיה שלך מדבקת! {streak} שיעורים ברצף ועוד היד נטויה.',
+    'התמדה משתלמת — {streak} שיעורים ברצף. גאה בך!',
   ],
   empathetic: [
     'החיים עמוסים לפעמים. הרצף שלך מוקפא להיום.',
@@ -80,10 +80,10 @@ const MESSAGES: Record<CoachPose, Line[]> = {
     'הפספוס הקטן הזה לא מגדיר אותך. נתראה מחר?',
   ],
   celebrate: [
-    'רצף של {streak} ימים! רגע ששווה לעצור ולחגוג.',
+    'רצף של {streak} שיעורים! רגע ששווה לעצור ולחגוג.',
   ],
   streak_flame: [
-    '{streak} ימים ברצף והאש בוערת. לא עוצרים עכשיו!',
+    '{streak} שיעורים ברצף והאש בוערת. לא עוצרים עכשיו!',
   ],
   streak_lost: [
     'הרצף נקטע, אבל ההרגל לא. מתחילים חדש היום.',
@@ -92,23 +92,23 @@ const MESSAGES: Record<CoachPose, Line[]> = {
 }
 
 const MILESTONE_MESSAGES: Record<number, Line> = {
-  3: 'שלושה ימים ברצף — ההרגל מתחיל להיבנות 🌱',
+  3: 'שלושה שיעורים ברצף — ההרגל מתחיל להיבנות 🌱',
   7: {
-    n: 'שבוע שלם ברצף! 🎉 רשמית במסלול המנצח.',
-    f: 'שבוע שלם ברצף! 🎉 את רשמית במסלול המנצח.',
-    m: 'שבוע שלם ברצף! 🎉 אתה רשמית במסלול המנצח.',
+    n: '7 שיעורים ברצף! 🎉 רשמית במסלול המנצח.',
+    f: '7 שיעורים ברצף! 🎉 את רשמית במסלול המנצח.',
+    m: '7 שיעורים ברצף! 🎉 אתה רשמית במסלול המנצח.',
   },
-  14: 'שבועיים ברצף 🔥 ההרגל כבר חלק מהזהות.',
+  14: '14 שיעורים ברצף 🔥 ההרגל כבר חלק מהזהות.',
   30: {
-    n: 'חודש שלם! 👑 ליגה של עצמכם — כל הכבוד.',
-    f: 'חודש שלם! 👑 את בליגה של עצמך — כל הכבוד.',
-    m: 'חודש שלם! 👑 אתה בליגה של עצמך — כל הכבוד.',
+    n: '30 שיעורים ברצף! 👑 ליגה של עצמכם — כל הכבוד.',
+    f: '30 שיעורים ברצף! 👑 את בליגה של עצמך — כל הכבוד.',
+    m: '30 שיעורים ברצף! 👑 אתה בליגה של עצמך — כל הכבוד.',
   },
-  60: '60 יום של התמדה. השראה לכל המועדון 🌟',
+  60: '60 שיעורים ברצף. השראה לכל המועדון 🌟',
   100: {
-    n: '100 ימים! ✨ מעטים מגיעים לכאן. אנחנו גאים בך.',
-    f: '100 ימים! ✨ מעטות מגיעות לכאן. אנחנו גאים בך.',
-    m: '100 ימים! ✨ מעטים מגיעים לכאן. אנחנו גאים בך.',
+    n: '100 שיעורים ברצף! ✨ מעטים מגיעים לכאן. אנחנו גאים בך.',
+    f: '100 שיעורים ברצף! ✨ מעטות מגיעות לכאן. אנחנו גאים בך.',
+    m: '100 שיעורים ברצף! ✨ מעטים מגיעים לכאן. אנחנו גאים בך.',
   },
 }
 
@@ -131,9 +131,9 @@ type CoachMember = StreakMember & {
  * Pick the pose. Order matters — the first match wins:
  *
  *   never trained  → wave         (greeting, not a scolding)
- *   freeze used    → empathetic   (a day was missed but the streak survived)
- *   milestone day  → celebrate    (only on the exact day)
- *   streak ≥ 3     → energetic / streak_flame from a week in
+ *   freeze used    → empathetic   (they nearly lapsed but the streak survived)
+ *   milestone      → celebrate    (only at the exact count)
+ *   streak ≥ 3     → energetic, and streak_flame from 7 classes in
  *   streak lost    → streak_lost  (they have history but the chain broke)
  *   otherwise      → basic
  */

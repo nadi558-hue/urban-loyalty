@@ -32,7 +32,7 @@ const RULE_ORDER = [
 const RULE_HINTS: Record<string, string> = {
   class_attended:      'על כל שיעור שנסרק ואומת',
   happy_hour:          'בשיעורים המסומנים כ-Happy Hour',
-  streak_10:           'על כל 10 ימי אימון רצופים',
+  streak_10:           'על כל 10 שיעורים רצופים, בלי ביטול מאוחר',
   full_month:          '12 שיעורים ומעלה בחודש קלנדרי',
   social_share:        'תיוג הסטודיו בסטורי, פעם בשבוע',
   referral_trial:      'חברה שהבאתם הגיעה לשיעור ניסיון',
@@ -77,8 +77,11 @@ export default async function HelpPage() {
     .filter(r => r.cost > member.total_coins)
     .sort((a, b) => a.cost - b.cost)[0]
 
+  const qualifying = member.qualifying_coins ?? member.lifetime_coins
   const tierCap = TIER_NEXT[member.tier]
-  const toNext = tierCap === Infinity ? 0 : tierCap - member.lifetime_coins
+  const toNext = tierCap === Infinity ? 0 : Math.max(0, tierCap - qualifying)
+  const tierFloor = member.tier === 'gold' ? 500 : member.tier === 'platinum' ? 1500 : 0
+  const belowFloor = Math.max(0, tierFloor - qualifying)
   const nextTier = member.tier === 'silver' ? 'Gold' : member.tier === 'gold' ? 'Platinum' : ''
 
   const wa = (process.env.STUDIO_WHATSAPP ?? '').replace(/\D/g, '')
@@ -182,15 +185,31 @@ export default async function HelpPage() {
               הדרגה שלכם: {TIER_LABELS[member.tier] ?? member.tier}
             </strong>
           </div>
+          <p style={{ marginBottom: 8 }}>
+            הדרגה נקבעת לפי המטבעות שצברתם ב־<strong>12 החודשים האחרונים</strong> — כרגע{' '}
+            <strong style={{ color: '#A66B43' }}>{qualifying}</strong>.
+            <br />
+            מימוש הטבה <strong>לא</strong> מוריד אתכם: היתרה יורדת, הספירה לדרגה נשארת.
+          </p>
           {toNext > 0 ? (
-            <p>
-              צברתם <strong style={{ color: '#A66B43' }}>{member.lifetime_coins}</strong> מטבעות מאז ההצטרפות.
-              נשארו <strong style={{ color: '#A66B43' }}>{toNext}</strong> כדי להגיע ל־{nextTier}.
-              <br />
-              הדרגה נקבעת לפי <strong>סך כל המטבעות שצברתם אי פעם</strong> — מימוש הטבה לא מוריד אתכם.
+            <p style={{ marginBottom: 8 }}>
+              נשארו <strong style={{ color: '#A66B43' }}>{toNext}</strong> מטבעות כדי להגיע ל־{nextTier}.
             </p>
           ) : (
-            <p>אתם בדרגה הגבוהה ביותר. כל הכבוד!</p>
+            <p style={{ marginBottom: 8 }}>אתם בדרגה הגבוהה ביותר. כל הכבוד!</p>
+          )}
+          {member.tier !== 'silver' && (
+            belowFloor > 0 ? (
+              <p style={{ color: '#B43C3C' }}>
+                שימו לב: הספירה שלכם ירדה מתחת לסף הדרגה. חסרים {belowFloor} מטבעות.
+                יש לכם 30 יום להשלים אותם לפני שהדרגה תתעדכן.
+              </p>
+            ) : (
+              <p>
+                כדי לשמור על הדרגה צריך להישאר מעל {tierFloor} מטבעות ב־12 החודשים האחרונים.
+                אם יורדים מתחת, יש 30 יום להשלים לפני שהדרגה משתנה.
+              </p>
+            )
           )}
         </Section>
 

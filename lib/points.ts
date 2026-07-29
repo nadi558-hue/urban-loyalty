@@ -91,19 +91,30 @@ export async function awardPoints(
 
   const { data: member } = await db
     .from('members')
-    .select('total_coins, lifetime_coins')
+    // '*' rather than a column list: naming a column that a not-yet-run
+    // migration hasn't added fails the query, and this function would then
+    // silently stop awarding coins at all.
+    .select('*')
     .eq('id', memberId)
-    .single() as { data: { total_coins: number; lifetime_coins: number } | null }
+    .single() as { data: { total_coins: number; lifetime_coins: number; qualifying_coins: number | null } | null }
 
   if (!member) return
 
   const newTotal = member.total_coins + points
+  // lifetime_coins is the all-time record and never falls; qualifying_coins is
+  // the rolling 12-month total the tier is derived from, and the nightly review
+  // is what ages entries out of it.
   const newLifetime = member.lifetime_coins + (points > 0 ? points : 0)
-  const tier = calcTier(newLifetime)
+  const newQualifying = (member.qualifying_coins ?? 0) + (points > 0 ? points : 0)
 
   await db
     .from('members')
-    .update({ total_coins: newTotal, lifetime_coins: newLifetime, tier })
+    .update({
+      total_coins: newTotal,
+      lifetime_coins: newLifetime,
+      qualifying_coins: newQualifying,
+      tier: calcTier(newQualifying),
+    })
     .eq('id', memberId)
 }
 
@@ -111,10 +122,18 @@ export async function deductPoints(memberId: string, points: number, reason: str
   return awardPoints(memberId, -points, 'redemption', { note: reason })
 }
 
-export function calcTier(lifetimePoints: number): 'silver' | 'gold' | 'platinum' {
-  if (lifetimePoints >= TIER_THRESHOLDS.platinum) return 'platinum'
-  if (lifetimePoints >= TIER_THRESHOLDS.gold) return 'gold'
+/** Tier from the rolling 12-month qualifying total, not the all-time one. */
+export function calcTier(qualifyingPoints: number): 'silver' | 'gold' | 'platinum' {
+  if (qualifyingPoints >= TIER_THRESHOLDS.platinum) return 'platinum'
+  if (qualifyingPoints >= TIER_THRESHOLDS.gold) return 'gold'
   return 'silver'
+}
+
+export const TIER_RANK: Record<string, number> = { silver: 0, gold: 1, platinum: 2 }
+
+/** Does this member's tier meet a reward's minimum? */
+export function tierMeets(memberTier: string, minTier: string): boolean {
+  return (TIER_RANK[memberTier] ?? 0) >= (TIER_RANK[minTier] ?? 0)
 }
 
 // Check if a weekly social share has already been awarded this week
