@@ -65,7 +65,7 @@ export async function POST(req: Request) {
       alreadyCheckedIn: true,
       pending,
       message: pending
-        ? 'הסריקה נקלטה — הנוכחות תאומת והנקודות יתווספו בקרוב ⏳'
+        ? 'כבר סרקת לשיעור הזה — המטבעות ייכנסו כשהנוכחות תסומן במערכת ⏳'
         : 'כבר נרשם לך צ׳ק-אין לשיעור הזה 💪',
     })
   }
@@ -82,7 +82,10 @@ export async function POST(req: Request) {
       ok: true,
       pending: true,
       name: member.name,
-      message: 'הנוכחות שלך נקלטה — הנקודות יתווספו לאחר אימות מול המערכת ⏳',
+      // Says what actually has to happen next, not a vague "soon" — the
+      // trigger is the studio marking attendance, which is usually within
+      // minutes of the door check-in but occasionally never.
+      message: 'נקלט! המטבעות ייכנסו ברגע שהנוכחות תסומן במערכת השיעורים ⏳',
     })
   }
 

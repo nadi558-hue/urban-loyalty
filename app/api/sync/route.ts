@@ -8,6 +8,9 @@ import {
   arboxConfigured,
 } from '@/lib/arbox'
 import { awardPoints, getRules } from '@/lib/points'
+import {
+  awardAttendance, matchingScanIndex, type Promo,
+} from '@/lib/attendance'
 import { grantDateBonuses } from '@/lib/bonuses'
 import { payReferral } from '@/lib/referrals'
 import { registerAttendance, breakStreak, runStreakRollover, type RolloverResult, type StreakMember } from '@/lib/streak'
@@ -15,11 +18,6 @@ import { registerAttendance, breakStreak, runStreakRollover, type RolloverResult
 // Allow up to 60s (Vercel Hobby max) — the sync fetches Arbox + reconciles.
 export const maxDuration = 60
 
-// A QR scan may land from 15 min before class start through ~30 min after a
-// ~60 min class ends. An Arbox 'attended' check-in must match a scan inside
-// this window for coins to be awarded.
-const SCAN_MATCH_BEFORE_MS = 15 * 60 * 1000
-const SCAN_MATCH_AFTER_MS = 90 * 60 * 1000
 const PENDING_LOOKBACK_MS = 2 * 86_400_000
 
 // Accept both Vercel Cron's `Authorization: Bearer <CRON_SECRET>` and a manual
@@ -86,7 +84,7 @@ async function handleSync(req: NextRequest) {
       (membersRes.data ?? []).map((m: any) => [m.arbox_id, m]),
     )
     const processed = new Set<string>((processedRes.data ?? []).map((r: any) => r.arbox_checkin_id))
-    const promos = (promosRes.data ?? []) as { title: string; branch: string | null; bonus_coins: number }[]
+    const promos = (promosRes.data ?? []) as Promo[]
 
     const scansByMember = new Map<string, PendingScan[]>()
     for (const s of (pendingRes.data ?? []) as any[]) {
@@ -102,11 +100,7 @@ async function handleSync(req: NextRequest) {
       if (!member) continue
 
       const list = scansByMember.get(member.id) ?? []
-      const start = new Date(ev.start).getTime()
-      const idx = list.findIndex((s) => {
-        const t = new Date(s.created_at).getTime()
-        return t >= start - SCAN_MATCH_BEFORE_MS && t <= start + SCAN_MATCH_AFTER_MS
-      })
+      const idx = matchingScanIndex(list, ev)
 
       if (idx < 0) {
         // Attended in Arbox but no QR scan yet → no coins (blocks buddy check-in).
@@ -116,43 +110,11 @@ async function handleSync(req: NextRequest) {
       }
 
       const scan = list.splice(idx, 1)[0] // consume so it can't match twice
-      const bonus = happyHourBonus(ev, promos)
-      const pts = (rules['class_attended'] ?? 1) + bonus
-
-      await awardPoints(member.id, pts, 'class_attended', {
-        class_name: ev.class_name, branch: ev.branch,
-        arbox_checkin_id: ev.arbox_checkin_id, verified: true,
-        ...(bonus > 0 ? { happy_hour_bonus: bonus } : {}),
-      })
-      coinsAwarded += pts
+      const { coins, referralPaid } = await awardAttendance(db, member, ev, scan.id, rules, promos)
+      coinsAwarded += coins
       verified++
-
-      await db.from('checkins').update({
-        status: 'verified', arbox_checkin_id: ev.arbox_checkin_id,
-        coins_awarded: pts, verified_at: new Date().toISOString(),
-      }).eq('id', scan.id)
-
-      await db.from('processed_checkins').insert({
-        arbox_checkin_id: ev.arbox_checkin_id, member_id: member.id, is_happy_hour: bonus > 0,
-      })
       processed.add(ev.arbox_checkin_id)
-
-      // Streaks count active DAYS — a second class today doesn't advance it,
-      // and doesn't pay the milestone a second time.
-      const { streak: newStreak, milestone } = await registerAttendance(db, member)
-      if (milestone) {
-        const streakPts = rules['streak_10'] ?? 10
-        await awardPoints(member.id, streakPts, 'streak_10', { streak: newStreak })
-        coinsAwarded += streakPts
-      }
-      await checkMonthBonus(member.id, rules, db)
-
-      // First verified class by someone who arrived through a referral link
-      // pays both sides. payReferral is a no-op on later classes.
-      if (member.referred_by && await payReferral(member, 'referral_trial')) {
-        coinsAwarded += (rules['referral_trial'] ?? 50) * 2
-        referralsPaid++
-      }
+      if (referralPaid) referralsPaid++
     }
 
     // ── Late cancellations: break streak, no coins, recorded for the member ──
@@ -201,39 +163,3 @@ async function handleSync(req: NextRequest) {
   return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, errors })
 }
 
-// Bonus coins if the attended class matches an active promoted ("Happy Hour") class
-function happyHourBonus(
-  ev: { class_name: string | null; branch: string | null },
-  promos: { title: string; branch: string | null; bonus_coins: number }[],
-): number {
-  if (!promos.length) return 0
-  const name = (ev.class_name ?? '').toLowerCase()
-  const branch = (ev.branch ?? '').toLowerCase()
-  for (const p of promos) {
-    const titleMatch = p.title && name.includes(p.title.toLowerCase())
-    const branchMatch = !p.branch || branch.includes(p.branch.toLowerCase())
-    if (titleMatch && branchMatch) return p.bonus_coins ?? 0
-  }
-  return 0
-}
-
-async function checkMonthBonus(memberId: string, rules: Record<string, number>, db: any) {
-  const now = new Date()
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
-
-  const { count: classCount } = await db
-    .from('point_ledger').select('*', { count: 'exact', head: true })
-    .eq('member_id', memberId).eq('reason', 'class_attended')
-    .gte('created_at', monthStart).lte('created_at', monthEnd)
-
-  const { count: alreadyAwarded } = await db
-    .from('point_ledger').select('*', { count: 'exact', head: true })
-    .eq('member_id', memberId).eq('reason', 'full_month').gte('created_at', monthStart)
-
-  if ((classCount ?? 0) >= 12 && (alreadyAwarded ?? 0) === 0) {
-    await awardPoints(memberId, rules['full_month'] ?? 30, 'full_month', {
-      month: `${now.getFullYear()}-${now.getMonth() + 1}`,
-    })
-  }
-}

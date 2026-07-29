@@ -5,6 +5,8 @@ import { getLedger, countClassesThisMonth, reasonLabel } from '@/lib/ledger'
 import { getRules } from '@/lib/points'
 import { getCoachView } from '@/lib/coach'
 import CoachCard from '@/components/CoachCard'
+import { reconcileMember, getPendingScans, STALE_PENDING_MS } from '@/lib/reconcile'
+import { Clock, InfoCircle } from 'iconsax-reactjs'
 
 export const dynamic = 'force-dynamic'
 
@@ -46,7 +48,19 @@ function TierCoin({ tier, size = 22 }: { tier: string; size?: number }) {
 }
 
 export default async function HomePage() {
-  const member = (await getCurrentMember()) ?? DEMO_MEMBER
+  let member = (await getCurrentMember()) ?? DEMO_MEMBER
+
+  // A scan waits for Arbox to confirm the class. Try to close that out now
+  // rather than leaving it to tonight's cron, and re-read the member if it
+  // paid, so the balance on screen already includes it.
+  const reconciled = await reconcileMember(member.id)
+  if (reconciled.awarded > 0) member = (await getCurrentMember()) ?? member
+
+  const pending = await getPendingScans(member.id)
+  const stalePending = pending.filter(
+    (p) => Date.now() - new Date(p.created_at).getTime() > STALE_PENDING_MS,
+  ).length
+
   const { name, total_coins, lifetime_coins, tier } = member
   const firstName = name.split(' ')[0]
 
@@ -225,6 +239,33 @@ export default async function HomePage() {
           </Link>
         </div>
       </div>
+
+      {/* ── Pending check-ins ────────────────────── */}
+      {pending.length > 0 && (
+        <div style={{ padding: '12px 16px 0' }}>
+          <div className="clay-sm" style={{ padding: '12px 14px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%', flexShrink: 0, marginTop: 1,
+              background: stalePending > 0 ? 'rgba(180,60,60,0.10)' : 'linear-gradient(150deg,#FBF1E8,#DBB89C)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              {stalePending > 0
+                ? <InfoCircle size={17} variant="Bulk" color="#B43C3C" />
+                : <Clock size={17} variant="Bulk" color="#96613F" />}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 2 }}>
+                {pending.length === 1 ? 'צ׳ק-אין אחד ממתין לאישור' : `${pending.length} צ׳ק-אין ממתינים לאישור`}
+              </p>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11.5, color: '#9C8B7F', lineHeight: 1.45 }}>
+                {stalePending > 0
+                  ? 'הנוכחות עדיין לא סומנה במערכת השיעורים. שווה לפנות לצוות הסטודיו.'
+                  : 'המטבעות ייכנסו ברגע שהנוכחות תסומן במערכת השיעורים.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Coach ────────────────────────────────── */}
       <div style={{ paddingTop: 18 }}>
