@@ -8,6 +8,13 @@ import BirthdayField from './BirthdayField'
 
 const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
+const MENU: { label: string; href?: string }[] = [
+  { label: 'שאלות ותשובות ועזרה', href: '/help' },
+  { label: 'בחירת מאמן אישי',      href: '/coach' },
+  { label: 'התראות ותזכורות' },
+  { label: 'תקנון ותנאי שימוש' },
+]
+
 export default async function ProfilePage() {
   const member = (await getCurrentMember()) ?? DEMO_MEMBER
 
@@ -123,16 +130,29 @@ export default async function ProfilePage() {
           <div style={{ borderBottom: '1px solid #F3EAE3' }}>
             <BirthdayField current={member.birth_date} bonus={birthdayBonus} />
           </div>
-          {['התראות ותזכורות', 'תקנון ותנאי שימוש', 'יצירת קשר עם הסטודיו'].map((label, i) => (
-            <div key={label} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '14px 18px',
-              borderBottom: i < 2 ? '1px solid #F3EAE3' : undefined,
-            }}>
-              <span style={{ fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{label}</span>
-              <ArrowLeft2 size={17} variant="Linear" color="#C0906F" />
-            </div>
-          ))}
+          {MENU.map((item, i) => {
+            const row = (
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '14px 18px',
+                borderBottom: i < MENU.length - 1 ? '1px solid #F3EAE3' : undefined,
+                opacity: item.href ? 1 : 0.45,
+              }}>
+                <span style={{ fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+                  {item.label}
+                  {/* Rows with nowhere to go are dimmed and labelled rather than
+                      looking tappable and doing nothing. */}
+                  {!item.href && (
+                    <span style={{ fontSize: 11, color: '#9C8B7F' }}> · בקרוב</span>
+                  )}
+                </span>
+                <ArrowLeft2 size={17} variant="Linear" color="#C0906F" />
+              </div>
+            )
+            return item.href
+              ? <Link key={item.label} href={item.href} style={{ textDecoration: 'none', display: 'block' }}>{row}</Link>
+              : <div key={item.label}>{row}</div>
+          })}
         </div>
       </div>
 

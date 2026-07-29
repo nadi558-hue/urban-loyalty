@@ -144,3 +144,8 @@ body {
   color: #3B2E27;
   border-bottom: 1px solid rgba(192,144,111,0.18);
 }
+
+/* The help screen uses <details> for its accordions — no client JS needed.
+   Both engines draw their own marker, and neither honours list-style alone. */
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ''; }
