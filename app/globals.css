@@ -27,6 +27,11 @@
      soft clay instead of floating glass. */
   --clay-radius:     30px;
   --clay-radius-sm:  20px;
+
+  /* Clearance for anything pinned to the bottom of a member screen, or the nav
+     covers it. The bar is 67px on a flat viewport, the QR circle protrudes
+     10px above it, and the whole thing grows by the home-indicator inset. */
+  --nav-clearance: calc(92px + env(safe-area-inset-bottom));
   --clay-face:       rgba(251,244,238,0.92);  /* card fill */
   --clay-light:      rgba(255,255,255,0.92);  /* inner top highlight */
   --clay-shade:      rgba(150,110,85,0.16);   /* inner bottom shade */

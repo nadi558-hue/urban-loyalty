@@ -43,7 +43,7 @@ export default function CoachSelectClient(
   }
 
   return (
-    <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3', paddingBottom: 110 }}>
+    <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3', paddingBottom: 'calc(150px + env(safe-area-inset-bottom))' }}>
 
       {/* ── Hero ─────────────────────────────────── */}
       <div style={{
@@ -148,7 +148,7 @@ export default function CoachSelectClient(
 
       {/* ── Sticky confirm ───────────────────────── */}
       <div style={{
-        position: 'fixed', left: 12, right: 12, bottom: 16, zIndex: 40,
+        position: 'fixed', left: 12, right: 12, bottom: 'var(--nav-clearance)', zIndex: 40,
         maxWidth: 420, margin: '0 auto',
       }}>
         <button

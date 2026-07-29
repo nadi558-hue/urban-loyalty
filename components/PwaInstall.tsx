@@ -90,7 +90,7 @@ export default function PwaInstall() {
     <div
       dir="rtl"
       style={{
-        position: 'fixed', left: 12, right: 12, bottom: 12, zIndex: 60,
+        position: 'fixed', left: 12, right: 12, bottom: 'var(--nav-clearance)', zIndex: 60,
         maxWidth: 420, margin: '0 auto',
         background: 'linear-gradient(135deg,#5A473C,#3B2E27)',
         border: '1px solid rgba(192,144,111,0.45)', borderRadius: 18,
