@@ -13,10 +13,15 @@ const COACHES: Coach[] = [
   { id: 'idan', name: 'עידן', tagline: 'הדוחף שלך — נחוש, ממוקד ומעודד' },
 ]
 
+/**
+ * Only the two real choices are offered. 'unspecified' stays the stored
+ * default and keeps its neutral phrasing — most members are imported from
+ * Arbox and will never open this screen, and guessing for them is exactly what
+ * the neutral wording exists to avoid.
+ */
 const GENDER_OPTIONS: { id: Gender; label: string; sample: string }[] = [
-  { id: 'female',      label: 'בלשון נקבה', sample: 'מוכנה?' },
-  { id: 'male',        label: 'בלשון זכר',  sample: 'מוכן?' },
-  { id: 'unspecified', label: 'ניטרלי',     sample: 'מוכנים?' },
+  { id: 'female', label: 'בלשון נקבה', sample: 'מוכנה לזוז?' },
+  { id: 'male',   label: 'בלשון זכר',  sample: 'מוכן לזוז?' },
 ]
 
 export default function CoachSelectClient(
@@ -111,13 +116,13 @@ export default function CoachSelectClient(
 
       {/* ── How the coach should address you ─────── */}
       <div style={{ padding: '22px 16px 0' }}>
-        <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          איך לפנות אליכם
+        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 19, fontWeight: 700, color: '#3B2E27', marginBottom: 3 }}>
+          ואיך לפנות אליכם?
         </p>
-        <p style={{ fontSize: 12.5, color: '#7A6B60', marginBottom: 10, lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          עברית מטה את הפנייה, אז נשמח לדעת. אם לא תבחרו — נשארים בניסוח ניטרלי.
+        <p style={{ fontSize: 12.5, color: '#7A6B60', marginBottom: 11, lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          כדי שההודעות יישמעו טבעיות.
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {GENDER_OPTIONS.map(g => {
             const on = gender === g.id
             return (
