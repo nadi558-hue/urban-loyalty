@@ -23,6 +23,42 @@ export type Member = {
   gender: 'female' | 'male' | 'unspecified'
 }
 
+/** True when a real Supabase project is wired up, as opposed to local demo mode. */
+export function supabaseConfigured(): boolean {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  return Boolean(key) && !key!.includes('placeholder')
+}
+
+/**
+ * Does the signed-in phone belong to an actual member?
+ *
+ * Supabase will send an OTP to any phone number, so passing the login says
+ * nothing about membership. Without this check the screens fall through to
+ * DEMO_MEMBER and show a stranger a fabricated profile — someone else's name
+ * and balance. Cheap on purpose: it selects one column and runs from the
+ * member layout on every page.
+ *
+ * 'demo' means Supabase isn't configured at all, which is the only case where
+ * DEMO_MEMBER is the right answer.
+ */
+export type MemberStatus = 'demo' | 'member' | 'not-a-member' | 'signed-out'
+
+export async function getMemberStatus(): Promise<MemberStatus> {
+  if (!supabaseConfigured()) return 'demo'
+  try {
+    const authClient = await createSupabaseServerClient()
+    const { data: { user } } = await authClient.auth.getUser()
+    if (!user?.phone) return 'signed-out'
+    const db = createServiceClient()
+    const { data } = await db.from('members').select('id').eq('phone', user.phone).maybeSingle()
+    return data ? 'member' : 'not-a-member'
+  } catch {
+    // A lookup failure must not lock a real member out — the pages below
+    // handle a missing member on their own.
+    return 'member'
+  }
+}
+
 // Demo fallback — used locally when Supabase isn't configured, so every
 // screen shows the SAME person instead of drifting mock data.
 export const DEMO_MEMBER: Member = {
@@ -48,10 +84,7 @@ export const DEMO_MEMBER: Member = {
 // Fetch the currently logged-in member. Returns null when Supabase isn't
 // configured (local demo) so callers can fall back to DEMO_MEMBER.
 export async function getCurrentMember(): Promise<Member | null> {
-  if (
-    !process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY.includes('placeholder')
-  ) return null
+  if (!supabaseConfigured()) return null
   try {
     const authClient = await createSupabaseServerClient()
     const { data: { user } } = await authClient.auth.getUser()

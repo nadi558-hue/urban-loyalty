@@ -12,6 +12,7 @@ import {
   awardAttendance, matchingScanIndex, type Promo,
 } from '@/lib/attendance'
 import { grantDateBonuses } from '@/lib/bonuses'
+import { syncPlanMembers, type MemberSyncResult } from '@/lib/member-sync'
 import { payReferral } from '@/lib/referrals'
 import { registerAttendance, breakStreak, runStreakRollover, type RolloverResult, type StreakMember } from '@/lib/streak'
 
@@ -56,6 +57,17 @@ async function handleSync(req: NextRequest) {
 
   let checkInsFound = 0, coinsAwarded = 0, verified = 0, unmatched = 0, lateCancels = 0, referralsPaid = 0
   let errors: string | null = null
+
+  // Import active plan holders first, so someone who joined the studio today
+  // has a member row before their check-ins are reconciled below. This used to
+  // run only when an admin clicked the button in /admin/members, which meant a
+  // new member simply couldn't use the app until someone remembered.
+  let members: MemberSyncResult | null = null
+  try {
+    members = await syncPlanMembers()
+  } catch (e) {
+    errors = e instanceof Error ? e.message : String(e)
+  }
 
   try {
     const [attended, cancellations] = await Promise.all([
@@ -135,7 +147,7 @@ async function handleSync(req: NextRequest) {
       lateCancels++
     }
   } catch (e) {
-    errors = e instanceof Error ? e.message : String(e)
+    errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
   }
 
   // Once-a-year date bonuses. Kept outside the try above so a failure in the
@@ -160,6 +172,6 @@ async function handleSync(req: NextRequest) {
 
   await db.from('sync_log').insert({ check_ins_found: checkInsFound, coins_awarded: coinsAwarded, errors })
 
-  return NextResponse.json({ ok: true, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, errors })
+  return NextResponse.json({ ok: true, members, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, errors })
 }
 
