@@ -74,7 +74,7 @@ export default function ShareClient({
           שתפו וקבלו {bonus} UC
         </h1>
         <p style={{ fontSize: 13, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
-          העלו צילום מסך של סטורי שבו תייגתם אותנו — נאשר ונזכה אתכם. פעם בשבוע.
+          העלו צילום מסך של סטורי שבו תייגתם אותנו — נאשר ונזכה אתכם. פעם בחודש.
         </p>
       </div>
 

@@ -12,7 +12,7 @@ export const DEFAULT_RULES: Record<string, number> = {
   welcome_bonus: 20,          // בונוס הצטרפות לאפליקציה
   referral_trial: 50,         // חבר הגיע לשיעור ניסיון
   referral_subscribed: 50,    // חבר רכש מנוי (גם מפנה וגם מופנה מקבלים)
-  social_share: 7,            // שיתוף סטורי עם תיוג (5-10, ממוצע 7)
+  social_share: 2,            // שיתוף סטורי עם תיוג, פעם בחודש
   birthday: 50,               // יום הולדת
   anniversary: 20,            // שנת חברות בסטודיו
 }
@@ -132,23 +132,3 @@ export function tierMeets(memberTier: string, minTier: string): boolean {
   return (TIER_RANK[memberTier] ?? 0) >= (TIER_RANK[minTier] ?? 0)
 }
 
-// Check if a weekly social share has already been awarded this week
-export async function canAwardSocialShare(memberId: string): Promise<boolean> {
-  try {
-    const db = createServiceClient()
-    const weekStart = new Date()
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay())
-    weekStart.setHours(0, 0, 0, 0)
-
-    const { count } = await db
-      .from('point_ledger')
-      .select('*', { count: 'exact', head: true })
-      .eq('member_id', memberId)
-      .eq('reason', 'social_share')
-      .gte('created_at', weekStart.toISOString()) as { count: number | null }
-
-    return (count ?? 0) === 0
-  } catch {
-    return false
-  }
-}

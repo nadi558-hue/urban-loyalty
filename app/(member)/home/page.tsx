@@ -16,7 +16,7 @@ const MONTH_GOAL = 12
 // The two earning routes that have no other way in — /share was only reachable
 // from /referrals, and nothing linked to /referrals at all.
 const EARN = [
-  { Icon: Instagram, title: 'שיתוף סטורי', href: '/share', reward: '+7 UC', note: 'תייגו אותנו בסטורי ושלחו צילום מסך' },
+  { Icon: Instagram, title: 'שיתוף סטורי', href: '/share', reward: '+2 UC', note: 'תייגו אותנו בסטורי ושלחו צילום מסך' },
   { Icon: Profile2User, title: 'חבר מביא חבר', href: '/referrals', reward: '+50 UC', note: 'שתפו את הקוד האישי שלכם' },
 ]
 

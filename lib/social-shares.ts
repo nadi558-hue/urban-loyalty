@@ -1,7 +1,7 @@
 import { createServiceClient } from '@/lib/supabase'
 
 export const SHARE_BUCKET = 'social-shares'
-export const COOLDOWN_DAYS = 7
+export const COOLDOWN_DAYS = 30
 
 export type ShareStatus = 'pending' | 'approved' | 'rejected'
 
@@ -27,7 +27,7 @@ export type ShareEligibility = {
  * Whether this member may submit a story right now.
  *
  * Two gates: one submission may be awaiting review at a time, and an approved
- * one starts a 7-day cooldown. Rejected submissions don't count against either,
+ * one starts a 30-day cooldown. Rejected submissions don't count against either,
  * so a member whose screenshot was unclear can retry immediately.
  */
 export async function checkEligibility(memberId: string): Promise<ShareEligibility> {

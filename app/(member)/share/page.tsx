@@ -14,7 +14,7 @@ export default async function SharePage() {
   ])
   return (
     <ShareClient
-      bonus={rules['social_share'] ?? 7}
+      bonus={rules['social_share'] ?? 2}
       eligibility={eligibility}
       history={history}
     />

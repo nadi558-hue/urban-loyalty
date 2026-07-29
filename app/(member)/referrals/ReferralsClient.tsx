@@ -196,7 +196,7 @@ export default function ReferralsClient({
               style={{ color: '#96613F', fontWeight: 700 }}>
               @urban_studio_official
             </a>
-            {' '}ושתף כאן – קבל 7 UC (פעם בשבוע)
+            {' '}ושתף כאן – קבל 2 UC (פעם בחודש)
           </p>
           <Link href="/share"
             className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"

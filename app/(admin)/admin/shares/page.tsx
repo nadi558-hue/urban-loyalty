@@ -47,7 +47,7 @@ async function approve(formData: FormData) {
   const row = claimed?.[0]
   if (!row) return
 
-  const points = (await getRules())['social_share'] ?? 7
+  const points = (await getRules())['social_share'] ?? 2
   await awardPoints(row.member_id, points, 'social_share', { share_id: id })
   await db.from('social_shares').update({ coins_awarded: points }).eq('id', id)
 

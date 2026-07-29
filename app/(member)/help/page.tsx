@@ -34,7 +34,7 @@ const RULE_HINTS: Record<string, string> = {
   happy_hour:          'בשיעורים המסומנים כ-Happy Hour',
   streak_10:           'על כל 10 שיעורים רצופים, בלי ביטול מאוחר',
   full_month:          '12 שיעורים ומעלה בחודש קלנדרי',
-  social_share:        'תיוג הסטודיו בסטורי, פעם בשבוע',
+  social_share:        'תיוג הסטודיו בסטורי, פעם בחודש',
   referral_trial:      'חברה שהבאתם הגיעה לשיעור ניסיון',
   referral_subscribed: 'חברה שהבאתם רכשה מנוי',
   welcome_bonus:       'פעם אחת, בכניסה הראשונה לאפליקציה',
