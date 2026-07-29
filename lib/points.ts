@@ -50,17 +50,13 @@ export const TIER_NEXT: Record<string, number> = {
   platinum: Infinity,
 }
 
+// What each tier unlocks, phrased only in terms of things the rewards catalog
+// actually enforces (min_tier). Don't promise anything here that a member
+// can't redeem in the app.
 export const TIER_PERKS: Record<string, string> = {
-  silver:   'הנחה 5% על מנויים + עדיפות הרשמה לסדנאות',
-  gold:     'הנחה 10% + כניסה חינם לסדנה מיוחדת כל 3 חודשים',
-  platinum: 'הנחה 15% + סדנה חודשית + כרטיסייה VIP',
-}
-
-// ─── Reward costs (Urban Coins) ────────────────────────────────────────────
-export const REWARD_COSTS = {
-  credit_25: 30,       // 25₪ קרדיט למנוי הבא
-  workshop: 40,        // כניסה לסדנה מיוחדת
-  discount_10pct: 100, // 10% הנחה על חידוש מנוי
+  silver:   'גישה להטבות הבסיס במסך ההטבות',
+  gold:     'גישה להטבות זהב: 10% הנחה על חידוש + שריון VIP שבועיים מראש',
+  platinum: 'כל הטבות הזהב + הטבות פלטינום שיתווספו בהמשך',
 }
 
 export async function getRules(): Promise<Record<string, number>> {

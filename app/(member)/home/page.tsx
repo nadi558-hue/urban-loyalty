@@ -107,9 +107,11 @@ export default async function HomePage() {
   const arcColor = tier === 'platinum' ? '#c0c0d8' : tier === 'gold' ? '#C0906F' : '#C0906F'
 
   // Tier perk for next tier
-  const nextPerk = tier === 'silver' ? '10% הנחה + כניסה חינם לסדנה מיוחדת כל 3 חודשים' : tier === 'gold' ? '15% הנחה + סדנה חודשית + כרטיסייה VIP' : ''
-  const nextPerkTile1 = tier === 'silver' ? '10%' : '15%'
-  const nextPerkTile2 = tier === 'silver' ? { value: 'סדנה', label: 'חינם כל 3 חוד׳' } : { value: 'VIP', label: 'כרטיסייה ייחודית' }
+  // What the next tier actually unlocks — the gold-gated rewards, not display
+  // promises. Anything shown here must exist in the rewards catalog.
+  const nextPerk = tier === 'silver'
+  const nextPerkTile1 = { value: '10%', label: 'הנחה על החידוש הבא' }
+  const nextPerkTile2 = { value: 'VIP', label: 'שריון שבועיים מראש' }
 
   return (
     <main className="max-w-md mx-auto" style={{ minHeight: '100dvh', background: '#F1E9E3' }}>
@@ -328,8 +330,8 @@ export default async function HomePage() {
             {nextPerk && (
               <div style={{ marginTop: 12, display: 'flex', gap: 16 }}>
                 <div className="clay-inset" style={{ flex: 1, textAlign: 'center', padding: '8px 4px' }}>
-                  <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile1}</p>
-                  <p style={{ fontSize: 10, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>הנחה קבועה</p>
+                  <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile1.value}</p>
+                  <p style={{ fontSize: 10, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextPerkTile1.label}</p>
                 </div>
                 <div className="clay-inset" style={{ flex: 1, textAlign: 'center', padding: '8px 4px' }}>
                   <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile2.value}</p>
