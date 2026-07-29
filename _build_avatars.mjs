@@ -34,11 +34,57 @@ function keyWhite(data, ch) {
   }
 }
 
-async function keyed(file, key) {
+/**
+ * Remove the white rim a hard key leaves behind.
+ *
+ * The backdrop key is a yes/no test, but the pixels along the outline are
+ * blends of the figure and the backdrop. Keeping the threshold tight enough to
+ * protect sparkles and skin highlights means those blended pixels stay fully
+ * opaque and near-white, which reads as a cut-out halo once the figure sits on
+ * the app's sand background.
+ *
+ * A near-white pixel touching transparency is treated as partial coverage:
+ * how far it is from pure white becomes its alpha, and the colour is
+ * un-blended back out of the white it was mixed with. Two passes, because the
+ * rim is up to two pixels wide, and only outward from existing transparency so
+ * highlights inside the figure are never touched.
+ */
+function deFringeWhite(data, w, h, ch, { lo = 228, passes = 2 } = {}) {
+  const alphaAt = (x, y) => data[(y * w + x) * ch + 3]
+  for (let pass = 0; pass < passes; pass++) {
+    const edits = []
+    for (let y = 1; y < h - 1; y++) {
+      for (let x = 1; x < w - 1; x++) {
+        const i = (y * w + x) * ch
+        if (data[i + 3] < 250) continue
+        const touchesHole =
+          alphaAt(x - 1, y) < 40 || alphaAt(x + 1, y) < 40 ||
+          alphaAt(x, y - 1) < 40 || alphaAt(x, y + 1) < 40
+        if (!touchesHole) continue
+        const r = data[i], g = data[i + 1], b = data[i + 2]
+        const lum = 0.299 * r + 0.587 * g + 0.114 * b
+        if (lum < lo) continue
+        const a = Math.max(0, Math.min(1, (255 - lum) / (255 - lo)))
+        edits.push([i, a])
+      }
+    }
+    // Applied after the sweep so one pass can't cascade into itself.
+    for (const [i, a] of edits) {
+      if (a <= 0.02) { data[i + 3] = 0; continue }
+      for (let k = 0; k < 3; k++) {
+        data[i + k] = Math.max(0, Math.min(255, Math.round((data[i + k] - 255 * (1 - a)) / a)))
+      }
+      data[i + 3] = Math.round(255 * a)
+    }
+  }
+}
+
+async function keyed(file, key, defringe = false) {
   const { data, info } = await sharp(SRC + file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
-  key(data, info.channels)
-  return sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
-    .png().toBuffer()
+  const { width, height, channels } = info
+  key(data, channels)
+  if (defringe) deFringeWhite(data, width, height, channels)
+  return sharp(data, { raw: { width, height, channels } }).png().toBuffer()
 }
 
 /**
@@ -82,6 +128,31 @@ async function cleanEdges(buf) {
     for (let y = 0; y < h; y++) data[(y * w + x) * ch + 3] = 0
   }
 
+  // Same problem vertically: the row above leaves a strip of legs or a foot
+  // along the top of the crop. Only a band that runs into the very top edge is
+  // treated as bleed — a figure's own head is part of the main mass, and the
+  // crown over level_up floats clear of the edge, so neither is a candidate.
+  // Cleared rather than cropped, so every pose keeps the shared baseline.
+  const rowMass = new Array(h).fill(0)
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) if (data[(y * w + x) * ch + 3] > 10) rowMass[y]++
+  }
+  const bands = []
+  for (let y = 0, start = -1; y <= h; y++) {
+    if (y < h && rowMass[y] > 0) { if (start < 0) start = y }
+    else if (start >= 0) { bands.push([start, y]); start = -1 }
+  }
+  if (bands.length > 1) {
+    const bandMass = bands.map(([a, b]) => rowMass.slice(a, b).reduce((s, v) => s + v, 0))
+    const biggest = Math.max(...bandMass)
+    bands.forEach(([a, b], i) => {
+      if (a !== 0 || bandMass[i] >= biggest * 0.2) return
+      for (let y = a; y < b; y++) {
+        for (let x = 0; x < w; x++) data[(y * w + x) * ch + 3] = 0
+      }
+    })
+  }
+
   return sharp(data, { raw: { width: w, height: h, channels: ch } })
     .extract({ left, top: 0, width: right - left, height: h })
     .png({ compressionLevel: 9 })
@@ -89,8 +160,8 @@ async function cleanEdges(buf) {
 }
 
 /** Even grid — poses share a cell size, so scale and baseline match. */
-async function buildGrid({ file, key, cols, rows, names, outDir }) {
-  const img = await keyed(file, key)
+async function buildGrid({ file, key, cols, rows, names, outDir, defringe }) {
+  const img = await keyed(file, key, defringe)
   const { width, height } = await sharp(img).metadata()
   const cw = Math.floor(width / cols)
   const ch = Math.floor(height / rows)
@@ -162,7 +233,8 @@ const P16 = [
 ]
 
 await buildGrid({ file: 'maya sheet 1.png', key: keyGreen, cols: 4, rows: 4, names: P16, outDir: 'maya' })
-await buildGrid({ file: 'sara sheet 1.png', key: keyWhite, cols: 4, rows: 4, names: P16, outDir: 'sara' })
+// The white sheet needs the extra de-fringe pass; the green ones key clean.
+await buildGrid({ file: 'sara sheet 1.png', key: keyWhite, cols: 4, rows: 4, names: P16, outDir: 'sara', defringe: true })
 
 // idan's second sheet is a clean separated 4x4, but the four rows sit at
 // different heights and the vertical gaps between them are only ~50px — an
