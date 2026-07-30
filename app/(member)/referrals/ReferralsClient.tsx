@@ -88,7 +88,7 @@ export default function ReferralsClient({
               מזמינים חברה, מרוויחים יחד
             </p>
             <p style={{ fontSize: 12.5, lineHeight: 1.6, color: '#6F625A', fontFamily: 'var(--font-assistant,sans-serif)' }}>
-              על כל חבר/ה שמצטרף/ת ומתאמן/ת — שניכם מקבלים <strong style={{ color: '#96613F' }}>50 UC</strong>
+              על כל חבר/ה שמצטרף/ת ורוכש/ת מנוי — שניכם מקבלים <strong style={{ color: '#96613F' }}>60 UC</strong>
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -141,7 +141,7 @@ export default function ReferralsClient({
           <div className="space-y-3">
             {[
               { step: '1', text: 'שלח לחבר את הלינק האישי שלך' },
-              { step: '2', text: 'חברך מגיע לשיעור ניסיון → שניכם מקבלים 50 UC מיידי' },
+              { step: '2', text: 'חברך מגיע לשיעור ניסיון → שניכם מקבלים 10 UC מיידי' },
               { step: '3', text: 'חברך רוכש מנוי → שניכם מקבלים עוד 50 UC בונוס!' },
             ].map(({ step, text }) => (
               <div key={step} className="flex items-start gap-3">

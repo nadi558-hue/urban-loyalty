@@ -126,7 +126,7 @@ INSERT INTO point_rules (key, points, description) VALUES
   ('weekly_superstar',    2,  'בונוס נוסף על 5+ שיעורים באותו שבוע'),
   ('happy_hour',          1,  'כפל מטבעות בשיעור Happy Hour (+1 נוסף)'),
   ('welcome_bonus',       20, 'בונוס הצטרפות לאפליקציה'),
-  ('referral_trial',      50, 'חבר הגיע לשיעור ניסיון'),
+  ('referral_trial',      10, 'חבר הגיע לשיעור ניסיון'),
   ('referral_subscribed', 50, 'חבר רכש מנוי (גם מפנה וגם מופנה)'),
   ('social_share',        2,  'שיתוף סטורי עם תיוג הסטודיו (פעם בחודש)'),
   ('birthday',            50, 'מתנת יום הולדת'),
