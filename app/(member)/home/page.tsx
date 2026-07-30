@@ -205,11 +205,11 @@ export default async function HomePage() {
         {/* To next label */}
         {toNext > 0 && (
           <p style={{
-            display: 'flex', alignItems: 'center', gap: 5,
+            display: 'flex', alignItems: 'center', gap: 5, direction: 'rtl',
             fontSize: 12, color: '#7A6B60', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)',
           }}>
-            עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName}
             <Star1 size={13} variant="Bulk" color="#C0906F" />
+            עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName}
           </p>
         )}
       </div>
