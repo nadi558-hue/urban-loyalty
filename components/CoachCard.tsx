@@ -10,15 +10,23 @@ import { Flash, Setting2 } from 'iconsax-reactjs'
  * down — the sliced PNGs already share a baseline, so this reads as one
  * character moving rather than several images of different sizes.
  */
+/** Three sparkles around the figure on a milestone, staggered so they read as a
+ *  burst rather than one flash. Gold, small, and gone in under two seconds. */
+const SPARKLES = [
+  { at: { top: 6,  right: 2  }, size: 15, delay: 0   },
+  { at: { top: 34, left: -4  }, size: 11, delay: 180 },
+  { at: { top: 62, right: 12 }, size: 9,  delay: 340 },
+] as const
+
 export default function CoachCard({ view }: { view: CoachView }) {
   const { image, message, pose, streak, coach, isMilestone } = view
 
   return (
-    <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'flex-end', gap: 2, padding: '0 16px' }}>
+    <div className="coach-stage" style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'flex-end', gap: 2, padding: '0 16px' }}>
 
       {/* Speech bubble */}
       <div style={{ flex: 1, paddingBottom: 26 }}>
-        <div className="clay-sm" style={{ padding: '12px 14px', position: 'relative' }}>
+        <div className="clay-sm coach-bubble" style={{ padding: '12px 14px', position: 'relative' }}>
           {(streak > 0 || isMilestone) && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 5 }}>
               <Flash size={14} variant="Bulk" color="#C0906F" />
@@ -57,13 +65,27 @@ export default function CoachCard({ view }: { view: CoachView }) {
         </Link>
       </div>
 
-      {/* The coach */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={image} alt={`${COACH_NAMES[coach]} — ${pose}`}
-        style={{
-          height: 190, width: 'auto', objectFit: 'contain', objectPosition: 'bottom',
-          flexShrink: 0, filter: 'drop-shadow(0 8px 14px rgba(59,46,39,0.22))',
-        }} />
+      {/* The coach. The animation lives on this element alone so the entrance on
+          the wrapper and the breathing loop here don't overwrite each other's
+          transform. */}
+      <div style={{ position: 'relative', flexShrink: 0 }}>
+        {isMilestone && SPARKLES.map((sp, i) => (
+          <span key={i} aria-hidden className="coach-sparkle" style={{
+            position: 'absolute', ...sp.at, fontSize: sp.size, lineHeight: 1, color: '#C0906F',
+            animationDelay: `${sp.delay}ms`, pointerEvents: 'none',
+          }}>✦</span>
+        ))}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={`coach-figure${isMilestone ? ' is-milestone' : ''}`}
+          src={image}
+          alt={`${COACH_NAMES[coach]} — ${pose}`}
+          style={{
+            height: 190, width: 'auto', objectFit: 'contain', objectPosition: 'bottom',
+            display: 'block', filter: 'drop-shadow(0 8px 14px rgba(59,46,39,0.22))',
+          }}
+        />
+      </div>
     </div>
   )
 }

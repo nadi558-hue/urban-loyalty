@@ -149,3 +149,61 @@ body {
    Both engines draw their own marker, and neither honours list-style alone. */
 summary::-webkit-details-marker { display: none; }
 summary::marker { content: ''; }
+
+/* ── Coach motion ──────────────────────────────────
+   The coach is a flat PNG, so the life has to come from how it's moved rather
+   than from frames. Three layers compose without fighting each other: the
+   wrapper handles entrance, the figure breathes, and a milestone adds a single
+   celebratory beat before settling into the breathing loop.
+
+   Deliberately small numbers — a few pixels and a percent of scale. At
+   watercolour-illustration scale anything larger reads as a bouncing sticker
+   and cheapens the whole screen. */
+
+@keyframes coach-enter {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes coach-breathe {
+  0%, 100% { transform: translateY(0)    scale(1);     }
+  50%      { transform: translateY(-3px) scale(1.012); }
+}
+
+/* One beat on hitting a milestone: up, over-settle, rest. */
+@keyframes coach-celebrate {
+  0%   { transform: translateY(0)     rotate(0deg);    }
+  22%  { transform: translateY(-15px) rotate(-1.8deg); }
+  45%  { transform: translateY(2px)   rotate(0.8deg);  }
+  65%  { transform: translateY(-6px)  rotate(-0.5deg); }
+  100% { transform: translateY(0)     rotate(0deg);    }
+}
+
+@keyframes bubble-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes sparkle-pop {
+  0%   { opacity: 0; transform: scale(0.4) translateY(0);     }
+  35%  { opacity: 1; transform: scale(1)   translateY(-8px);  }
+  100% { opacity: 0; transform: scale(0.7) translateY(-22px); }
+}
+
+.coach-stage  { animation: coach-enter 620ms cubic-bezier(.22,1,.36,1) both; }
+.coach-figure { animation: coach-breathe 4.6s ease-in-out infinite; will-change: transform; }
+.coach-figure.is-milestone {
+  animation:
+    coach-celebrate 1150ms cubic-bezier(.34,1.4,.64,1) 220ms both,
+    coach-breathe 4.6s ease-in-out 1370ms infinite;
+}
+.coach-bubble { animation: bubble-enter 520ms cubic-bezier(.22,1,.36,1) 180ms both; }
+.coach-sparkle { animation: sparkle-pop 1400ms ease-out 420ms both; }
+
+/* Motion here is decoration; the pose and the message already carry the state. */
+@media (prefers-reduced-motion: reduce) {
+  .coach-stage, .coach-figure, .coach-figure.is-milestone,
+  .coach-bubble, .coach-sparkle {
+    animation: none;
+  }
+}
