@@ -24,7 +24,8 @@ function fmt(iso: string) {
 
 /** Rules worth explaining, in the order a member meets them. */
 const RULE_ORDER = [
-  'class_attended', 'happy_hour', 'streak_10', 'half_month', 'full_month',
+  'class_attended', 'happy_hour', 'streak_10',
+  'weekly_strong', 'weekly_superstar', 'half_month', 'full_month',
   'social_share', 'referral_trial', 'referral_subscribed',
   'welcome_bonus', 'birthday', 'anniversary',
 ]
@@ -33,6 +34,8 @@ const RULE_HINTS: Record<string, string> = {
   class_attended:      'על כל שיעור שנסרק ואומת',
   happy_hour:          'בשיעורים המסומנים כ-Happy Hour',
   streak_10:           'על כל 10 שיעורים רצופים, בלי ביטול מאוחר',
+  weekly_strong:       '4 שיעורים ומעלה באותו שבוע',
+  weekly_superstar:    '5 שיעורים ומעלה באותו שבוע — בנוסף לבונוס השבועי',
   half_month:          '8 שיעורים ומעלה בחודש קלנדרי',
   full_month:          '12 שיעורים ומעלה בחודש קלנדרי',
   social_share:        'תיוג הסטודיו בסטורי, פעם בחודש',

@@ -105,15 +105,25 @@ CREATE TABLE IF NOT EXISTS sync_log (
 );
 
 -- ─── Default coin rules ────────────────────────────────────────────────────
--- Rebalanced: class_attended carries the incentive to attend at all, and
--- half_month gives a 2x/week member a bonus of their own instead of missing
--- the old single cliff at 12 classes by a wide margin. See migration_tiers.sql
--- for the reasoning and the full frequency table.
+-- class_attended is a simple flat rate; the shape of the incentive lives in
+-- two independent bonus layers instead of one per-class multiplier:
+--   half_month/full_month  — two monthly thresholds (8 / 12 classes) rather
+--                            than one cliff at 12, so a 2x/week member has a
+--                            bonus of their own instead of missing every one.
+--   weekly_strong/superstar — the only mechanism that specifically rewards
+--                            4 or 5 classes in the SAME week; past the
+--                            monthly cliffs every extra class was otherwise
+--                            worth the same as any other.
+-- Modeled annual ceiling (never misses a week), 1x-5x/week:
+-- 102 / 284 / 486 / 692 / 908 coins. See migration_tiers.sql for the full
+-- reasoning and the tier-reachability table.
 INSERT INTO point_rules (key, points, description) VALUES
-  ('class_attended',      3,  'Urban Coin לכל שיעור שהושלם'),
+  ('class_attended',      1,  'Urban Coin לכל שיעור שהושלם'),
   ('streak_10',           10, 'בונוס על 10 שיעורים רצופים ללא ביטול'),
-  ('half_month',          12, 'בונוס חצי חודש – 8+ שיעורים'),
-  ('full_month',          30, 'בונוס חודש מלא – 12+ שיעורים'),
+  ('half_month',          8,  'מתמידה — בונוס על 8+ שיעורים בחודש קלנדרי'),
+  ('full_month',          10, 'מתקדמת — בונוס על 12+ שיעורים בחודש קלנדרי'),
+  ('weekly_strong',       2,  'בונוס על 4+ שיעורים באותו שבוע'),
+  ('weekly_superstar',    2,  'בונוס נוסף על 5+ שיעורים באותו שבוע'),
   ('happy_hour',          1,  'כפל מטבעות בשיעור Happy Hour (+1 נוסף)'),
   ('welcome_bonus',       20, 'בונוס הצטרפות לאפליקציה'),
   ('referral_trial',      50, 'חבר הגיע לשיעור ניסיון'),
@@ -121,19 +131,19 @@ INSERT INTO point_rules (key, points, description) VALUES
   ('social_share',        2,  'שיתוף סטורי עם תיוג הסטודיו (פעם בחודש)'),
   ('birthday',            50, 'מתנת יום הולדת'),
   ('anniversary',         20, 'שנת חברות בסטודיו')
-ON CONFLICT (key) DO UPDATE SET points = EXCLUDED.points;
+ON CONFLICT (key) DO UPDATE SET points = EXCLUDED.points, description = EXCLUDED.description;
 
 -- ─── Default rewards catalog (matches the app UI) ─────────────────────────
--- Prices scale with the rebalanced class value above. The two premium rewards
--- are gold-gated (see migration_tiers.sql for rewards.min_tier) and priced so
--- an active Gold member redeems each roughly once a quarter, not weekly.
+-- Prices scale with the rebalanced income above. The two premium rewards are
+-- gold-gated (see migration_tiers.sql for rewards.min_tier) and priced so an
+-- active Gold member redeems each every few months, not weekly.
 INSERT INTO rewards (name, description, cost_coins, reward_type, emoji) VALUES
-  ('הקפצה בראש רשימת המתנה',          'קפיצה לראש רשימת ההמתנה בשיעור מלא',                       60,  'priority', '⤴️'),
-  ('שריון מוקדם · שבוע מראש',          'פתיחת מערכת השעות שבוע לפני כולם',                          110, 'priority', '📅'),
-  ('5% הנחה · חידוש מנוי או כרטיסייה',  '5% הנחה על החידוש הבא (מנוי פעיל 3+ חודשים)',              140, 'discount', '💫'),
-  ('10% הנחה · חידוש מנוי או כרטיסייה', '10% הנחה על החידוש הבא (מנוי פעיל 3+ חודשים)',             400, 'discount', '💰'),
-  ('שריון VIP · שבועיים מראש',          'פתיחת מערכת השעות שבועיים לפני כולם',                       330, 'priority', '⭐'),
-  ('שיעור בודד מעבר למכסה',            'שיעור נוסף מעבר למכסת המנוי החודשי',                        370, 'class',    '🎫')
+  ('הקפצה בראש רשימת המתנה',          'קפיצה לראש רשימת ההמתנה בשיעור מלא',                       30,  'priority', '⤴️'),
+  ('שריון מוקדם · שבוע מראש',          'פתיחת מערכת השעות שבוע לפני כולם',                          50,  'priority', '📅'),
+  ('5% הנחה · חידוש מנוי או כרטיסייה',  '5% הנחה על החידוש הבא (מנוי פעיל 3+ חודשים)',              60,  'discount', '💫'),
+  ('10% הנחה · חידוש מנוי או כרטיסייה', '10% הנחה על החידוש הבא (מנוי פעיל 3+ חודשים)',             260, 'discount', '💰'),
+  ('שריון VIP · שבועיים מראש',          'פתיחת מערכת השעות שבועיים לפני כולם',                       200, 'priority', '⭐'),
+  ('שיעור בודד מעבר למכסה',            'שיעור נוסף מעבר למכסת המנוי החודשי',                        160, 'class',    '🎫')
 ON CONFLICT (name) DO UPDATE SET
   description = EXCLUDED.description,
   cost_coins  = EXCLUDED.cost_coins,

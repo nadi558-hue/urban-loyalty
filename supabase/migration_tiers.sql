@@ -14,6 +14,13 @@
 --
 -- Safe to run more than once. Nothing is deleted; qualifying_coins is seeded
 -- from the ledger so nobody is demoted by the migration itself.
+--
+-- Thresholds (Gold 250, Platinum 650) are calibrated against the rebalanced
+-- economy in lib/points.ts / schema.sql: a member who never misses a week
+-- earns an annual 102/284/486/692/908 coins at 1x-5x/week. Gold is reachable
+-- within a year from 2x/week and faster above that; Platinum needs sustained
+-- 4x (~11mo) or 5x (~9mo) — a stretch at 3x (~16mo, effectively out of reach
+-- inside the 12-month qualifying window) and out of reach below that.
 
 -- ── Part 1: rewards can require a tier ───────────────────────────────────
 ALTER TABLE rewards
@@ -45,10 +52,10 @@ UPDATE members m
 -- The nightly review takes over from here, and any drop happens only after the
 -- notice period the terms describe.
 UPDATE members
-   SET qualifying_coins = GREATEST(qualifying_coins, 1200)
+   SET qualifying_coins = GREATEST(qualifying_coins, 650)
  WHERE tier = 'platinum';
 UPDATE members
-   SET qualifying_coins = GREATEST(qualifying_coins, 400)
+   SET qualifying_coins = GREATEST(qualifying_coins, 250)
  WHERE tier = 'gold';
 
 -- ── Verification ─────────────────────────────────────────────────────────

@@ -49,10 +49,11 @@ export function happyHourBonus(
 /**
  * Two monthly thresholds rather than one. A single cliff at 12 classes paid a
  * 2x/week member (~9 classes) almost nothing next to a 3x/week member (~13) —
- * 44% more attendance for over 3x the coins. half_month at 8 classes gives the
- * twice-a-week member a bonus of their own instead of a rounding error.
+ * 44% more attendance for over 3x the coins. half_month at 8 classes ("מתמידה")
+ * gives the twice-a-week member a bonus of their own instead of a rounding
+ * error, ahead of full_month ("מתקדמת") at 12.
  */
-export async function checkMonthBonus(memberId: string, rules: Record<string, number>, db: any) {
+export async function checkMonthBonus(memberId: string, rules: Record<string, number>, db: any): Promise<number> {
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
@@ -64,19 +65,75 @@ export async function checkMonthBonus(memberId: string, rules: Record<string, nu
     .gte('created_at', monthStart).lte('created_at', monthEnd)
   const n = classCount ?? 0
 
-  const alreadyAwarded = async (reason: string) => {
+  const alreadyAwarded = async (reason: string, since: string) => {
     const { count } = await db
       .from('point_ledger').select('*', { count: 'exact', head: true })
-      .eq('member_id', memberId).eq('reason', reason).gte('created_at', monthStart)
+      .eq('member_id', memberId).eq('reason', reason).gte('created_at', since)
     return (count ?? 0) > 0
   }
 
-  if (n >= 8 && !(await alreadyAwarded('half_month'))) {
-    await awardPoints(memberId, rules['half_month'] ?? 12, 'half_month', { month })
+  let awarded = 0
+  if (n >= 8 && !(await alreadyAwarded('half_month', monthStart))) {
+    const pts = rules['half_month'] ?? 8
+    await awardPoints(memberId, pts, 'half_month', { month })
+    awarded += pts
   }
-  if (n >= 12 && !(await alreadyAwarded('full_month'))) {
-    await awardPoints(memberId, rules['full_month'] ?? 30, 'full_month', { month })
+  if (n >= 12 && !(await alreadyAwarded('full_month', monthStart))) {
+    const pts = rules['full_month'] ?? 10
+    await awardPoints(memberId, pts, 'full_month', { month })
+    awarded += pts
   }
+  return awarded
+}
+
+/** Sunday-start week containing `d`, as an ISO string — the boundary used for
+ *  both counting this week's classes and scoping "already awarded this week". */
+function weekStart(d: Date): string {
+  const start = new Date(d)
+  start.setHours(0, 0, 0, 0)
+  start.setDate(start.getDate() - start.getDay())
+  return start.toISOString()
+}
+
+/**
+ * Two more thresholds, this time inside the week rather than the month — the
+ * mechanism that actually rewards training 4 or 5 times a week instead of 3.
+ * A flat per-class rate can't do that on its own: past the monthly cliffs,
+ * every extra class was worth the same as every other one, so there was
+ * nothing that specifically favoured the top end of frequency. Deliberately
+ * NOT priced by "which numbered class this is" — that would depend on
+ * processing order across a batch of same-day reconciliations, and a member
+ * would see the same class pay differently depending on what else was in that
+ * run. A weekly count is stable regardless of order.
+ */
+export async function checkWeekBonus(memberId: string, rules: Record<string, number>, db: any): Promise<number> {
+  const since = weekStart(new Date())
+
+  const { count: classCount } = await db
+    .from('point_ledger').select('*', { count: 'exact', head: true })
+    .eq('member_id', memberId).eq('reason', 'class_attended')
+    .gte('created_at', since)
+  const n = classCount ?? 0
+
+  const alreadyAwarded = async (reason: string) => {
+    const { count } = await db
+      .from('point_ledger').select('*', { count: 'exact', head: true })
+      .eq('member_id', memberId).eq('reason', reason).gte('created_at', since)
+    return (count ?? 0) > 0
+  }
+
+  let awarded = 0
+  if (n >= 4 && !(await alreadyAwarded('weekly_strong'))) {
+    const pts = rules['weekly_strong'] ?? 2
+    await awardPoints(memberId, pts, 'weekly_strong', { week: since })
+    awarded += pts
+  }
+  if (n >= 5 && !(await alreadyAwarded('weekly_superstar'))) {
+    const pts = rules['weekly_superstar'] ?? 2
+    await awardPoints(memberId, pts, 'weekly_superstar', { week: since })
+    awarded += pts
+  }
+  return awarded
 }
 
 /** Index of the pending scan that matches this class, or -1. */
@@ -138,7 +195,8 @@ export async function awardAttendance(
     coins += streakPts
   }
 
-  await checkMonthBonus(member.id, rules, db)
+  coins += await checkMonthBonus(member.id, rules, db)
+  coins += await checkWeekBonus(member.id, rules, db)
 
   // First verified class by someone who arrived through a referral link pays
   // both sides. payReferral is a no-op on later classes.

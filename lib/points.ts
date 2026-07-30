@@ -4,15 +4,30 @@ import { createServiceClient } from './supabase'
 // 1 Urban Coin = per class attended (base)
 // Bonuses and special events add on top
 
-// A rebalance: class value carries the incentive to attend at all, and a
-// second monthly bonus at the halfway point smooths what used to be a single
-// cliff at 12 classes — someone training twice a week no longer earns a
-// rounding error next to someone training three times.
+// A rebalance in two layers, modeled against attendance frequency rather than
+// picked by feel:
+//
+//   class_attended  the base rate — every class counts, at a simple 1 coin.
+//   half_month /    two monthly thresholds instead of one cliff at 12 classes.
+//   full_month      A 2x/week member (~9 classes) used to earn almost nothing
+//                   next to 3x/week (~13) — 44% more attendance for 3x+ the
+//                   coins. half_month at 8 classes ("מתמידה") gives the
+//                   twice-a-week member a bonus of their own, ahead of
+//                   full_month at 12 ("מתקדמת").
+//   weekly_strong / actual acceleration for training 4 or 5 times in the SAME
+//   weekly_superstar week, which nothing else here rewards — past the monthly
+//                   cliffs every extra class was worth the same as any other.
+//
+// Modeled annual ceiling for a member who never misses a week, class 1-5x:
+// 102 / 284 / 486 / 692 / 908 coins — smoothly and increasingly accelerating
+// at every step (marginal gain per added weekly class: 182, 202, 206, 216).
 export const DEFAULT_RULES: Record<string, number> = {
-  class_attended: 3,          // כל שיעור שהושלם
-  streak_10: 10,              // 10 שיעורים רצופים ללא ביטול
-  half_month: 12,             // 8+ שיעורים בחודש קלנדרי
-  full_month: 30,             // 12+ שיעורים בחודש קלנדרי
+  class_attended: 1,          // כל שיעור שהושלם
+  streak_10: 10,               // 10 שיעורים רצופים ללא ביטול
+  half_month: 8,               // מתמידה — 8+ שיעורים בחודש קלנדרי
+  full_month: 10,              // מתקדמת — 12+ שיעורים בחודש קלנדרי
+  weekly_strong: 2,            // 4+ שיעורים באותו שבוע
+  weekly_superstar: 2,         // 5+ שיעורים באותו שבוע (מצטבר מעל weekly_strong)
   happy_hour: 1,              // כפל מטבעות בשיעור Happy Hour (מוסיף 1 נוסף)
   welcome_bonus: 20,          // בונוס הצטרפות לאפליקציה
   referral_trial: 50,         // חבר הגיע לשיעור ניסיון
@@ -27,6 +42,8 @@ export type PointReason =
   | 'streak_10'
   | 'half_month'
   | 'full_month'
+  | 'weekly_strong'
+  | 'weekly_superstar'
   | 'happy_hour'
   | 'welcome_bonus'
   | 'referral_trial'
@@ -37,13 +54,15 @@ export type PointReason =
   | 'manual'
   | 'redemption'
 
-// ─── Tier thresholds (lifetime coins) ─────────────────────────────────────
-// A 2x/week member should reach Gold within a year and Platinum should stay a
-// stretch reserved for 4x+/week — see the frequency table in the migration.
+// ─── Tier thresholds (rolling 12-month qualifying coins) ─────────────────
+// Against the ceiling above: Gold reachable within a year at 2x/week and
+// faster from there; Platinum requires sustained 4x/week (~11mo) or 5x
+// (~9mo) — a stretch at 3x (~16mo, effectively out of reach within the
+// 12-month qualifying window) and out of reach entirely below that.
 export const TIER_THRESHOLDS = {
   silver:   0,
-  gold:     400,
-  platinum: 1200,
+  gold:     250,
+  platinum: 650,
 } as const
 
 export const TIER_LABELS: Record<string, string> = {
@@ -53,8 +72,8 @@ export const TIER_LABELS: Record<string, string> = {
 }
 
 export const TIER_NEXT: Record<string, number> = {
-  silver:   400,
-  gold:     1200,
+  silver:   TIER_THRESHOLDS.gold,
+  gold:     TIER_THRESHOLDS.platinum,
   platinum: Infinity,
 }
 
