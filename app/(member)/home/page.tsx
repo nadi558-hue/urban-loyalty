@@ -169,10 +169,14 @@ export default async function HomePage() {
           {fillLen > 0 && (() => {
             const px = cx + R * Math.cos(Math.PI - arcFrac * Math.PI)
             const py = cy - R * Math.sin(arcFrac * Math.PI)
-            const largeArc = arcFrac > 0.5 ? 1 : 0
+            // The fill never sweeps more than the 180° half-circle, so this is
+            // always the minor arc — large-arc-flag must stay 0. Flipping it
+            // past 50% (as a prior version did) draws the reflex arc instead,
+            // the wrong way around the circle, which looks like the gauge
+            // jumped to a different position.
             return (
               <path
-                d={`M ${cx - R} ${cy} A ${R} ${R} 0 ${largeArc} 1 ${px.toFixed(2)} ${py.toFixed(2)}`}
+                d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${px.toFixed(2)} ${py.toFixed(2)}`}
                 fill="none"
                 stroke={arcColor}
                 strokeWidth="11"
