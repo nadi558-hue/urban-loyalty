@@ -46,24 +46,36 @@ export function happyHourBonus(
   return 0
 }
 
+/**
+ * Two monthly thresholds rather than one. A single cliff at 12 classes paid a
+ * 2x/week member (~9 classes) almost nothing next to a 3x/week member (~13) —
+ * 44% more attendance for over 3x the coins. half_month at 8 classes gives the
+ * twice-a-week member a bonus of their own instead of a rounding error.
+ */
 export async function checkMonthBonus(memberId: string, rules: Record<string, number>, db: any) {
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString()
+  const month = `${now.getFullYear()}-${now.getMonth() + 1}`
 
   const { count: classCount } = await db
     .from('point_ledger').select('*', { count: 'exact', head: true })
     .eq('member_id', memberId).eq('reason', 'class_attended')
     .gte('created_at', monthStart).lte('created_at', monthEnd)
+  const n = classCount ?? 0
 
-  const { count: alreadyAwarded } = await db
-    .from('point_ledger').select('*', { count: 'exact', head: true })
-    .eq('member_id', memberId).eq('reason', 'full_month').gte('created_at', monthStart)
+  const alreadyAwarded = async (reason: string) => {
+    const { count } = await db
+      .from('point_ledger').select('*', { count: 'exact', head: true })
+      .eq('member_id', memberId).eq('reason', reason).gte('created_at', monthStart)
+    return (count ?? 0) > 0
+  }
 
-  if ((classCount ?? 0) >= 12 && (alreadyAwarded ?? 0) === 0) {
-    await awardPoints(memberId, rules['full_month'] ?? 30, 'full_month', {
-      month: `${now.getFullYear()}-${now.getMonth() + 1}`,
-    })
+  if (n >= 8 && !(await alreadyAwarded('half_month'))) {
+    await awardPoints(memberId, rules['half_month'] ?? 12, 'half_month', { month })
+  }
+  if (n >= 12 && !(await alreadyAwarded('full_month'))) {
+    await awardPoints(memberId, rules['full_month'] ?? 30, 'full_month', { month })
   }
 }
 

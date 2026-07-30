@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowLeft2, Star1, Flash, CalendarTick, Instagram, Profile2User } from 'iconsax-reactjs'
 import { getCurrentMember, DEMO_MEMBER } from '@/lib/member'
 import { getLedger, countClassesThisMonth, reasonLabel } from '@/lib/ledger'
-import { getRules } from '@/lib/points'
+import { getRules, TIER_THRESHOLDS } from '@/lib/points'
 import { getCoachView } from '@/lib/coach'
 import CoachCard from '@/components/CoachCard'
 import { reconcileMember, getPendingScans, STALE_PENDING_MS } from '@/lib/reconcile'
@@ -89,8 +89,8 @@ export default async function HomePage() {
   // Tier tracks the rolling 12-month total, not the all-time one — coins age
   // out of it, which is what allows a tier to fall.
   const qualifying = member.qualifying_coins ?? lifetime_coins
-  const tierCap = tier === 'silver' ? 500 : tier === 'gold' ? 1500 : Infinity
-  const tierFloor = tier === 'silver' ? 0 : tier === 'gold' ? 500 : 1500
+  const tierCap = tier === 'silver' ? TIER_THRESHOLDS.gold : tier === 'gold' ? TIER_THRESHOLDS.platinum : Infinity
+  const tierFloor = tier === 'silver' ? 0 : tier === 'gold' ? TIER_THRESHOLDS.gold : TIER_THRESHOLDS.platinum
   const nextTierName = tier === 'silver' ? 'Gold' : tier === 'gold' ? 'Platinum' : ''
   const toNext = tierCap === Infinity ? 0 : Math.max(0, tierCap - qualifying)
   const progressPct = tierCap === Infinity ? 100 : Math.min(100, Math.max(0, ((qualifying - tierFloor) / (tierCap - tierFloor)) * 100))

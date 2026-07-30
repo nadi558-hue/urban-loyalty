@@ -4,9 +4,14 @@ import { createServiceClient } from './supabase'
 // 1 Urban Coin = per class attended (base)
 // Bonuses and special events add on top
 
+// A rebalance: class value carries the incentive to attend at all, and a
+// second monthly bonus at the halfway point smooths what used to be a single
+// cliff at 12 classes — someone training twice a week no longer earns a
+// rounding error next to someone training three times.
 export const DEFAULT_RULES: Record<string, number> = {
-  class_attended: 1,          // כל שיעור שהושלם
+  class_attended: 3,          // כל שיעור שהושלם
   streak_10: 10,              // 10 שיעורים רצופים ללא ביטול
+  half_month: 12,             // 8+ שיעורים בחודש קלנדרי
   full_month: 30,             // 12+ שיעורים בחודש קלנדרי
   happy_hour: 1,              // כפל מטבעות בשיעור Happy Hour (מוסיף 1 נוסף)
   welcome_bonus: 20,          // בונוס הצטרפות לאפליקציה
@@ -20,6 +25,7 @@ export const DEFAULT_RULES: Record<string, number> = {
 export type PointReason =
   | 'class_attended'
   | 'streak_10'
+  | 'half_month'
   | 'full_month'
   | 'happy_hour'
   | 'welcome_bonus'
@@ -32,10 +38,12 @@ export type PointReason =
   | 'redemption'
 
 // ─── Tier thresholds (lifetime coins) ─────────────────────────────────────
+// A 2x/week member should reach Gold within a year and Platinum should stay a
+// stretch reserved for 4x+/week — see the frequency table in the migration.
 export const TIER_THRESHOLDS = {
   silver:   0,
-  gold:     500,
-  platinum: 1500,
+  gold:     400,
+  platinum: 1200,
 } as const
 
 export const TIER_LABELS: Record<string, string> = {
@@ -45,8 +53,8 @@ export const TIER_LABELS: Record<string, string> = {
 }
 
 export const TIER_NEXT: Record<string, number> = {
-  silver:   500,
-  gold:     1500,
+  silver:   400,
+  gold:     1200,
   platinum: Infinity,
 }
 

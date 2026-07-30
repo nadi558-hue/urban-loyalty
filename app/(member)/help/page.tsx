@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getCurrentMember, DEMO_MEMBER, memberIdLabel } from '@/lib/member'
-import { getRules, TIER_LABELS, TIER_NEXT } from '@/lib/points'
+import { getRules, TIER_LABELS, TIER_NEXT, TIER_THRESHOLDS } from '@/lib/points'
 import { getPendingScans, STALE_PENDING_MS } from '@/lib/reconcile'
 import { getRewards } from '../rewards/rewards-data'
 import { reasonLabel } from '@/lib/ledger'
@@ -24,7 +24,7 @@ function fmt(iso: string) {
 
 /** Rules worth explaining, in the order a member meets them. */
 const RULE_ORDER = [
-  'class_attended', 'happy_hour', 'streak_10', 'full_month',
+  'class_attended', 'happy_hour', 'streak_10', 'half_month', 'full_month',
   'social_share', 'referral_trial', 'referral_subscribed',
   'welcome_bonus', 'birthday', 'anniversary',
 ]
@@ -33,6 +33,7 @@ const RULE_HINTS: Record<string, string> = {
   class_attended:      'על כל שיעור שנסרק ואומת',
   happy_hour:          'בשיעורים המסומנים כ-Happy Hour',
   streak_10:           'על כל 10 שיעורים רצופים, בלי ביטול מאוחר',
+  half_month:          '8 שיעורים ומעלה בחודש קלנדרי',
   full_month:          '12 שיעורים ומעלה בחודש קלנדרי',
   social_share:        'תיוג הסטודיו בסטורי, פעם בחודש',
   referral_trial:      'חברה שהבאתם הגיעה לשיעור ניסיון',
@@ -80,7 +81,7 @@ export default async function HelpPage() {
   const qualifying = member.qualifying_coins ?? member.lifetime_coins
   const tierCap = TIER_NEXT[member.tier]
   const toNext = tierCap === Infinity ? 0 : Math.max(0, tierCap - qualifying)
-  const tierFloor = member.tier === 'gold' ? 500 : member.tier === 'platinum' ? 1500 : 0
+  const tierFloor = member.tier === 'gold' ? TIER_THRESHOLDS.gold : member.tier === 'platinum' ? TIER_THRESHOLDS.platinum : 0
   const belowFloor = Math.max(0, tierFloor - qualifying)
   const nextTier = member.tier === 'silver' ? 'Gold' : member.tier === 'gold' ? 'Platinum' : ''
 

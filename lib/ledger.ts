@@ -12,6 +12,7 @@ export const REASON_LABELS: Record<string, string> = {
   class_attended:      'שיעור הושלם',
   happy_hour:          'Happy Hour · מטבע נוסף',
   streak_10:           'בונוס רצף 10 שיעורים',
+  half_month:          'בונוס חצי חודש',
   full_month:          'בונוס נוכחות מלאה',
   welcome_bonus:       'בונוס הצטרפות',
   referral_trial:      'חבר הגיע לשיעור ניסיון',

@@ -45,10 +45,10 @@ UPDATE members m
 -- The nightly review takes over from here, and any drop happens only after the
 -- notice period the terms describe.
 UPDATE members
-   SET qualifying_coins = GREATEST(qualifying_coins, 1500)
+   SET qualifying_coins = GREATEST(qualifying_coins, 1200)
  WHERE tier = 'platinum';
 UPDATE members
-   SET qualifying_coins = GREATEST(qualifying_coins, 500)
+   SET qualifying_coins = GREATEST(qualifying_coins, 400)
  WHERE tier = 'gold';
 
 -- ── Verification ─────────────────────────────────────────────────────────
