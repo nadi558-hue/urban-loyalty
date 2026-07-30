@@ -156,7 +156,10 @@ export default async function HomePage() {
         padding: '14px 18px 18px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
-        <svg width="160" height="90" viewBox="0 0 160 90" style={{ overflow: 'visible' }}>
+        {/* Height covers the SILVER/GOLD labels at cy+16 (=96) plus descender
+            room — the box previously stopped at 90 and relied on overflow to
+            show them, which let them bleed into the "toNext" line below. */}
+        <svg width="160" height="104" viewBox="0 0 160 104" style={{ overflow: 'visible' }}>
           {/* Track: half circle, left→right, top */}
           <path
             d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`}
