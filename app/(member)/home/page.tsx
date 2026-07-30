@@ -17,7 +17,7 @@ const MONTH_GOAL = 12
 // from /referrals, and nothing linked to /referrals at all.
 const EARN = [
   { Icon: Instagram, title: 'שיתוף סטורי', href: '/share', reward: '+2 UC', note: 'תייגו אותנו בסטורי ושלחו צילום מסך' },
-  { Icon: Profile2User, title: 'חבר מביא חבר', href: '/referrals', reward: '+60 UC', note: 'שתפו את הקוד האישי שלכם' },
+  { Icon: Profile2User, title: 'חבר מביא חבר', href: '/referrals', reward: '+50 UC', note: 'שתפו את הקוד האישי שלכם' },
 ]
 
 /** "היום · 09:00", "אמש · 19:30", otherwise "12 ביולי · 09:00". */

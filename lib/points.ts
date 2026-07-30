@@ -31,7 +31,7 @@ export const DEFAULT_RULES: Record<string, number> = {
   happy_hour: 1,              // כפל מטבעות בשיעור Happy Hour (מוסיף 1 נוסף)
   welcome_bonus: 20,          // בונוס הצטרפות לאפליקציה
   referral_trial: 10,         // חבר הגיע לשיעור ניסיון
-  referral_subscribed: 50,    // חבר רכש מנוי (גם מפנה וגם מופנה מקבלים)
+  referral_subscribed: 40,    // חבר רכש מנוי (גם מפנה וגם מופנה מקבלים)
   social_share: 2,            // שיתוף סטורי עם תיוג, פעם בחודש
   birthday: 50,               // יום הולדת
   anniversary: 20,            // שנת חברות בסטודיו
