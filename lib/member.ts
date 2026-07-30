@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { grantWelcomeBonus } from '@/lib/bonuses'
 import { attachReferrer } from '@/lib/referrals'
+import { isAdminPhone } from '@/lib/admin'
 
 export type Member = {
   id: string
@@ -43,7 +44,10 @@ export function supabaseConfigured(): boolean {
  * 'demo' means Supabase isn't configured at all, which is the only case where
  * DEMO_MEMBER is the right answer.
  */
-export type MemberStatus = 'demo' | 'member' | 'not-a-member' | 'signed-out'
+// 'admin-only' is a phone on the ADMIN_PHONES allow-list with no member row —
+// staff who run the studio but never bought a plan through Arbox. They still
+// need somewhere to land instead of the same wall a stranger's phone hits.
+export type MemberStatus = 'demo' | 'member' | 'not-a-member' | 'admin-only' | 'signed-out'
 
 export async function getMemberStatus(): Promise<MemberStatus> {
   if (!supabaseConfigured()) return 'demo'
@@ -53,7 +57,8 @@ export async function getMemberStatus(): Promise<MemberStatus> {
     if (!user?.phone) return 'signed-out'
     const db = createServiceClient()
     const { data } = await db.from('members').select('id').eq('phone', user.phone).maybeSingle()
-    return data ? 'member' : 'not-a-member'
+    if (data) return 'member'
+    return isAdminPhone(user.phone) ? 'admin-only' : 'not-a-member'
   } catch {
     // A lookup failure must not lock a real member out — the pages below
     // handle a missing member on their own.
