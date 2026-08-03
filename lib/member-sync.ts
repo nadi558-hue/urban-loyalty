@@ -23,10 +23,15 @@ export async function syncPlanMembers(): Promise<MemberSyncResult> {
   try {
     const eligible = await getEligiblePlanMembers()
 
+    // name/preferred_branch are fetched so an unchanged member can be skipped
+    // rather than rewritten — see the no-op guard in the loop below.
     const { data: existing } = await db
       .from('members')
-      .select('id, arbox_id, phone, referred_by') as {
-        data: { id: string; arbox_id: string; phone: string; referred_by: string | null }[] | null
+      .select('id, arbox_id, phone, referred_by, name, preferred_branch') as {
+        data: {
+          id: string; arbox_id: string; phone: string; referred_by: string | null
+          name: string; preferred_branch: string | null
+        }[] | null
       }
 
     const byArbox = new Map((existing ?? []).map((m) => [m.arbox_id, m]))
@@ -37,10 +42,21 @@ export async function syncPlanMembers(): Promise<MemberSyncResult> {
       const hitPhone = byPhone.get(m.phone)
 
       if (hitArbox) {
-        await db.from('members')
-          .update({ name: m.name, phone: m.phone, preferred_branch: m.branch })
-          .eq('id', hitArbox.id)
-        updated++
+        // Only write when Arbox actually differs. This used to update all ~485
+        // members on every run — sequential round-trips that on their own blew
+        // past the 60s function limit, so the whole sync (check-ins included)
+        // timed out and no coins were awarded at all.
+        const stale =
+          hitArbox.name !== m.name ||
+          hitArbox.phone !== m.phone ||
+          hitArbox.preferred_branch !== m.branch
+
+        if (stale) {
+          await db.from('members')
+            .update({ name: m.name, phone: m.phone, preferred_branch: m.branch })
+            .eq('id', hitArbox.id)
+          updated++
+        }
         // Appearing here means an active plan — the referral's second milestone.
         // Pays once; a member whose referrer isn't attached yet is picked up on
         // a later run, after they've opened the app.
