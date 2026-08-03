@@ -181,6 +181,13 @@ export default async function ProfilePage() {
         </div>
       )}
 
+      <p style={{
+        textAlign: 'center', fontSize: 11, color: '#B3A597', marginTop: 28,
+        fontFamily: 'var(--font-assistant,sans-serif)',
+      }}>
+        © Urban Studio · כל הזכויות שמורות
+      </p>
+
       <div style={{ height: 100 }} />
     </main>
   )
