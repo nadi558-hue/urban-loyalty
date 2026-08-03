@@ -39,6 +39,20 @@ export default function LoginPage() {
       type: 'sms',
     })
     if (error) { setError(error.message); setLoading(false); return }
+
+    // The session lives in a cookie so the server can read it. When the browser
+    // refuses to store it — Safari Private Browsing, or "Block All Cookies" —
+    // verifyOtp still resolves successfully, but /home finds no session and
+    // bounces straight back here. That looked like the code was silently
+    // rejected. Confirm the session actually persisted before redirecting, and
+    // name the real cause when it didn't.
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      setError('הדפדפן חוסם שמירת התחברות. אם את/ה בגלישה פרטית — צאו ממנה, או אפשרו קובצי Cookie ונסו שוב.')
+      setLoading(false)
+      return
+    }
+
     window.location.href = '/home'
   }
 
