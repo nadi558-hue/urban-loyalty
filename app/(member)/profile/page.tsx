@@ -13,7 +13,7 @@ const MENU: { label: string; href?: string }[] = [
   { label: 'שאלות ותשובות ועזרה', href: '/help' },
   { label: 'בחירת מאמן אישי',      href: '/coach' },
   { label: 'התראות ותזכורות' },
-  { label: 'תקנון ותנאי שימוש' },
+  { label: 'תקנון ותנאי שימוש', href: '/terms' },
 ]
 
 export default async function ProfilePage() {
