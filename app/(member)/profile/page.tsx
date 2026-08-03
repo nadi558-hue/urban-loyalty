@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft2, Setting2 } from 'iconsax-reactjs'
 import { getRules } from '@/lib/points'
 import BirthdayField from './BirthdayField'
+import InstallButton from '@/components/InstallButton'
 
 const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
@@ -129,6 +130,10 @@ export default async function ProfilePage() {
         <div className="clay-sm" style={{ overflow: 'hidden' }}>
           <div style={{ borderBottom: '1px solid #F3EAE3' }}>
             <BirthdayField current={member.birth_date} bonus={birthdayBonus} />
+          </div>
+          {/* Renders nothing once the app is actually installed. */}
+          <div style={{ borderBottom: '1px solid #F3EAE3' }}>
+            <InstallButton />
           </div>
           {MENU.map((item, i) => {
             const row = (

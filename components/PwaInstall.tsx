@@ -2,14 +2,31 @@
 
 import { useEffect, useState } from 'react'
 import { CloseCircle } from 'iconsax-reactjs'
+import { detectPlatform } from '@/lib/install'
 
 type BIPEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> }
 
 const DISMISS_KEY = 'urban-a2hs-dismissed'
 
+// Dismissal used to be permanent, so one stray tap meant the banner never came
+// back on that phone. It now lapses, and /profile carries a permanent entry for
+// anyone who wants it sooner.
+const DISMISS_DAYS = 14
+
+function dismissedRecently(): boolean {
+  const raw = localStorage.getItem(DISMISS_KEY)
+  if (!raw) return false
+  const at = Number(raw)
+  // Legacy value was the string '1' — treat it as an expired dismissal rather
+  // than as permanent, so phones carrying it start seeing the banner again.
+  if (!Number.isFinite(at)) { localStorage.removeItem(DISMISS_KEY); return false }
+  return Date.now() - at < DISMISS_DAYS * 86_400_000
+}
+
 type Mode =
   | { kind: 'native'; ev: BIPEvent }   // Android/Chrome real install prompt available
   | { kind: 'ios' }                    // iOS Safari — manual Add to Home Screen
+  | { kind: 'ios-other' }              // iOS Chrome/Firefox — only Safari can install
   | { kind: 'android-manual' }         // Android but no prompt fired — menu → Install app
   | { kind: 'inapp' }                  // in-app webview (WhatsApp/IG/FB) — can't install
 
@@ -26,16 +43,9 @@ export default function PwaInstall() {
       window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as { standalone?: boolean }).standalone === true
     if (standalone) return
-    if (localStorage.getItem(DISMISS_KEY)) return
+    if (dismissedRecently()) return
 
-    const ua = window.navigator.userAgent
-
-    // In-app browsers (WhatsApp / Instagram / Facebook / Messenger / TikTok) cannot
-    // install PWAs at all — the only fix is opening in the real browser.
-    const isInApp = /FBAN|FBAV|Instagram|Line\/|Twitter|WhatsApp|; wv\)|GSA\//i.test(ua)
-
-    const isIos = /iphone|ipad|ipod/i.test(ua)
-    const isSafari = /safari/i.test(ua) && !/crios|fxios|edgios/i.test(ua)
+    const platform = detectPlatform()
 
     let bipFired = false
     const onBIP = (e: Event) => {
@@ -45,13 +55,17 @@ export default function PwaInstall() {
     }
     window.addEventListener('beforeinstallprompt', onBIP)
 
-    // Decide the fallback after a short delay (gives beforeinstallprompt a chance to fire)
+    // Decide the fallback after a short delay (gives beforeinstallprompt a chance
+    // to fire). Chrome gates that event behind an engagement heuristic and iOS
+    // never fires it at all, so on phones the manual path is the common case
+    // rather than the exception.
     const timer = setTimeout(() => {
       if (bipFired) return
-      if (isInApp) { setMode({ kind: 'inapp' }); return }
-      if (isIos && isSafari) { setMode({ kind: 'ios' }); return }
-      // Android/desktop Chrome that didn't fire the event yet → show manual path
-      if (/android/i.test(ua)) setMode({ kind: 'android-manual' })
+      if (platform === 'inapp') { setMode({ kind: 'inapp' }); return }
+      if (platform === 'ios-safari') { setMode({ kind: 'ios' }); return }
+      if (platform === 'ios-other') { setMode({ kind: 'ios-other' }); return }
+      if (platform === 'android') setMode({ kind: 'android-manual' })
+      // Desktop is left alone — a home-screen icon isn't what that user wants.
     }, 2500)
 
     window.addEventListener('appinstalled', () => setMode(null))
@@ -65,7 +79,7 @@ export default function PwaInstall() {
   if (!mode) return null
 
   const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, '1')
+    localStorage.setItem(DISMISS_KEY, String(Date.now()))
     setMode(null)
   }
 
@@ -78,11 +92,13 @@ export default function PwaInstall() {
 
   const title =
     mode.kind === 'inapp' ? 'פתחו בדפדפן להתקנה'
+    : mode.kind === 'ios-other' ? 'פתחו ב-Safari להתקנה'
     : 'התקינו את אפליקציית Urban Club'
 
   const subtitle =
     mode.kind === 'native'        ? 'גישה מהירה מהמסך הבית — כמו אפליקציה'
     : mode.kind === 'ios'          ? 'הקישו על ⬆️ שיתוף ואז "הוסף למסך הבית"'
+    : mode.kind === 'ios-other'    ? 'באייפון רק Safari יודע להוסיף למסך הבית'
     : mode.kind === 'android-manual' ? 'תפריט ⋮ בכרום → "התקנת אפליקציה"'
     : /* inapp */                    'הקישו על ⋮ ואז "פתח בדפדפן" (Chrome), ושם התקינו'
 
