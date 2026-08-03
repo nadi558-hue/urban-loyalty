@@ -26,7 +26,7 @@ export default function TermsSheet({ onClose, onAgree }: { onClose: () => void; 
           <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, fontWeight: 700, color: '#F6EFEA', textAlign: 'center' }}>
             תקנון ותנאי שימוש
           </p>
-          <p style={{ fontSize: 11, color: 'rgba(245,240,230,0.4)', textAlign: 'center', marginTop: 2 }}>
+          <p style={{ fontSize: 12.5, color: 'rgba(245,240,230,0.4)', textAlign: 'center', marginTop: 2 }}>
             מועדון לקוחות Urban Pilates
           </p>
         </div>
@@ -34,11 +34,11 @@ export default function TermsSheet({ onClose, onAgree }: { onClose: () => void; 
         <div style={{ overflowY: 'auto', padding: '16px 20px', flex: 1 }}>
           {TERMS_SECTIONS.map(sec => (
             <div key={sec.title} style={{ marginBottom: 18 }}>
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#DBB89C', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#DBB89C', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
                 {sec.title}
               </p>
               {sec.items.map((it, i) => (
-                <p key={i} style={{ fontSize: 12.5, lineHeight: 1.7, color: 'rgba(245,240,230,0.65)', marginBottom: 6 }}>
+                <p key={i} style={{ fontSize: 13.5, lineHeight: 1.7, color: 'rgba(245,240,230,0.65)', marginBottom: 6 }}>
                   {it}
                 </p>
               ))}

@@ -34,8 +34,8 @@ export default function BirthdayField({ current, bonus }: { current: string | nu
       <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
         <Cake size={19} variant="Bulk" color="#C0906F" />
         <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>יום הולדת</p>
-          <p style={{ fontSize: 11, color: saved ? '#3f8f5e' : '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 14.5, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>יום הולדת</p>
+          <p style={{ fontSize: 12.5, color: saved ? '#3f8f5e' : '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
             {error
               ? error
               : busy ? 'שומר…'
@@ -56,7 +56,7 @@ export default function BirthdayField({ current, bonus }: { current: string | nu
           style={{
             border: 'none', background: 'rgba(255,255,255,0.7)',
             borderRadius: 10, padding: '7px 9px',
-            fontSize: 13, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)',
+            fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)',
             boxShadow: 'inset 0 2px 5px -2px rgba(150,110,85,0.3)',
           }}
         />

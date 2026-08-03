@@ -117,13 +117,13 @@ export default function RewardsClient(
         }} />
         {/* Title (RTL — reads top-right) */}
         <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right' }}>
-          <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 12.5, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             מועדון URBAN
           </p>
           <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 32, fontWeight: 900, color: '#3B2E27', lineHeight: 1.12, marginBottom: 8 }}>
             חנות ההטבות
           </p>
-          <p style={{ fontSize: 12.5, color: '#7A6B60', maxWidth: 180, marginRight: 0, marginLeft: 'auto', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 13.5, color: '#7A6B60', maxWidth: 180, marginRight: 0, marginLeft: 'auto', fontFamily: 'var(--font-assistant,sans-serif)' }}>
             ממטבעות Urban להטבות אמיתיות
           </p>
         </div>
@@ -136,7 +136,7 @@ export default function RewardsClient(
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <div>
-          <p style={{ fontSize: 11, color: '#8B7A6C', letterSpacing: '0.08em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>היתרה שלך למימוש</p>
+          <p style={{ fontSize: 12.5, color: '#8B7A6C', letterSpacing: '0.08em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>היתרה שלך למימוש</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
             <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 46, fontWeight: 900, color: '#3B2E27', lineHeight: 1 }}>{uc}</span>
             <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, color: '#A66B43' }}>UC</span>
@@ -155,12 +155,12 @@ export default function RewardsClient(
               style={{ position: 'absolute', top: -20, left: -20, width: 180, opacity: 0.35, pointerEvents: 'none' }}
             />
             <div style={{ position: 'relative', zIndex: 1 }}>
-              <p style={{ fontSize: 11, color: '#C0906F', letterSpacing: '0.15em', marginBottom: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>מומלץ החודש</p>
+              <p style={{ fontSize: 12.5, color: '#C0906F', letterSpacing: '0.15em', marginBottom: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>מומלץ החודש</p>
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#F6EFEA', marginBottom: 4 }}>{featured.name}</p>
-              <p style={{ fontSize: 12, color: 'rgba(245,240,230,0.5)', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>{featured.description}</p>
+              <p style={{ fontSize: 13, color: 'rgba(245,240,230,0.5)', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>{featured.description}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#DBB89C' }}>{featured.cost} UC</span>
-                <span style={{ fontSize: 12, color: 'rgba(245,240,230,0.4)', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+                <span style={{ fontSize: 13, color: 'rgba(245,240,230,0.4)', fontFamily: 'var(--font-assistant,sans-serif)' }}>
                   {uc >= featured.cost ? 'זמין למימוש' : `חסרים ${featured.cost - uc} UC`}
                 </span>
               </div>
@@ -172,7 +172,7 @@ export default function RewardsClient(
       <div style={{ padding: '14px 16px 0', display: 'flex', gap: 8 }}>
         {filters.map(f => (
           <button key={f.key} onClick={() => setFilter(f.key)} style={{
-            borderRadius: 999, padding: '7px 16px', fontSize: 13,
+            borderRadius: 999, padding: '7px 16px', fontSize: 14,
             fontFamily: 'var(--font-assistant,sans-serif)',
             fontWeight: f.key === filter ? 700 : 400,
             background: f.key === filter ? '#3B2E27' : 'rgba(255,255,255,0.6)',
@@ -184,16 +184,16 @@ export default function RewardsClient(
 
       {showAvailable && available.length > 0 && (
         <div style={{ padding: '14px 16px 0' }}>
-          <p style={{ fontSize: 11, color: '#9C8B7F', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין עכשיו</p>
+          <p style={{ fontSize: 12.5, color: '#9C8B7F', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין עכשיו</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {available.map(r => (
               <div key={r.id} className="clay-sm" style={{ padding: '14px 14px 12px' }}>
                 <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} /></div>
-                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 4 }}>{r.name}</p>
-                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
+                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', marginBottom: 4 }}>{r.name}</p>
+                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14.5, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
                 <button
                   onClick={() => setConfirming(r)}
-                  style={{ width: '100%', background: 'linear-gradient(135deg,#DBB89C,#C0906F)', border: 'none', borderRadius: 999, padding: '7px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', cursor: 'pointer' }}
+                  style={{ width: '100%', background: 'linear-gradient(135deg,#DBB89C,#C0906F)', border: 'none', borderRadius: 999, padding: '7px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', cursor: 'pointer' }}
                 >מימוש</button>
               </div>
             ))}
@@ -203,14 +203,14 @@ export default function RewardsClient(
 
       {showLocked && locked.length > 0 && (
         <div style={{ padding: '14px 16px 0' }}>
-          <p style={{ fontSize: 11, color: '#9C8B7F', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>בהישג יד</p>
+          <p style={{ fontSize: 12.5, color: '#9C8B7F', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>בהישג יד</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {locked.map(r => (
               <div key={r.id} className="clay-sm" style={{ padding: '14px 14px 12px', opacity: 0.85 }}>
                 <div style={{ marginBottom: 10 }}><RewardIcon type={r.icon} muted /></div>
-                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#6F625A', marginBottom: 4 }}>{r.name}</p>
-                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
-                <div className="clay-track" style={{ width: '100%', padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>
+                <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#6F625A', marginBottom: 4 }}>{r.name}</p>
+                <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14.5, color: '#9C8B7F', marginBottom: 10 }}>{r.cost} UC</p>
+                <div className="clay-track" style={{ width: '100%', padding: '7px 0', textAlign: 'center', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 12.5, color: '#9C8B7F' }}>
                   {!tierOk(r) ? `שמור לדרגת ${TIER_NAME[r.minTier] ?? r.minTier}` : `חסרים ${r.cost - uc} UC`}
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function RewardsClient(
       )}
 
       {rewards.length === 0 && (
-        <p style={{ padding: '32px 16px', textAlign: 'center', fontSize: 13, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ padding: '32px 16px', textAlign: 'center', fontSize: 14, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
           אין הטבות פעילות כרגע — נתראה בקרוב
         </p>
       )}
@@ -234,18 +234,18 @@ export default function RewardsClient(
             <div style={{ width: 40, height: 4, borderRadius: 999, background: '#E7DBD1', margin: '0 auto 18px' }} />
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><RewardIcon type={confirming.icon} /></div>
             <p style={{ textAlign: 'center', fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#3B2E27', marginBottom: 6 }}>{confirming.name}</p>
-            <p style={{ textAlign: 'center', fontSize: 13, color: '#8B7A6C', marginBottom: 18, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ textAlign: 'center', fontSize: 14, color: '#8B7A6C', marginBottom: 18, fontFamily: 'var(--font-assistant,sans-serif)' }}>
               המימוש ינכה <strong style={{ color: '#C0906F' }}>{confirming.cost} UC</strong> מהיתרה שלך · יישאר {uc - confirming.cost} UC
             </p>
-            {redeemError && <p style={{ textAlign: 'center', fontSize: 13, color: '#c04040', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>{redeemError}</p>}
+            {redeemError && <p style={{ textAlign: 'center', fontSize: 14, color: '#c04040', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>{redeemError}</p>}
             <button
               onClick={() => confirmRedeem(confirming)}
               disabled={redeeming}
-              style={{ width: '100%', background: 'linear-gradient(135deg,#DBB89C,#C0906F)', border: 'none', borderRadius: 999, padding: '13px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', cursor: redeeming ? 'default' : 'pointer', opacity: redeeming ? 0.6 : 1, marginBottom: 8 }}
+              style={{ width: '100%', background: 'linear-gradient(135deg,#DBB89C,#C0906F)', border: 'none', borderRadius: 999, padding: '13px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14.5, fontWeight: 700, color: '#3B2E27', cursor: redeeming ? 'default' : 'pointer', opacity: redeeming ? 0.6 : 1, marginBottom: 8 }}
             >{redeeming ? 'מבצע מימוש...' : 'אישור מימוש'}</button>
             <button
               onClick={() => { setConfirming(null); setRedeemError('') }}
-              style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, color: '#9C8B7F', cursor: 'pointer' }}
+              style={{ width: '100%', background: 'transparent', border: 'none', padding: '8px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, color: '#9C8B7F', cursor: 'pointer' }}
             >ביטול</button>
           </div>
         </div>
@@ -259,18 +259,18 @@ export default function RewardsClient(
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3B2E27" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
             </div>
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, fontWeight: 700, color: '#3B2E27', marginBottom: 6 }}>ההטבה מומשה!</p>
-            <p style={{ fontSize: 13, color: '#8B7A6C', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ fontSize: 14, color: '#8B7A6C', marginBottom: 14, fontFamily: 'var(--font-assistant,sans-serif)' }}>
               {redeemed.name} · הצג את הקוד בדלפק הסטודיו
             </p>
             {redeemedCode && (
               <div style={{ background: '#3B2E27', borderRadius: 14, padding: '12px 0', marginBottom: 16 }}>
-                <p style={{ fontSize: 10, color: 'rgba(232,204,136,0.6)', letterSpacing: '0.18em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>קוד מימוש</p>
+                <p style={{ fontSize: 12, color: 'rgba(232,204,136,0.6)', letterSpacing: '0.18em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>קוד מימוש</p>
                 <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 900, color: '#DBB89C', letterSpacing: '0.25em' }}>{redeemedCode}</p>
               </div>
             )}
             <button
               onClick={() => { setRedeemed(null); setRedeemedCode(null) }}
-              style={{ width: '100%', background: '#3B2E27', border: 'none', borderRadius: 999, padding: '12px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#DBB89C', cursor: 'pointer' }}
+              style={{ width: '100%', background: '#3B2E27', border: 'none', borderRadius: 999, padding: '12px 0', fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14.5, fontWeight: 700, color: '#DBB89C', cursor: 'pointer' }}
             >סגירה</button>
           </div>
         </div>

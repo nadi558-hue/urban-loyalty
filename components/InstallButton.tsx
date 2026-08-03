@@ -63,7 +63,7 @@ export default function InstallButton() {
       >
         <span style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)',
+          fontSize: 14.5, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)',
         }}>
           <MobileProgramming size={18} variant="Bulk" color="#96613F" />
           הוספה למסך הבית
@@ -107,9 +107,9 @@ export default function InstallButton() {
                     width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
                     background: 'linear-gradient(135deg,#5A473C,#3B2E27)', color: '#DBB89C',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 12, fontWeight: 700,
+                    fontSize: 13, fontWeight: 700,
                   }}>{i + 1}</span>
-                  <span style={{ fontSize: 14, lineHeight: 1.5, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+                  <span style={{ fontSize: 14.5, lineHeight: 1.5, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>
                     {s}
                   </span>
                 </li>
@@ -118,7 +118,7 @@ export default function InstallButton() {
 
             {guide.note && (
               <p style={{
-                marginTop: 16, fontSize: 12.5, color: '#8B7A6C', lineHeight: 1.5,
+                marginTop: 16, fontSize: 13.5, color: '#8B7A6C', lineHeight: 1.5,
                 fontFamily: 'var(--font-assistant,sans-serif)',
               }}>
                 {guide.note}

@@ -67,13 +67,13 @@ export default function ShareClient({
         background: 'linear-gradient(160deg,#FBF4EE 0%,#F0E2D6 100%)',
         borderBottom: '1px solid rgba(192,144,111,0.18)',
       }}>
-        <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 12.5, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           Social Buzz
         </p>
         <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 30, fontWeight: 900, color: '#3B2E27', lineHeight: 1.15, marginBottom: 6 }}>
           שתפו וקבלו {bonus} UC
         </h1>
-        <p style={{ fontSize: 13, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 14, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
           העלו צילום מסך של סטורי שבו תייגתם אותנו — נאשר ונזכה אתכם. פעם בחודש.
         </p>
       </div>
@@ -84,8 +84,8 @@ export default function ShareClient({
           style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', textDecoration: 'none' }}>
           <Instagram size={22} variant="Bulk" color="#96613F" />
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>@urban_studio_official</p>
-            <p style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>תייגו אותנו בסטורי</p>
+            <p style={{ fontSize: 14, fontWeight: 700, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>@urban_studio_official</p>
+            <p style={{ fontSize: 12.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>תייגו אותנו בסטורי</p>
           </div>
         </a>
       </div>
@@ -97,7 +97,7 @@ export default function ShareClient({
             <div style={{ textAlign: 'center', padding: '14px 0' }}>
               <TickCircle size={48} variant="Bulk" color="#3f8f5e" />
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 19, fontWeight: 700, color: '#3B2E27', marginTop: 10 }}>נשלח לאישור!</p>
-              <p style={{ fontSize: 13, color: '#8B7A6C', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              <p style={{ fontSize: 14, color: '#8B7A6C', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
                 נבדוק ונזכה אתכם ב-{bonus} UC
               </p>
             </div>
@@ -106,7 +106,7 @@ export default function ShareClient({
               {eligibility.reason === 'pending'
                 ? <Timer1 size={44} variant="Bulk" color="#C0906F" />
                 : <CloseCircle size={44} variant="Bulk" color="#9C8B7F" />}
-              <p style={{ fontSize: 14, color: '#6F625A', marginTop: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+              <p style={{ fontSize: 14.5, color: '#6F625A', marginTop: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>
                 {eligibility.reason === 'pending'
                   ? 'יש לכם שיתוף שממתין לאישור'
                   : `אפשר לשתף שוב בעוד ${eligibility.nextAt ? daysUntil(eligibility.nextAt) : 7} ימים`}
@@ -132,13 +132,13 @@ export default function ShareClient({
                 ) : (
                   <>
                     <Gallery size={34} variant="Bulk" color="#C0906F" />
-                    <span style={{ fontSize: 13, color: '#8B7A6C', fontFamily: 'var(--font-assistant,sans-serif)' }}>בחרו צילום מסך</span>
+                    <span style={{ fontSize: 14, color: '#8B7A6C', fontFamily: 'var(--font-assistant,sans-serif)' }}>בחרו צילום מסך</span>
                   </>
                 )}
               </button>
 
               {error && (
-                <p style={{ textAlign: 'center', fontSize: 13, color: '#b04040', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>{error}</p>
+                <p style={{ textAlign: 'center', fontSize: 14, color: '#b04040', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>{error}</p>
               )}
 
               <button
@@ -162,7 +162,7 @@ export default function ShareClient({
       {/* History */}
       {history.length > 0 && (
         <div style={{ padding: '20px 16px 0' }}>
-          <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 12.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             השיתופים שלך
           </p>
           <div className="clay-sm" style={{ overflow: 'hidden' }}>
@@ -176,8 +176,8 @@ export default function ShareClient({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={s.image_url} alt="" style={{ width: 42, height: 42, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: label.color, fontWeight: 600, fontFamily: 'var(--font-assistant,sans-serif)' }}>{label.text}</p>
-                    <p style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+                    <p style={{ fontSize: 14, color: label.color, fontWeight: 600, fontFamily: 'var(--font-assistant,sans-serif)' }}>{label.text}</p>
+                    <p style={{ fontSize: 12.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
                       {new Date(s.created_at).toLocaleDateString('he-IL')}
                     </p>
                   </div>

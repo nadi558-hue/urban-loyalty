@@ -23,7 +23,7 @@ export default function TermsPage() {
         borderBottom: '1px solid rgba(192,144,111,0.18)',
       }}>
         <p style={{
-          fontSize: 11, color: '#A66B43', letterSpacing: '0.22em',
+          fontSize: 12.5, color: '#A66B43', letterSpacing: '0.22em',
           textTransform: 'uppercase', marginBottom: 8, fontFamily: 'var(--font-assistant,sans-serif)',
         }}>
           Urban Club
@@ -34,10 +34,10 @@ export default function TermsPage() {
         }}>
           תקנון ותנאי שימוש
         </h1>
-        <p style={{ fontSize: 12.5, color: '#7A6B60', marginTop: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 13.5, color: '#7A6B60', marginTop: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           מועדון הלקוחות של אורבן פילאטיס גרופ בע״מ
         </p>
-        <p style={{ fontSize: 11.5, color: '#9C8B7F', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 13, color: '#9C8B7F', marginTop: 4, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           עודכן: {TERMS_UPDATED}
         </p>
       </div>
@@ -47,14 +47,14 @@ export default function TermsPage() {
           {TERMS_SECTIONS.map((sec, si) => (
             <section key={sec.title} style={{ marginBottom: si === TERMS_SECTIONS.length - 1 ? 0 : 22 }}>
               <h2 style={{
-                fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 800,
+                fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14.5, fontWeight: 800,
                 color: '#96613F', marginBottom: 8,
               }}>
                 {sec.title}
               </h2>
               {sec.items.map((it, i) => (
                 <p key={i} style={{
-                  fontSize: 13, lineHeight: 1.75, color: '#4A3B32', marginBottom: 8,
+                  fontSize: 14, lineHeight: 1.75, color: '#4A3B32', marginBottom: 8,
                   fontFamily: 'var(--font-assistant,sans-serif)',
                 }}>
                   {it}
@@ -67,7 +67,7 @@ export default function TermsPage() {
 
       <div style={{ padding: '18px 16px 0', textAlign: 'center' }}>
         <Link href="/home" style={{
-          fontSize: 13, color: '#96613F', textDecoration: 'none',
+          fontSize: 14, color: '#96613F', textDecoration: 'none',
           fontFamily: 'var(--font-assistant,sans-serif)',
         }}>
           ‹ חזרה לאפליקציה
@@ -75,7 +75,7 @@ export default function TermsPage() {
       </div>
 
       <p style={{
-        textAlign: 'center', fontSize: 11, color: '#B3A597', margin: '22px 0 0',
+        textAlign: 'center', fontSize: 12.5, color: '#B3A597', margin: '22px 0 0',
         fontFamily: 'var(--font-assistant,sans-serif)',
       }}>
         © Urban Studio · כל הזכויות שמורות

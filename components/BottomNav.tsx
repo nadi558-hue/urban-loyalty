@@ -77,7 +77,7 @@ function Label({
 }) {
   return (
     <span style={{
-      fontSize: 10,
+      fontSize: 12,
       color: lit ? '#C0906F' : '#9C8B7F',
       fontFamily: 'var(--font-assistant,sans-serif)',
       fontWeight: lit ? 700 : 400,

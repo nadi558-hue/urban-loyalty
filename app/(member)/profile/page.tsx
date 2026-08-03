@@ -88,7 +88,7 @@ export default async function ProfilePage() {
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={coinSrc} alt="" aria-hidden style={{ height: 22, width: 'auto', objectFit: 'contain' }} />
-            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: '#A66B43', letterSpacing: '0.12em' }}>{tierLabel}</span>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 13, color: '#A66B43', letterSpacing: '0.12em' }}>{tierLabel}</span>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ export default async function ProfilePage() {
             borderLeft: i < stats.length - 1 ? '1px solid rgba(192,144,111,0.25)' : undefined,
           }}>
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#3B2E27', lineHeight: 1.1 }}>{s.value}</p>
-            <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>{s.label}</p>
+            <p style={{ fontSize: 12, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -118,8 +118,8 @@ export default async function ProfilePage() {
               padding: '14px 18px',
               borderBottom: i < rows.length - 1 ? '1px solid #F3EAE3' : undefined,
             }}>
-              <span style={{ fontSize: 13, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{r.label}</span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{r.value}</span>
+              <span style={{ fontSize: 14, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{r.label}</span>
+              <span style={{ fontSize: 14.5, fontWeight: 600, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{r.value}</span>
             </div>
           ))}
         </div>
@@ -143,12 +143,12 @@ export default async function ProfilePage() {
                 borderBottom: i < MENU.length - 1 ? '1px solid #F3EAE3' : undefined,
                 opacity: item.href ? 1 : 0.45,
               }}>
-                <span style={{ fontSize: 14, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+                <span style={{ fontSize: 14.5, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>
                   {item.label}
                   {/* Rows with nowhere to go are dimmed and labelled rather than
                       looking tappable and doing nothing. */}
                   {!item.href && (
-                    <span style={{ fontSize: 11, color: '#9C8B7F' }}> · בקרוב</span>
+                    <span style={{ fontSize: 12.5, color: '#9C8B7F' }}> · בקרוב</span>
                   )}
                 </span>
                 <ArrowLeft2 size={17} variant="Linear" color="#C0906F" />
@@ -176,7 +176,7 @@ export default async function ProfilePage() {
           }}>
             <span style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              fontSize: 14, fontWeight: 700, color: '#DBB89C', fontFamily: 'var(--font-assistant,sans-serif)',
+              fontSize: 14.5, fontWeight: 700, color: '#DBB89C', fontFamily: 'var(--font-assistant,sans-serif)',
             }}>
               <Setting2 size={19} variant="Bulk" color="#DBB89C" />
               ניהול מועדון
@@ -187,7 +187,7 @@ export default async function ProfilePage() {
       )}
 
       <p style={{
-        textAlign: 'center', fontSize: 11, color: '#B3A597', marginTop: 28,
+        textAlign: 'center', fontSize: 12.5, color: '#B3A597', marginTop: 28,
         fontFamily: 'var(--font-assistant,sans-serif)',
       }}>
         © Urban Studio · כל הזכויות שמורות

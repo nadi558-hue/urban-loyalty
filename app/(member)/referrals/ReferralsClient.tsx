@@ -49,13 +49,13 @@ export default function ReferralsClient({
           background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
         }} />
         <div style={{ position: 'relative', zIndex: 2, padding: '26px 22px', textAlign: 'right' }}>
-          <p className="uppercase" style={{ fontSize: 11, letterSpacing: '0.28em', color: '#A66B43', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
+          <p className="uppercase" style={{ fontSize: 12.5, letterSpacing: '0.28em', color: '#A66B43', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
             The Booster
           </p>
           <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 38, fontWeight: 900, color: '#3B2E27', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
             הפניות
           </h1>
-          <p style={{ fontSize: 13, marginTop: 4, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 14, marginTop: 4, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
             הפוך חברים לשגרירים של Urban
           </p>
         </div>
@@ -72,7 +72,7 @@ export default function ReferralsClient({
             borderLeft: i < refStats.length - 1 ? '1px solid rgba(192,144,111,0.25)' : undefined,
           }}>
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#3B2E27', lineHeight: 1.1 }}>{s.value}</p>
-            <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>{s.label}</p>
+            <p style={{ fontSize: 12, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -87,7 +87,7 @@ export default function ReferralsClient({
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, fontWeight: 700, color: '#3B2E27', marginBottom: 4 }}>
               מזמינים חברה, מרוויחים יחד
             </p>
-            <p style={{ fontSize: 12.5, lineHeight: 1.6, color: '#6F625A', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ fontSize: 13.5, lineHeight: 1.6, color: '#6F625A', fontFamily: 'var(--font-assistant,sans-serif)' }}>
               על כל חבר/ה שמצטרף/ת ורוכש/ת מנוי — שניכם מקבלים <strong style={{ color: '#96613F' }}>50 UC</strong>
             </p>
           </div>

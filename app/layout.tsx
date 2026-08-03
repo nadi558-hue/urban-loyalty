@@ -38,8 +38,10 @@ export const viewport: Viewport = {
   themeColor: '#3B2E27',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  // Zoom is deliberately left enabled. Pinch-to-zoom is the main way an older
+  // member copes with small text, and blocking it fails WCAG 1.4.4. The usual
+  // reason to block it — iOS auto-zooming when a small input is focused — is
+  // handled instead by keeping every input at >=16px (see globals.css).
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

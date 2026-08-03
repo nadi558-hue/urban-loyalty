@@ -62,7 +62,7 @@ export default async function AdminHappyHourPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 pt-8 pb-12" dir="rtl">
       <div className="mb-6">
-        <Link href="/admin" className="text-sm text-gray-400 hover:underline">← חזרה לדשבורד</Link>
+        <Link href="/admin" className="text-sm text-gray-400 hover:underline">← חזרה למסך הבית</Link>
         <h1 className="text-2xl font-bold mt-1" style={{ color: 'var(--urban-dark)' }}>🔥 Happy Hour · שיעורים מקודמים</h1>
         <p className="text-sm text-gray-400 mt-1">בחר שיעורים לקידום — החברים יקבלו בונוס UC על נוכחות בהם</p>
       </div>

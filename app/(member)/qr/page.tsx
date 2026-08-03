@@ -34,13 +34,13 @@ export default async function QrPage() {
           background: 'radial-gradient(130% 90% at 85% 18%, rgba(255,255,255,0.4), transparent 58%), linear-gradient(180deg, transparent 62%, rgba(241,233,227,0.5) 100%)',
         }} />
         <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right' }}>
-          <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 12.5, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             צ׳ק-אין בסטודיו
           </p>
           <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 30, fontWeight: 900, color: '#3B2E27', lineHeight: 1.12 }}>
             סרקו את המסך בכניסה
           </p>
-          <p style={{ fontSize: 12, color: '#7A6B60', marginTop: 8, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 13, color: '#7A6B60', marginTop: 8, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             {member.name} · {memberId} · {tier}
           </p>
         </div>

@@ -279,3 +279,19 @@ button:disabled { cursor: default; transform: none !important; filter: none !imp
 @media (prefers-reduced-motion: reduce) {
   @keyframes urban-pulse { 0%, 100% { opacity: 1; } }
 }
+
+/* ── Readability ───────────────────────────────────
+   The club skews older than a typical app audience, and the design leaned on
+   10–12px captions that were genuinely hard to read. Bumping the floor here
+   rather than at each call site keeps the visual hierarchy intact (headings
+   and figures are unchanged) while lifting only the text that was too small.
+
+   16px on inputs is load-bearing: below that, iOS Safari zooms the page in on
+   focus. That auto-zoom is why the viewport used to block zooming altogether,
+   which cost every user the ability to zoom at all. */
+input, select, textarea {
+  font-size: max(1rem, 16px);
+}
+
+/* Never render below ~12px, whatever an inline style asks for. */
+body { font-size: 16px; }

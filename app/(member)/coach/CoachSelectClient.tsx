@@ -51,13 +51,13 @@ export default function CoachSelectClient(
         background: 'linear-gradient(160deg,#FBF4EE 0%,#F0E2D6 100%)',
         borderBottom: '1px solid rgba(192,144,111,0.18)',
       }}>
-        <p style={{ fontSize: 11, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 12.5, color: '#A66B43', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           מאמן/ת אישי/ת
         </p>
         <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 30, fontWeight: 900, color: '#3B2E27', lineHeight: 1.15, marginBottom: 6 }}>
           בחרו את המלווה שלכם
         </h1>
-        <p style={{ fontSize: 13, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 14, color: '#7A6B60', fontFamily: 'var(--font-assistant,sans-serif)' }}>
           הדמות שתלווה אתכם במסע — תעודד ברצף, תחגוג הישגים ותהיה שם גם בימים פחות קלים.
         </p>
       </div>
@@ -107,7 +107,7 @@ export default function CoachSelectClient(
               {/* Text */}
               <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingInline: '2px 6px' }}>
                 <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#3B2E27', marginBottom: 4 }}>{c.name}</p>
-                <p style={{ fontSize: 13, lineHeight: 1.55, color: '#6F625A', fontFamily: 'var(--font-assistant,sans-serif)' }}>{c.tagline}</p>
+                <p style={{ fontSize: 14, lineHeight: 1.55, color: '#6F625A', fontFamily: 'var(--font-assistant,sans-serif)' }}>{c.tagline}</p>
               </div>
             </button>
           )
@@ -119,7 +119,7 @@ export default function CoachSelectClient(
         <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 19, fontWeight: 700, color: '#3B2E27', marginBottom: 3 }}>
           ואיך לפנות אליכם?
         </p>
-        <p style={{ fontSize: 12.5, color: '#7A6B60', marginBottom: 11, lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 13.5, color: '#7A6B60', marginBottom: 11, lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           כדי שההודעות יישמעו טבעיות.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -138,8 +138,8 @@ export default function CoachSelectClient(
                   transition: 'all .18s ease',
                 }}
               >
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{g.label}</p>
-                <p style={{ fontSize: 11, color: '#9C8B7F', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>{g.sample}</p>
+                <p style={{ fontSize: 14, fontWeight: 700, color: '#3B2E27', fontFamily: 'var(--font-assistant,sans-serif)' }}>{g.label}</p>
+                <p style={{ fontSize: 12.5, color: '#9C8B7F', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>{g.sample}</p>
               </button>
             )
           })}

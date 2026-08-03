@@ -135,7 +135,7 @@ export default async function HomePage() {
         {/* Greeting + tier chip (overlaid on the photo) */}
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '22px 20px' }}>
           <div style={{ textShadow: '0 1px 10px rgba(30,20,14,0.45)' }}>
-            <p style={{ fontSize: 13, color: 'rgba(246,239,234,0.8)', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
+            <p style={{ fontSize: 14, color: 'rgba(246,239,234,0.8)', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>ערב טוב,</p>
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 26, fontWeight: 700, color: '#FBF6F2', lineHeight: 1.1 }}>{firstName} {name.split(' ')[1]}</p>
           </div>
           {/* Glass tier chip */}
@@ -145,7 +145,7 @@ export default async function HomePage() {
             background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
           }}>
             <TierCoin tier={tier} size={30} />
-            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 12, color: '#FBF6F2', letterSpacing: '0.12em' }}>{tierLabel}</span>
+            <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 13, color: '#FBF6F2', letterSpacing: '0.12em' }}>{tierLabel}</span>
           </div>
         </div>
       </div>
@@ -194,17 +194,17 @@ export default async function HomePage() {
             {qualifying}
           </text>
           <text x={cx} y={cy + 8} textAnchor="middle"
-            fontSize="10" fill="#A66B43" letterSpacing="2"
+            fontSize="11.5" fill="#A66B43" letterSpacing="2"
             fontFamily="var(--font-assistant,sans-serif)">
             UC · סטטוס
           </text>
           {/* Labels */}
           <text x={cx - R - 4} y={cy + 16} textAnchor="end"
-            fontSize="9" fill="#9C8B7F" fontFamily="var(--font-assistant,sans-serif)">
+            fontSize="11" fill="#9C8B7F" fontFamily="var(--font-assistant,sans-serif)">
             SILVER
           </text>
           <text x={cx + R + 4} y={cy + 16} textAnchor="start"
-            fontSize="9" fill="#A66B43" fontFamily="var(--font-assistant,sans-serif)">
+            fontSize="11" fill="#A66B43" fontFamily="var(--font-assistant,sans-serif)">
             {nextTierName.toUpperCase()}
           </text>
         </svg>
@@ -213,7 +213,7 @@ export default async function HomePage() {
         {toNext > 0 && (
           <p style={{
             display: 'flex', alignItems: 'center', gap: 5, direction: 'rtl',
-            fontSize: 12, color: '#7A6B60', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)',
+            fontSize: 13, color: '#7A6B60', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)',
           }}>
             <Star1 size={13} variant="Bulk" color="#C0906F" />
             עוד <strong style={{ color: '#A66B43' }}>{toNext} UC</strong> ל‑{nextTierName}
@@ -234,7 +234,7 @@ export default async function HomePage() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <p style={{ fontSize: 11, color: 'rgba(40,30,10,0.6)', letterSpacing: '0.08em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין למימוש</p>
+            <p style={{ fontSize: 12.5, color: 'rgba(40,30,10,0.6)', letterSpacing: '0.08em', marginBottom: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>זמין למימוש</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
               <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 52, fontWeight: 900, color: '#3B2E27', lineHeight: 1 }}>{total_coins}</span>
               <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 20, color: 'rgba(40,30,10,0.65)' }}>UC</span>
@@ -245,7 +245,7 @@ export default async function HomePage() {
               background: '#3B2E27', borderRadius: 999, padding: '10px 18px',
               display: 'flex', alignItems: 'center', gap: 6,
             }}>
-              <span style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#DBB89C' }}>מימוש</span>
+              <span style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#DBB89C' }}>מימוש</span>
               <ArrowLeft2 size={15} variant="Linear" color="#DBB89C" />
             </div>
           </Link>
@@ -266,10 +266,10 @@ export default async function HomePage() {
                 : <Clock size={17} variant="Bulk" color="#96613F" />}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 2 }}>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', marginBottom: 2 }}>
                 {pending.length === 1 ? 'צ׳ק-אין אחד ממתין לאישור' : `${pending.length} צ׳ק-אין ממתינים לאישור`}
               </p>
-              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11.5, color: '#9C8B7F', lineHeight: 1.45 }}>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, color: '#9C8B7F', lineHeight: 1.45 }}>
                 {stalePending > 0
                   ? 'הנוכחות עדיין לא סומנה במערכת השיעורים. שווה לפנות לצוות הסטודיו.'
                   : 'המטבעות ייכנסו ברגע שהנוכחות תסומן במערכת השיעורים.'}
@@ -286,7 +286,7 @@ export default async function HomePage() {
 
       {/* ── Ways to earn ─────────────────────────── */}
       <div style={{ padding: '20px 16px 0' }}>
-        <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>איך צוברים עוד</p>
+        <p style={{ fontSize: 12.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>איך צוברים עוד</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {EARN.map(e => (
             <Link key={e.href} href={e.href} className="clay-sm" style={{
@@ -302,13 +302,13 @@ export default async function HomePage() {
                   <e.Icon size={20} variant="Bulk" color="#96613F" />
                 </div>
                 <span style={{
-                  fontSize: 11, fontWeight: 700, color: '#96613F',
+                  fontSize: 12.5, fontWeight: 700, color: '#96613F',
                   background: '#FBF1E8', borderRadius: 999, padding: '2px 8px',
                   fontFamily: 'var(--font-assistant,sans-serif)',
                 }}>{e.reward}</span>
               </div>
-              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 3 }}>{e.title}</p>
-              <p style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', lineHeight: 1.35 }}>{e.note}</p>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', marginBottom: 3 }}>{e.title}</p>
+              <p style={{ fontSize: 12.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', lineHeight: 1.35 }}>{e.note}</p>
             </Link>
           ))}
         </div>
@@ -320,7 +320,7 @@ export default async function HomePage() {
           <div className="clay-sm" style={{ padding: '16px 18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#3B2E27' }}>המסלול ל‑{nextTierName}</p>
-              <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14, color: '#6F625A' }}>
+              <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 14.5, color: '#6F625A' }}>
                 <span style={{ color: '#C0906F', fontWeight: 700 }}>{qualifying}</span> / {tierCap}
               </p>
             </div>
@@ -330,19 +330,19 @@ export default async function HomePage() {
             </div>
             {/* Labels */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>SILVER · {tierFloor}</span>
-              <span style={{ fontSize: 11, color: '#C0906F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextTierName.toUpperCase()} · {tierCap}</span>
+              <span style={{ fontSize: 12.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>SILVER · {tierFloor}</span>
+              <span style={{ fontSize: 12.5, color: '#C0906F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextTierName.toUpperCase()} · {tierCap}</span>
             </div>
             {/* Perk preview */}
             {nextPerk && (
               <div style={{ marginTop: 12, display: 'flex', gap: 16 }}>
                 <div className="clay-inset" style={{ flex: 1, textAlign: 'center', padding: '8px 4px' }}>
                   <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile1.value}</p>
-                  <p style={{ fontSize: 10, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextPerkTile1.label}</p>
+                  <p style={{ fontSize: 12, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextPerkTile1.label}</p>
                 </div>
                 <div className="clay-inset" style={{ flex: 1, textAlign: 'center', padding: '8px 4px' }}>
                   <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#C0906F' }}>{nextPerkTile2.value}</p>
-                  <p style={{ fontSize: 10, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextPerkTile2.label}</p>
+                  <p style={{ fontSize: 12, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{nextPerkTile2.label}</p>
                 </div>
               </div>
             )}
@@ -352,7 +352,7 @@ export default async function HomePage() {
 
       {/* ── Active challenges ────────────────────── */}
       <div style={{ padding: '20px 16px 0' }}>
-        <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>אתגרים פעילים</p>
+        <p style={{ fontSize: 12.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>אתגרים פעילים</p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {CHALLENGES.map(ch => (
             <div key={ch.title} className="clay-sm" style={{ padding: '14px 14px 12px' }}>
@@ -366,16 +366,16 @@ export default async function HomePage() {
                   <ch.Icon size={20} variant="Bulk" color="#96613F" />
                 </div>
                 <span style={{
-                  fontSize: 11, fontWeight: 700, color: '#96613F',
+                  fontSize: 12.5, fontWeight: 700, color: '#96613F',
                   background: '#FBF1E8', borderRadius: 999, padding: '2px 8px',
                   fontFamily: 'var(--font-assistant,sans-serif)',
                 }}>{ch.reward}</span>
               </div>
-              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 700, color: '#3B2E27', marginBottom: 8 }}>{ch.title}</p>
+              <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 700, color: '#3B2E27', marginBottom: 8 }}>{ch.title}</p>
               <div className="clay-track" style={{ height: 4, marginBottom: 6 }}>
                 <div style={{ height: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#DBB89C,#C0906F)', width: `${Math.round((ch.current / ch.goal) * 100)}%` }} />
               </div>
-              <p style={{ fontSize: 11, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{ch.current} / {ch.goal} · {ch.note}</p>
+              <p style={{ fontSize: 12.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>{ch.current} / {ch.goal} · {ch.note}</p>
             </div>
           ))}
         </div>
@@ -384,14 +384,14 @@ export default async function HomePage() {
       {/* ── Recent activity ──────────────────────── */}
       <div style={{ padding: '20px 16px 100px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-          <p style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>פעילות אחרונה</p>
+          <p style={{ fontSize: 12.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>פעילות אחרונה</p>
           {ledger.length > 0 && (
-            <Link href="/history" style={{ fontSize: 12, color: '#A66B43', textDecoration: 'none', fontFamily: 'var(--font-assistant,sans-serif)' }}>הכל</Link>
+            <Link href="/history" style={{ fontSize: 13, color: '#A66B43', textDecoration: 'none', fontFamily: 'var(--font-assistant,sans-serif)' }}>הכל</Link>
           )}
         </div>
         <div className="clay-sm" style={{ overflow: 'hidden' }}>
           {ledger.length === 0 && (
-            <p style={{ padding: '22px 16px', textAlign: 'center', fontSize: 12.5, color: '#9C8B7F', lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ padding: '22px 16px', textAlign: 'center', fontSize: 13.5, color: '#9C8B7F', lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
               עדיין אין תנועות. השיעור הבא שלכם יופיע כאן.
             </p>
           )}
@@ -405,10 +405,10 @@ export default async function HomePage() {
                 borderBottom: i < ledger.length - 1 ? '1px solid #F3EAE3' : undefined,
               }}>
                 <div>
-                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, fontWeight: 600, color: '#3B2E27' }}>
+                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, fontWeight: 600, color: '#3B2E27' }}>
                     {className ?? note ?? reasonLabel(a.reason)}
                   </p>
-                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 11, color: '#9C8B7F' }}>{activityMeta(a.created_at)}</p>
+                  <p style={{ fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 12.5, color: '#9C8B7F' }}>{activityMeta(a.created_at)}</p>
                 </div>
                 <span style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: a.points > 0 ? '#3f8f5e' : '#c04040' }}>
                   {a.points > 0 ? '+' : ''}{a.points}

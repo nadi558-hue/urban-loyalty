@@ -118,10 +118,10 @@ export default function PwaInstall() {
       <img src="/icons/icon-192.png" alt="" width={44} height={44}
         style={{ borderRadius: 10, flexShrink: 0 }} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: '#F6EFEA', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 14.5, fontWeight: 700, color: '#F6EFEA', fontFamily: 'var(--font-assistant,sans-serif)' }}>
           {title}
         </p>
-        <p style={{ fontSize: 12, color: '#B8A99B', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 13, color: '#B8A99B', marginTop: 2, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           {subtitle}
         </p>
       </div>
@@ -129,7 +129,7 @@ export default function PwaInstall() {
         <button onClick={install} style={{
           flexShrink: 0, border: 'none', borderRadius: 12, padding: '9px 16px',
           background: 'linear-gradient(135deg,#DBB89C,#C0906F)', color: '#3B2E27',
-          fontSize: 14, fontWeight: 800, fontFamily: 'var(--font-assistant,sans-serif)', cursor: 'pointer',
+          fontSize: 14.5, fontWeight: 800, fontFamily: 'var(--font-assistant,sans-serif)', cursor: 'pointer',
         }}>
           התקן
         </button>

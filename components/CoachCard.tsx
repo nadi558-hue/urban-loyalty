@@ -31,7 +31,7 @@ export default function CoachCard({ view }: { view: CoachView }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 5 }}>
               <Flash size={14} variant="Bulk" color="#C0906F" />
               <span style={{
-                fontFamily: 'var(--font-frank,serif)', fontSize: 12, fontWeight: 700,
+                fontFamily: 'var(--font-frank,serif)', fontSize: 13, fontWeight: 700,
                 color: '#A66B43', letterSpacing: '0.02em',
               }}>
                 {streak} שיעורים ברצף
@@ -39,7 +39,7 @@ export default function CoachCard({ view }: { view: CoachView }) {
             </div>
           )}
           <p style={{
-            fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 13, lineHeight: 1.5,
+            fontFamily: 'var(--font-assistant,sans-serif)', fontSize: 14, lineHeight: 1.5,
             color: '#3B2E27',
           }}>
             {message}
@@ -57,7 +57,7 @@ export default function CoachCard({ view }: { view: CoachView }) {
 
         <Link href="/coach" style={{
           display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 7, marginRight: 4,
-          fontSize: 11, color: '#9C8B7F', textDecoration: 'none',
+          fontSize: 12.5, color: '#9C8B7F', textDecoration: 'none',
           fontFamily: 'var(--font-assistant,sans-serif)',
         }}>
           <Setting2 size={12} variant="Linear" color="#9C8B7F" />

@@ -57,7 +57,7 @@ function Section({ q, children }: { q: string; children: React.ReactNode }) {
         {q}
       </summary>
       <div style={{
-        marginTop: 10, fontSize: 13, lineHeight: 1.65, color: '#6F625A',
+        marginTop: 10, fontSize: 14, lineHeight: 1.65, color: '#6F625A',
         fontFamily: 'var(--font-assistant,sans-serif)',
       }}>
         {children}
@@ -104,7 +104,7 @@ export default async function HelpPage() {
       <div style={{ padding: '26px 20px 18px' }}>
         <Link href="/profile" style={{
           display: 'inline-flex', alignItems: 'center', gap: 4, marginBottom: 12,
-          fontSize: 13, color: '#A66B43', textDecoration: 'none',
+          fontSize: 14, color: '#A66B43', textDecoration: 'none',
           fontFamily: 'var(--font-assistant,sans-serif)',
         }}>
           <ArrowLeft2 size={15} variant="Linear" color="#A66B43" />
@@ -113,7 +113,7 @@ export default async function HelpPage() {
         <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 30, fontWeight: 900, color: '#3B2E27', lineHeight: 1.15 }}>
           שאלות ותשובות
         </h1>
-        <p style={{ fontSize: 13, color: '#7A6B60', marginTop: 5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+        <p style={{ fontSize: 14, color: '#7A6B60', marginTop: 5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
           התשובות כאן מותאמות לחשבון שלכם.
         </p>
       </div>
@@ -166,7 +166,7 @@ export default async function HelpPage() {
             {RULE_ORDER.filter(k => rules[k] !== undefined).map(k => (
               <div key={k} style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
                 <span style={{
-                  fontFamily: 'var(--font-frank,serif)', fontSize: 13, fontWeight: 700,
+                  fontFamily: 'var(--font-frank,serif)', fontSize: 14, fontWeight: 700,
                   color: '#96613F', background: '#FBF1E8', borderRadius: 999,
                   padding: '1px 8px', flexShrink: 0, minWidth: 46, textAlign: 'center',
                 }}>
@@ -258,7 +258,7 @@ export default async function HelpPage() {
 
         {/* ── Still stuck ──────────────────────────── */}
         <div className="clay-sm" style={{ padding: '16px', marginTop: 16, textAlign: 'center' }}>
-          <p style={{ fontSize: 13, color: '#6F625A', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+          <p style={{ fontSize: 14, color: '#6F625A', marginBottom: 12, fontFamily: 'var(--font-assistant,sans-serif)' }}>
             לא מצאתם תשובה?
           </p>
           {wa ? (
@@ -272,7 +272,7 @@ export default async function HelpPage() {
               כתבו לצוות בוואטסאפ
             </a>
           ) : (
-            <p style={{ fontSize: 12.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ fontSize: 13.5, color: '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)' }}>
               פנו לצוות בסטודיו ונשמח לעזור.
             </p>
           )}

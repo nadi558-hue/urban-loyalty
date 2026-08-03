@@ -33,7 +33,7 @@ export default async function HistoryPage() {
           background: 'linear-gradient(180deg, rgba(59,46,39,0.38) 0%, rgba(59,46,39,0.06) 32%, rgba(59,46,39,0) 52%, rgba(241,233,227,0.55) 84%, #F1E9E3 100%)',
         }} />
         <div style={{ position: 'relative', zIndex: 2, padding: '28px 22px', textAlign: 'right', textShadow: '0 1px 10px rgba(30,20,14,0.45)' }}>
-          <p style={{ fontSize: 11, color: 'rgba(219,184,156,0.95)', letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
+          <p style={{ fontSize: 12.5, color: 'rgba(219,184,156,0.95)', letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 6, fontFamily: 'Georgia, serif' }}>
             Urban Coins
           </p>
           <h1 style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 38, fontWeight: 900, color: '#FBF6F2', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
@@ -49,11 +49,11 @@ export default async function HistoryPage() {
       }}>
         <div style={{ flex: 1, textAlign: 'center', borderLeft: '1px solid rgba(192,144,111,0.25)' }}>
           <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#3f8f5e', lineHeight: 1.1 }}>+{earned}</p>
-          <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>סה״כ צברת</p>
+          <p style={{ fontSize: 12, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>סה״כ צברת</p>
         </div>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 900, color: '#A66B43', lineHeight: 1.1 }}>{redeemed}</p>
-          <p style={{ fontSize: 10.5, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>מימשת</p>
+          <p style={{ fontSize: 12, color: '#8B7A6C', marginTop: 3, fontFamily: 'var(--font-assistant,sans-serif)' }}>מימשת</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export default async function HistoryPage() {
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 16, fontWeight: 700, color: '#3B2E27', marginBottom: 6 }}>
               עדיין אין תנועות
             </p>
-            <p style={{ fontSize: 12.5, color: '#9C8B7F', lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
+            <p style={{ fontSize: 13.5, color: '#9C8B7F', lineHeight: 1.5, fontFamily: 'var(--font-assistant,sans-serif)' }}>
               כל שיעור, בונוס ומימוש יופיעו כאן ברגע שייקלטו.
             </p>
           </div>

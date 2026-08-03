@@ -77,7 +77,7 @@ export default async function NotRegisteredPage() {
         )}
 
         <Link href="/login" style={{
-          display: 'block', fontSize: 12.5, color: '#9C8B7F', textDecoration: 'none',
+          display: 'block', fontSize: 13.5, color: '#9C8B7F', textDecoration: 'none',
           fontFamily: 'var(--font-assistant,sans-serif)',
         }}>
           התחברות עם מספר אחר

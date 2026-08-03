@@ -43,7 +43,7 @@ export default async function AdminMembersPage() {
     <main className="max-w-3xl mx-auto px-4 pt-8 pb-12" dir="rtl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/admin" className="text-sm text-gray-400 hover:underline">← חזרה לדשבורד</Link>
+          <Link href="/admin" className="text-sm text-gray-400 hover:underline">← חזרה למסך הבית</Link>
           <h1 className="text-2xl font-bold mt-1" style={{ color: 'var(--urban-dark)' }}>כל החברים</h1>
         </div>
         <span className="text-sm text-gray-400">{members.length} חברים</span>
