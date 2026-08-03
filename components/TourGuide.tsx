@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export const TOUR_KEY = 'urban-tour-v1'
 /** Fired by the profile row to replay the tour on demand. */
@@ -54,6 +54,9 @@ export default function TourGuide() {
   const [active, setActive] = useState(false)
   const [i, setI] = useState(0)
   const [box, setBox] = useState<Box | null>(null)
+  const bubbleRef = useRef<HTMLDivElement | null>(null)
+  // Seeded at roughly the real height so the first paint doesn't jump.
+  const [bubbleH, setBubbleH] = useState(230)
 
   // First visit only. Reading localStorage in an effect (not during render)
   // keeps the server and first client render identical.
@@ -89,6 +92,13 @@ export default function TourGuide() {
     }
   }, [active, i, measure, step])
 
+  // Re-measure the bubble whenever the copy changes.
+  useLayoutEffect(() => {
+    if (!active) return
+    const h = bubbleRef.current?.offsetHeight
+    if (h && Math.abs(h - bubbleH) > 1) setBubbleH(h)
+  })
+
   // Don't let the page scroll behind the overlay.
   useEffect(() => {
     if (!active) return
@@ -110,11 +120,14 @@ export default function TourGuide() {
   const vh = typeof window !== 'undefined' ? window.innerHeight : 800
   // Fall back to a centred bubble when the target isn't on this screen.
   const below = box ? (step.place === 'above' ? false : true) : true
+  // Measured rather than assumed: the copy is a different length on every step,
+  // so a fixed height estimate either overlapped the highlighted element or
+  // pushed the buttons off the bottom of the screen.
   const bubbleTop = box
     ? below
-      ? Math.min(box.top + box.height + pad + 6, vh - 210)
-      : Math.max(12, box.top - pad - 190)
-    : vh / 2 - 100
+      ? Math.min(box.top + box.height + pad + 6, vh - bubbleH - 12)
+      : Math.max(12, box.top - pad - bubbleH - 6)
+    : Math.max(12, vh / 2 - bubbleH / 2)
 
   return (
     <div
@@ -142,11 +155,12 @@ export default function TourGuide() {
       )}
 
       <div
+        ref={bubbleRef}
         onClick={e => e.stopPropagation()}
         style={{
           position: 'fixed', top: bubbleTop, left: '50%', transform: 'translateX(-50%)',
-          width: 'min(340px, calc(100vw - 32px))',
-          background: '#FBF6F2', borderRadius: 20, padding: '16px 18px 14px',
+          width: 'min(356px, calc(100vw - 28px))',
+          background: '#FBF6F2', borderRadius: 20, padding: '18px 20px 16px',
           boxShadow: '0 18px 40px rgba(0,0,0,0.4)',
           fontFamily: 'var(--font-assistant,sans-serif)',
         }}
@@ -160,24 +174,28 @@ export default function TourGuide() {
           ))}
         </div>
 
-        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 18, fontWeight: 700, color: '#3B2E27', marginBottom: 5 }}>
+        {/* Instruction copy is deliberately larger and darker than the app's
+            body text: it is read once, under a dimmed overlay, often by an
+            older member, and it is the only place the non-obvious rules (like
+            "no QR scan, no coins") are explained. */}
+        <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 21, fontWeight: 700, color: '#3B2E27', marginBottom: 7 }}>
           {step.title}
         </p>
-        <p style={{ fontSize: 13.5, lineHeight: 1.6, color: '#6F625A', marginBottom: 14 }}>
+        <p style={{ fontSize: 16, lineHeight: 1.65, fontWeight: 500, color: '#54463C', marginBottom: 16 }}>
           {step.body}
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <button onClick={finish} style={{
             border: 'none', background: 'transparent', cursor: 'pointer',
-            fontSize: 13, color: '#9C8B7F', padding: '6px 2px',
+            fontSize: 14.5, color: '#8B7A6C', padding: '8px 4px',
           }}>
             דלג
           </button>
           <span style={{ flex: 1 }} />
-          <span style={{ fontSize: 12.5, color: '#B3A597' }}>{i + 1}/{STEPS.length}</span>
+          <span style={{ fontSize: 13.5, color: '#A89787' }}>{i + 1}/{STEPS.length}</span>
           <button onClick={next} className="clay-btn" style={{
-            padding: '10px 22px', fontSize: 14, fontWeight: 800, cursor: 'pointer',
+            padding: '11px 24px', fontSize: 15.5, fontWeight: 800, cursor: 'pointer',
           }}>
             {i === STEPS.length - 1 ? 'סיימנו!' : 'הבא'}
           </button>

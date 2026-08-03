@@ -91,7 +91,7 @@ export default function InstallButton() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
-              <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 19, fontWeight: 700, color: '#3B2E27' }}>
+              <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 21, fontWeight: 700, color: '#3B2E27' }}>
                 {guide.title}
               </p>
               <button onClick={() => setOpen(false)} aria-label="סגור"
@@ -118,7 +118,7 @@ export default function InstallButton() {
 
             {guide.note && (
               <p style={{
-                marginTop: 16, fontSize: 13.5, color: '#8B7A6C', lineHeight: 1.5,
+                marginTop: 16, fontSize: 14.5, color: '#7A6B60', lineHeight: 1.6,
                 fontFamily: 'var(--font-assistant,sans-serif)',
               }}>
                 {guide.note}
