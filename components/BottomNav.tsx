@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useLinkStatus } from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home2, Gift, ScanBarcode, Clock, User, type Icon } from 'iconsax-reactjs'
 
@@ -11,6 +12,82 @@ const tabs: { label: string; Icon: Icon; href: string; center?: boolean }[] = [
   { label: 'היסטוריה', Icon: Clock, href: '/history' },
   { label: 'פרופיל', Icon: User, href: '/profile' },
 ]
+
+/**
+ * Marks the tab being navigated to.
+ *
+ * Member screens are force-dynamic, so the tap-to-paint gap is a server
+ * round-trip. The pressed state fades the moment the finger lifts, which left
+ * that gap with no feedback at all — this holds a visible signal on the tab
+ * for as long as the navigation is actually in flight.
+ *
+ * Must be rendered inside the <Link> it reports on; that is what useLinkStatus
+ * reads from.
+ */
+function TabBody({
+  tab, active,
+}: {
+  tab: (typeof tabs)[number]
+  active: boolean
+}) {
+  const { pending } = useLinkStatus()
+  const lit = active || pending
+
+  if (tab.center) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 44 }}>
+        <div style={{
+          width: 52, height: 52, borderRadius: '50%',
+          background: 'linear-gradient(135deg,#DBB89C,#C0906F)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: [
+            '0 12px 22px -8px rgba(139,100,74,0.65)',
+            'inset 0 4px 8px -3px rgba(255,255,255,0.7)',
+            'inset 0 -6px 12px -6px rgba(120,85,62,0.45)',
+          ].join(','),
+          marginTop: -18,
+          opacity: pending ? 0.65 : 1,
+          transition: 'opacity 140ms ease',
+        }}>
+          <tab.Icon size={24} variant="Bulk" color="#3B2E27" />
+        </div>
+        <Label tab={tab} lit={lit} pending={pending} />
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, minWidth: 44 }}>
+      <tab.Icon
+        size={23}
+        variant={lit ? 'Bulk' : 'Linear'}
+        color={lit ? '#C0906F' : '#9C8B7F'}
+      />
+      <Label tab={tab} lit={lit} pending={pending} />
+    </div>
+  )
+}
+
+function Label({
+  tab, lit, pending,
+}: {
+  tab: (typeof tabs)[number]
+  lit: boolean
+  pending: boolean
+}) {
+  return (
+    <span style={{
+      fontSize: 10,
+      color: lit ? '#C0906F' : '#9C8B7F',
+      fontFamily: 'var(--font-assistant,sans-serif)',
+      fontWeight: lit ? 700 : 400,
+      // A quiet pulse while the next screen is on its way.
+      animation: pending ? 'urban-pulse 900ms ease-in-out infinite' : undefined,
+    }}>
+      {tab.label}
+    </span>
+  )
+}
 
 export default function BottomNav() {
   const pathname = usePathname()
@@ -30,43 +107,11 @@ export default function BottomNav() {
       padding: '8px 0 max(8px, env(safe-area-inset-bottom))',
       zIndex: 50,
     }}>
-      {tabs.map(tab => {
-        const active = pathname === tab.href
-        if (tab.center) {
-          return (
-            <Link key={tab.href} href={tab.href} style={{ textDecoration: 'none' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 44 }}>
-                <div style={{
-                  width: 52, height: 52, borderRadius: '50%',
-                  background: 'linear-gradient(135deg,#DBB89C,#C0906F)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: [
-                    '0 12px 22px -8px rgba(139,100,74,0.65)',
-                    'inset 0 4px 8px -3px rgba(255,255,255,0.7)',
-                    'inset 0 -6px 12px -6px rgba(120,85,62,0.45)',
-                  ].join(','),
-                  marginTop: -18,
-                }}>
-                  <tab.Icon size={24} variant="Bulk" color="#3B2E27" />
-                </div>
-                <span style={{ fontSize: 10, color: active ? '#C0906F' : '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', fontWeight: active ? 700 : 400 }}>{tab.label}</span>
-              </div>
-            </Link>
-          )
-        }
-        return (
-          <Link key={tab.href} href={tab.href} style={{ textDecoration: 'none' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, minWidth: 44 }}>
-              <tab.Icon
-                size={23}
-                variant={active ? 'Bulk' : 'Linear'}
-                color={active ? '#C0906F' : '#9C8B7F'}
-              />
-              <span style={{ fontSize: 10, color: active ? '#C0906F' : '#9C8B7F', fontFamily: 'var(--font-assistant,sans-serif)', fontWeight: active ? 700 : 400 }}>{tab.label}</span>
-            </div>
-          </Link>
-        )
-      })}
+      {tabs.map(tab => (
+        <Link key={tab.href} href={tab.href} style={{ textDecoration: 'none' }}>
+          <TabBody tab={tab} active={pathname === tab.href} />
+        </Link>
+      ))}
     </nav>
   )
 }

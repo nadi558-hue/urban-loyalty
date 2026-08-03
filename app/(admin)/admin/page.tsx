@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +27,15 @@ export default async function AdminPage() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 pt-8" dir="rtl">
+      {/* The sub-pages each link back here, but the dashboard itself was a
+          dead end — an admin who is also a member had no way back to the app,
+          and staff-only phones need somewhere to go that isn't a wall. */}
+      <Link href="/home" style={{
+        display: 'inline-flex', alignItems: 'center', gap: 5,
+        fontSize: 13, color: '#96613F', textDecoration: 'none', marginBottom: 14,
+      }}>
+        ‹ חזרה לאפליקציה
+      </Link>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: 'var(--urban-dark)' }}>דשבורד ניהול</h1>

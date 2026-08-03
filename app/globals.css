@@ -207,3 +207,75 @@ summary::marker { content: ''; }
     animation: none;
   }
 }
+
+/* ── Tap feedback ──────────────────────────────────
+   Every screen is force-dynamic, so a tap can wait on a server round-trip
+   before anything changes. Without a pressed state the app reads as if the
+   tap was missed and people tap again. This is CSS-only so the feedback is
+   immediate — it never waits on React, hydration, or the network.
+
+   touch-action: manipulation also drops the ~300ms double-tap-zoom delay
+   iOS Safari otherwise adds to every tap. */
+a, button, [role="button"], summary, label[for] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+a:active, button:not(:disabled):active,
+[role="button"]:active, summary:active {
+  transform: scale(0.972);
+  filter: brightness(0.96);
+}
+
+/* Cards and pills already carry a raised clay bevel, so pressing one should
+   sink it rather than just shrink it. */
+.clay:active, .clay-sm:active, .urban-card:active {
+  box-shadow: var(--clay-shadow-inset);
+}
+
+a, button, [role="button"], summary,
+.clay, .clay-sm, .urban-card {
+  transition: transform 110ms cubic-bezier(.22,1,.36,1),
+              filter 110ms ease,
+              box-shadow 140ms ease;
+}
+
+/* Disabled controls must not look pressable. */
+button:disabled { cursor: default; transform: none !important; filter: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  a, button, [role="button"], summary,
+  .clay, .clay-sm, .urban-card { transition: none; }
+  a:active, button:not(:disabled):active,
+  [role="button"]:active, summary:active { transform: none; }
+}
+
+/* ── Route-change / skeleton shimmer ──────────────── */
+@keyframes urban-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(219,184,156,0.14) 25%,
+    rgba(219,184,156,0.34) 50%,
+    rgba(219,184,156,0.14) 75%);
+  background-size: 200% 100%;
+  animation: urban-shimmer 1.25s linear infinite;
+  border-radius: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+
+/* Pending-navigation pulse (see components/BottomNav.tsx). */
+@keyframes urban-pulse {
+  0%, 100% { opacity: 1;   }
+  50%      { opacity: 0.42; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes urban-pulse { 0%, 100% { opacity: 1; } }
+}
