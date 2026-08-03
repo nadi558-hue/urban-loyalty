@@ -6,6 +6,7 @@ import { ArrowLeft2, Setting2 } from 'iconsax-reactjs'
 import { getRules } from '@/lib/points'
 import BirthdayField from './BirthdayField'
 import InstallButton from '@/components/InstallButton'
+import TourReplayButton from '@/components/TourReplayButton'
 
 const TIER_LABELS: Record<string, string> = { silver: 'SILVER', gold: 'GOLD', platinum: 'PLATINUM' }
 
@@ -134,6 +135,9 @@ export default async function ProfilePage() {
           {/* Renders nothing once the app is actually installed. */}
           <div style={{ borderBottom: '1px solid #F3EAE3' }}>
             <InstallButton />
+          </div>
+          <div style={{ borderBottom: '1px solid #F3EAE3' }}>
+            <TourReplayButton />
           </div>
           {MENU.map((item, i) => {
             const row = (

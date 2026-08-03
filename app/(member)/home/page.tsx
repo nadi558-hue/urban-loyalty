@@ -6,6 +6,9 @@ import { getRules, TIER_THRESHOLDS } from '@/lib/points'
 import { getCoachView } from '@/lib/coach'
 import CoachCard from '@/components/CoachCard'
 import { reconcileMember, getPendingScans, STALE_PENDING_MS } from '@/lib/reconcile'
+import { getLeaderboard } from '@/lib/leaderboard'
+import Leaderboard from '@/components/Leaderboard'
+import TourGuide from '@/components/TourGuide'
 import { Clock, InfoCircle } from 'iconsax-reactjs'
 
 export const dynamic = 'force-dynamic'
@@ -64,10 +67,11 @@ export default async function HomePage() {
   const { name, total_coins, lifetime_coins, tier } = member
   const firstName = name.split(' ')[0]
 
-  const [rules, ledger, classesThisMonth] = await Promise.all([
+  const [rules, ledger, classesThisMonth, leaderboard] = await Promise.all([
     getRules(),
     getLedger(member.id, 4),
     countClassesThisMonth(member.id),
+    getLeaderboard(member.id),
   ])
 
   const streak = member.current_streak ?? 0
@@ -151,7 +155,7 @@ export default async function HomePage() {
       </div>
 
       {/* ── Clay stats card (overlaps the hero) ── */}
-      <div className="clay" style={{
+      <div className="clay" data-tour="status" style={{
         position: 'relative', zIndex: 3, margin: '-78px 16px 0',
         padding: '14px 18px 18px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -223,7 +227,7 @@ export default async function HomePage() {
 
       {/* ── Available UC card (gold) ─────────────── */}
       <div style={{ padding: '16px 16px 0' }}>
-        <div style={{
+        <div data-tour="balance" style={{
           background: 'linear-gradient(135deg,#DBB89C 0%,#C0906F 100%)',
           borderRadius: 26, padding: '18px 20px',
           boxShadow: [
@@ -350,6 +354,9 @@ export default async function HomePage() {
         </div>
       )}
 
+      {/* ── Monthly leaderboard ──────────────────── */}
+      <Leaderboard data={leaderboard} />
+
       {/* ── Active challenges ────────────────────── */}
       <div style={{ padding: '20px 16px 0' }}>
         <p style={{ fontSize: 12.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9C8B7F', marginBottom: 10, fontFamily: 'var(--font-assistant,sans-serif)' }}>אתגרים פעילים</p>
@@ -419,6 +426,7 @@ export default async function HomePage() {
         </div>
       </div>
 
+      <TourGuide />
     </main>
   )
 }

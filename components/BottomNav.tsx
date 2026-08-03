@@ -5,12 +5,12 @@ import { useLinkStatus } from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home2, Gift, ScanBarcode, Clock, User, type Icon } from 'iconsax-reactjs'
 
-const tabs: { label: string; Icon: Icon; href: string; center?: boolean }[] = [
+const tabs: { label: string; Icon: Icon; href: string; center?: boolean; tour?: string }[] = [
   { label: 'בית', Icon: Home2, href: '/home' },
-  { label: 'הטבות', Icon: Gift, href: '/rewards' },
-  { label: 'QR', Icon: ScanBarcode, href: '/qr', center: true },
+  { label: 'הטבות', Icon: Gift, href: '/rewards', tour: 'rewards' },
+  { label: 'QR', Icon: ScanBarcode, href: '/qr', center: true, tour: 'qr' },
   { label: 'היסטוריה', Icon: Clock, href: '/history' },
-  { label: 'פרופיל', Icon: User, href: '/profile' },
+  { label: 'פרופיל', Icon: User, href: '/profile', tour: 'profile' },
 ]
 
 /**
@@ -108,7 +108,7 @@ export default function BottomNav() {
       zIndex: 50,
     }}>
       {tabs.map(tab => (
-        <Link key={tab.href} href={tab.href} style={{ textDecoration: 'none' }}>
+        <Link key={tab.href} href={tab.href} data-tour={tab.tour} style={{ textDecoration: 'none' }}>
           <TabBody tab={tab} active={pathname === tab.href} />
         </Link>
       ))}
