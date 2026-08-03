@@ -74,7 +74,19 @@ export async function runTierReview(): Promise<TierReviewResult> {
         }
       }
 
-      await db.from('members').update(update).eq('id', m.id)
+      // Write only when something actually moved. This ran an UPDATE for every
+      // member on every sync — ~485 sequential round-trips that consumed the
+      // whole 60s function budget, so /api/sync died with
+      // FUNCTION_INVOCATION_TIMEOUT and no coins were ever awarded. In the
+      // steady state almost nobody changes, so almost nothing is written.
+      const unchanged =
+        update.qualifying_coins === m.qualifying_coins &&
+        !('tier' in update) &&
+        (!('tier_reviewed_at' in update) || update.tier_reviewed_at === m.tier_reviewed_at)
+
+      if (!unchanged) {
+        await db.from('members').update(update).eq('id', m.id)
+      }
     }
 
     return { reviewed: members.length, promoted, demoted, pending }
