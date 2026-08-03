@@ -1,5 +1,7 @@
 import { createServiceClient } from '@/lib/supabase'
 import Link from 'next/link'
+import { getOps } from '@/lib/ops'
+import OpsPanel from '@/components/OpsPanel'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +25,7 @@ async function getStats() {
 const TIER_BADGE = { silver: '🥈', gold: '🥇', platinum: '💎' }
 
 export default async function AdminPage() {
-  const { totalMembers, totalRedemptions, topMembers } = await getStats()
+  const [{ totalMembers, totalRedemptions, topMembers }, ops] = await Promise.all([getStats(), getOps()])
 
   return (
     <main className="max-w-2xl mx-auto px-4 pt-8" dir="rtl">
@@ -64,6 +66,8 @@ export default async function AdminPage() {
           </div>
         ))}
       </div>
+
+      <OpsPanel ops={ops} />
 
       {/* Top members */}
       <div className="bg-white rounded-2xl p-5 border border-[#E7DBD1] mb-6">
