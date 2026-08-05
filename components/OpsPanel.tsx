@@ -7,7 +7,10 @@ function Banner({ tone, title, body }: { tone: 'bad' | 'warn' | 'ok' | 'info'; t
     bad:  { bg: '#FBEAEA', bd: '#E4B4B4', fg: '#8E2F2F' },
     warn: { bg: '#FDF3E3', bd: '#E8D2A6', fg: '#8A6320' },
     ok:   { bg: '#EAF6EE', bd: '#B4DCC2', fg: '#2E6B44' },
-    info: { bg: '#F3E4D4', bd: '#DFC3A5', fg: '#7A4A2F' },
+    // Lighter than the rest of the sand palette on purpose: this one is
+    // informational, not a fault, so it shouldn't read as heavily as the
+    // warn/bad banners sitting next to it. Ink stays dark — contrast is 6.66:1.
+    info: { bg: '#FBF2E8', bd: '#EEDCC7', fg: '#7A4A2F' },
   }[tone]
   return (
     <div style={{
