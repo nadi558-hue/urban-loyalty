@@ -295,3 +295,22 @@ input, select, textarea {
 
 /* Never render below ~12px, whatever an inline style asks for. */
 body { font-size: 16px; }
+
+/* ── Tier gauge sweep-in ───────────────────────────
+   The fill is the full half-circle clipped by stroke-dasharray (set inline,
+   per member). Starting the dash fully offset and relaxing to 0 sweeps the
+   arc from SILVER toward GOLD on load. 214 = half-circle length (π·68) —
+   an offset can exceed the dash pattern safely, so one constant covers
+   every fill percentage. */
+@keyframes gauge-sweep {
+  from { stroke-dashoffset: 214; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.gauge-fill {
+  animation: gauge-sweep 900ms cubic-bezier(.33,1,.45,1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gauge-fill { animation: none; }
+}

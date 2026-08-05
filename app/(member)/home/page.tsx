@@ -6,6 +6,7 @@ import { getRules, TIER_THRESHOLDS } from '@/lib/points'
 import { getCoachView } from '@/lib/coach'
 import { withAnimatedPose } from '@/lib/coach-assets'
 import CoachCard from '@/components/CoachCard'
+import CountUp from '@/components/CountUp'
 import { reconcileMember, getPendingScans, STALE_PENDING_MS } from '@/lib/reconcile'
 import { getLeaderboard } from '@/lib/leaderboard'
 import Leaderboard from '@/components/Leaderboard'
@@ -173,30 +174,30 @@ export default async function HomePage() {
             strokeWidth="11"
             strokeLinecap="round"
           />
-          {/* Progress fill */}
-          {fillLen > 0 && (() => {
-            const px = cx + R * Math.cos(Math.PI - arcFrac * Math.PI)
-            const py = cy - R * Math.sin(arcFrac * Math.PI)
-            // The fill never sweeps more than the 180° half-circle, so this is
-            // always the minor arc — large-arc-flag must stay 0. Flipping it
-            // past 50% (as a prior version did) draws the reflex arc instead,
-            // the wrong way around the circle, which looks like the gauge
-            // jumped to a different position.
-            return (
-              <path
-                d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${px.toFixed(2)} ${py.toFixed(2)}`}
-                fill="none"
-                stroke={arcColor}
-                strokeWidth="11"
-                strokeLinecap="round"
-                style={{ filter: `drop-shadow(0 0 6px ${arcColor}99)` }}
-              />
-            )
-          })()}
-          {/* Center number */}
+          {/* Progress fill.
+              Drawn as the FULL half-circle and clipped with stroke-dasharray,
+              so the sweep-in can be pure CSS (see .gauge-fill in globals.css):
+              the dash animates from 0 to its final length on load. An earlier
+              version computed the partial arc endpoint instead — same pixels
+              at rest, but a path's shape can't be transitioned. */}
+          {fillLen > 0 && (
+            <path
+              className="gauge-fill"
+              d={`M ${cx - R} ${cy} A ${R} ${R} 0 0 1 ${cx + R} ${cy}`}
+              fill="none"
+              stroke={arcColor}
+              strokeWidth="11"
+              strokeLinecap="round"
+              style={{
+                filter: `drop-shadow(0 0 6px ${arcColor}99)`,
+                strokeDasharray: `${fillLen.toFixed(1)} ${halfCirc.toFixed(1)}`,
+              }}
+            />
+          )}
+          {/* Center number — counts up in step with the arc sweeping in */}
           <text x={cx} y={cy - 8} textAnchor="middle"
             fontFamily="var(--font-frank,serif)" fontSize="42" fontWeight="900" fill="#3B2E27">
-            {qualifying}
+            <CountUp value={qualifying} />
           </text>
           <text x={cx} y={cy + 8} textAnchor="middle"
             fontSize="11.5" fill="#A66B43" letterSpacing="2"
