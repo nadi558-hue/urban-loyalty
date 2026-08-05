@@ -4,6 +4,7 @@ import { getCurrentMember, DEMO_MEMBER } from '@/lib/member'
 import { getLedger, countClassesThisMonth, reasonLabel } from '@/lib/ledger'
 import { getRules, TIER_THRESHOLDS } from '@/lib/points'
 import { getCoachView } from '@/lib/coach'
+import { withAnimatedPose } from '@/lib/coach-assets'
 import CoachCard from '@/components/CoachCard'
 import { reconcileMember, getPendingScans, STALE_PENDING_MS } from '@/lib/reconcile'
 import { getLeaderboard } from '@/lib/leaderboard'
@@ -285,7 +286,7 @@ export default async function HomePage() {
 
       {/* ── Coach ────────────────────────────────── */}
       <div style={{ paddingTop: 18 }}>
-        <CoachCard view={getCoachView(member)} />
+        <CoachCard view={withAnimatedPose(getCoachView(member))} />
       </div>
 
       {/* ── Ways to earn ─────────────────────────── */}

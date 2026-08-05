@@ -21,6 +21,11 @@ const SPARKLES = [
 export default function CoachCard({ view }: { view: CoachView }) {
   const { image, message, pose, streak, coach, isMilestone } = view
 
+  // An animated pose already contains its own crown, sparkles and motion, so
+  // the CSS celebration would play a second, offset one on top of it. Poses
+  // that are still a static PNG keep the CSS version.
+  const isAnimated = image.endsWith('.webp')
+
   return (
     <div className="coach-stage" style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'flex-end', gap: 2, padding: '0 16px' }}>
 
@@ -69,7 +74,7 @@ export default function CoachCard({ view }: { view: CoachView }) {
           the wrapper and the breathing loop here don't overwrite each other's
           transform. */}
       <div style={{ position: 'relative', flexShrink: 0 }}>
-        {isMilestone && SPARKLES.map((sp, i) => (
+        {isMilestone && !isAnimated && SPARKLES.map((sp, i) => (
           <span key={i} aria-hidden className="coach-sparkle" style={{
             position: 'absolute', ...sp.at, fontSize: sp.size, lineHeight: 1, color: '#C0906F',
             animationDelay: `${sp.delay}ms`, pointerEvents: 'none',
@@ -77,7 +82,7 @@ export default function CoachCard({ view }: { view: CoachView }) {
         ))}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          className={`coach-figure${isMilestone ? ' is-milestone' : ''}`}
+          className={isAnimated ? undefined : `coach-figure${isMilestone ? ' is-milestone' : ''}`}
           src={image}
           alt={`${COACH_NAMES[coach]} — ${pose}`}
           style={{
