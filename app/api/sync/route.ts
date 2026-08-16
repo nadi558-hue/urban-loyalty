@@ -22,6 +22,14 @@ export const maxDuration = 60
 
 const PENDING_LOOKBACK_MS = 2 * 86_400_000
 
+// A scan that never found a class stays 'pending' forever, and the ops panel
+// counts it as stuck. Retiring it to 'expired' keeps the panel honest: what is
+// left as pending is genuinely still waiting.
+//
+// This is deliberately shorter than PENDING_LOOKBACK_MS, so it runs only after
+// the matching loop below has given the scan one last chance in this same run.
+const EXPIRE_PENDING_AFTER_MS = 86_400_000
+
 // Accept both Vercel Cron's `Authorization: Bearer <CRON_SECRET>` and a manual
 // `x-cron-secret` header.
 function authorized(req: NextRequest): boolean {
@@ -151,6 +159,20 @@ async function handleSync(req: NextRequest) {
     errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
   }
 
+  // Retire scans that are past the point of ever matching. Runs after the loop
+  // above, so a scan on its last day still gets this run's chance to match.
+  let expiredScans = 0
+  try {
+    const { data } = await db.from('checkins')
+      .update({ status: 'expired' })
+      .eq('status', 'pending').is('arbox_checkin_id', null)
+      .lt('created_at', new Date(Date.now() - EXPIRE_PENDING_AFTER_MS).toISOString())
+      .select('id')
+    expiredScans = (data ?? []).length
+  } catch (e) {
+    errors = [errors, e instanceof Error ? e.message : String(e)].filter(Boolean).join(' | ')
+  }
+
   // Once-a-year date bonuses. Kept outside the try above so a failure in the
   // Arbox reconciliation doesn't skip them, and vice versa.
   let dateBonuses = { birthday: 0, anniversary: 0 }
@@ -183,6 +205,6 @@ async function handleSync(req: NextRequest) {
 
   await db.from('sync_log').insert({ check_ins_found: checkInsFound, coins_awarded: coinsAwarded, errors })
 
-  return NextResponse.json({ ok: true, members, checkInsFound, verified, unmatched, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, tiers, errors })
+  return NextResponse.json({ ok: true, members, checkInsFound, verified, unmatched, expiredScans, lateCancels, coinsAwarded, referralsPaid, dateBonuses, streaks, tiers, errors })
 }
 

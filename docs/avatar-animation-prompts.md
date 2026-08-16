@@ -31,14 +31,22 @@
 
 ```
 TECHNICAL REQUIREMENTS (must follow exactly):
-- Solid pure blue background (#0000FF), flat and evenly lit, filling the entire frame. No gradients, no shadows cast on the background, no vignette. Do not put any blue tint, blue rim light, or blue reflection on the character.
+- Solid pure blue background (#0000FF), flat and evenly lit, filling the entire frame. No gradients, no shadows cast on the background, no vignette.
+- NEVER let blue light touch the character. No blue tint, no blue rim light, no blue reflection, no blue glow on her skin, hair or outfit, not even faintly and not even for a single frame. Her colors must stay exactly as warm as the reference image.
 - Keep the character EXACTLY as in the reference image: same face, same hairstyle, same outfit, same colors, same line-art illustration style, same proportions.
 - Locked static camera. No zoom, no pan, no dolly, no camera shake, no perspective change.
 - The character stays centered and anchored in frame at a constant scale. Do not let the character drift, resize, or walk out of frame.
-- Full body framing identical to the reference image.
+- FULL BODY FRAMING, always the same: the whole character from the top of her head to the soles of her shoes must stay inside the frame for every frame of the clip, with a small margin of background above her head and below her feet. She should fill roughly 80% of the frame height. Never crop her at the chest, waist or thighs, and never zoom in on her upper body — every pose must be framed at exactly the same distance so the clips can be used interchangeably.
 - No text, no captions, no watermarks, no logos, no additional characters or props beyond those described.
-- Clean 2D animation, smooth motion, 15fps feel.
+- Any sparkles, glows, particles or light effects must be WARM GOLD or AMBER only. Absolutely no white, silver, pale-blue or cyan light, no white light rays, no lens flare, no starburst glow. Effects must stay close to the character, not fill the frame or reach the frame edges.
+- Clean 2D animation with smooth, natural motion.
 ```
+
+> ⚠️ **למה נוספה השורה על אפקטים** — בקליפ הראשון של `celebrate` הדמות
+> יצאה מושלמת, אבל פרץ האור והניצוצות יצאו **לבנים/תכלת**. אור לבן הוא נייטרלי,
+> ולכן שום מפתח כרומה בעולם לא יודע להפריד אותו מהרקע — הוא ספג את הכחול
+> ונשאר אפור־כחלחל מלוכלך על הרקע הקרם של האפליקציה.
+> הכתר הזהוב באותו קליפ יצא נקי לחלוטין. **זהב עובד, לבן לא.**
 
 ---
 
@@ -50,7 +58,7 @@ TECHNICAL REQUIREMENTS (must follow exactly):
 ```
 Animate this character celebrating a milestone achievement.
 
-Motion: The character raises both arms upward in a joyful victory gesture and breaks into a wide, genuine smile. A golden crown gently descends and settles onto their head. As the crown lands, a burst of small golden sparkles and soft golden light rays radiates outward from behind the character, then fades away. The character settles into a proud, happy standing pose.
+Motion: The character raises both arms upward in a joyful victory gesture and breaks into a wide, genuine smile. A golden crown gently descends and settles onto their head. As the crown lands, a small burst of WARM GOLDEN sparkles appears close around the character's head and shoulders and then fades away. The sparkles must be solid warm gold — no white glow, no white light rays, no silver or pale blue glints, no starburst filling the frame.
 
 Timing: build-up (0-1s), peak burst as the crown lands (1-2s), settle and hold (2-3s).
 Energy: triumphant and warm, celebratory but elegant — not cartoonish or frantic.
@@ -75,12 +83,12 @@ This plays ONCE and ends on a held pose. It does not loop.
 > ⚠️ חייב להיות מינימלי. אם זה קופצני, זה יעצבן אחרי יומיים.
 
 ```
-Animate this character standing calmly, with very subtle idle motion only.
+Animate this character standing in a relaxed, friendly idle — alive and present, but calm.
 
-Motion: Slow, natural breathing — the chest and shoulders rise and fall gently. One slow, natural eye blink. Almost imperceptible weight shift. The hands and arms stay essentially where they are.
+Motion: Easy natural breathing that visibly lifts the chest and shoulders. She shifts her weight softly from one leg to the other, so her hips and shoulders sway a little. Her head turns very slightly and she gives a warm, easy smile toward the viewer, with a couple of unhurried natural blinks at different moments. A few loose strands of hair drift gently with the movement, but her hairstyle itself stays exactly as in the reference image. Her arms hang relaxed and sway slightly with her weight shift.
 
-Energy: EXTREMELY SUBTLE AND MINIMAL. This is a resting idle state that a user sees every single day, so it must never feel busy, bouncy, or distracting. Think of a photograph that is barely alive — not a performance.
-No gestures, no waving, no jumping, no arm movement.
+Energy: warm, welcoming and quietly alive — like someone waiting comfortably for a friend. She should look like a real person standing there, never like a frozen photograph, but also never busy or bouncy: this is the everyday state a user sees on every visit, so all motion stays slow, soft and low-amplitude.
+No jumping, no big gestures, no waving, no arm raising, no travelling across the frame.
 
 SEAMLESS LOOP: the first and last frame must be identical so the clip loops with no visible jump.
 ```
@@ -93,24 +101,32 @@ SEAMLESS LOOP: the first and last frame must be identical so the clip loops with
 **לולאה** · 3 שניות
 
 ```
-Animate this character radiating positive workout energy.
+Animate this character jogging energetically on the spot.
 
-Motion: The character bounces very lightly on the spot with an upbeat rhythm, shoulders relaxed, smiling confidently. A small, contained motivating gesture — a light fist pump or an encouraging nod toward the viewer.
+Motion: The character runs in place with a brisk, athletic rhythm, knees lifting, and her ARMS PUMP IN TIME WITH HER LEGS — elbows bent at about 90 degrees, swinging forward and back in the natural running rhythm, one arm forward while the opposite knee lifts. Her whole body commits to the movement: shoulders and torso rotate slightly with each stride, and she smiles with real effort and enthusiasm.
 
-Energy: upbeat and motivating but CONTROLLED. Keep the movement small and looping-friendly; the character must not travel across the frame or change scale.
+CRITICAL: the arms must never hang still or stay relaxed while the legs run. Legs and arms move together as one coordinated running motion, at the same tempo. A calm upper body over running legs looks broken.
 
-SEAMLESS LOOP: the first and last frame must be identical so the clip loops with no visible jump.
+CRITICAL: keep her hair in EXACTLY the same style as the reference image and never let it down. If her hair is tied up in a bun, it stays a tight bun for the whole clip — do not turn it into a ponytail, do not let long hair fall loose, do not let hair fly. Only tiny loose strands near the face may move.
+
+Energy: genuinely athletic and enthusiastic — she is mid-workout and enjoying it. Keep her anchored on the same spot at a constant scale; she must not travel across the frame.
+
+SEAMLESS LOOP: the first and last frame must be identical so the running cycle loops with no visible jump.
 ```
 
 ## 5. `streak_flame` — רצף 7+ (05_streak_fire)
 **לולאה** · 3 שניות
 
 ```
-Animate this character with a burning streak of momentum.
+Animate this character powered up and unstoppable, on a hot winning streak.
 
-Motion: The character holds a strong, confident stance with a proud smile, breathing steadily. Warm orange and golden flames flicker and dance continuously around and behind them, with a few small embers drifting slowly upward and fading out.
+Motion: The character plants a strong wide stance, pulls both fists in tight to her sides and pushes her chest up in a powerful "charged up" surge, then holds it with visible strength — shoulders squared, chin up, a fierce proud grin. Her body pulses with the effort: a firm rhythmic bounce of the shoulders and a small triumphant fist pump. She looks powerful and fired up, NOT calm.
 
-Energy: powerful and warm. The character's own motion stays fairly still and grounded — the FLAMES carry the movement, not the body.
+The flames sit BEHIND her and rise from BELOW her feet, like a glowing aura framing her silhouette — warm orange and gold, flickering upward with a few embers drifting away. The flames must never cover her face, her body or her outfit, and she must never look like she is burning or in pain.
+
+CRITICAL: do not make her stand still and breathe calmly. The character's own energy must match the fire — she is dominating, not meditating.
+
+Energy: triumphant, strong, exhilarating.
 
 SEAMLESS LOOP: the flames must loop continuously with no visible cut, and the first and last frame must match.
 ```
