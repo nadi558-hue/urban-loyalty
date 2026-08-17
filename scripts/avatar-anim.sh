@@ -21,10 +21,16 @@
 # chromakey= was tried and rejected: it keyed out the character entirely.
 set -euo pipefail
 
-IN="${1:?usage: avatar-anim.sh <input.mp4> <coach> <pose> [seconds] [fill]}"
+IN="${1:?usage: avatar-anim.sh <input.mp4> <coach> <pose> [seconds] [fill] [start]}"
 COACH="${2:?coach: maya|sara|idan}"
 POSE="${3:?pose: celebrate|wave|basic|energetic|streak_flame|empathetic|streak_lost}"
 SECS="${4:-2.0}"
+
+# Seconds to skip before the clip starts. The generators return 10s and spend
+# the first second or two easing into the pose, which is dead weight in a 3s
+# loop — idan/streak_flame doesn't catch fire until 2.4s, so a window starting
+# at 0 produced a "streak" animation with no flames in it at all.
+START="${6:-0}"
 
 # Fraction of the 280px canvas the figure should fill. 1.0 for a clip framed
 # head-to-shoes, which is what the prompt asks for and what nearly every clip
@@ -54,7 +60,7 @@ mkdir -p "$OUT_DIR"
 # frame 0 of maya/emphatic.mp4 is #010101. Reading that made the script call the
 # screen "magenta" with a level of 0, which collapsed the key ramp to a
 # zero-width span and produced a 688KB file with the background still in it.
-MID=$(echo "$SECS" | awk '{print $1/2}')
+MID=$(awk -v s="$START" -v d="$SECS" 'BEGIN{print s+d/2}')
 KEY=$(ffmpeg -v error -ss "$MID" -i "$IN" -vf "crop=10:10:0:0,scale=1:1" -frames:v 1 -f rawvideo -pix_fmt rgb24 - 2>/dev/null \
       | od -An -tu1 | awk '{printf "0x%02X%02X%02X", $1, $2, $3}')
 echo "  sampled background: $KEY"
@@ -105,7 +111,7 @@ DESPILL="geq=r='r(X,Y)':g='g(X,Y)':b='if(gt(b(X,Y),g(X,Y)), g(X,Y)+(b(X,Y)-g(X,Y
 SRC="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0:s=x "$IN")"
 export SRC
 read -r CW CH CX CY < <(
-  ffmpeg -v error -ss $(echo "$SECS" | awk '{print $1/2}') -i "$IN" \
+  ffmpeg -v error -ss "$MID" -i "$IN" \
     -vf "format=rgba,$KEYALPHA,scale=180:320" -frames:v 1 -pix_fmt rgba -f rawvideo - 2>/dev/null \
   | node -e "
     // A row or column counts as \"character\" only if it contains an unbroken
@@ -149,7 +155,7 @@ case "$POSE" in
   *)              LOOP=0 ;;
 esac
 
-ffmpeg -y -v error -t "$SECS" -i "$IN" \
+ffmpeg -y -v error -ss "$START" -t "$SECS" -i "$IN" \
   -vf "crop=${CW}:${CH}:${CX}:${CY},format=rgba,$KEYALPHA,$DESPILL,fps=10,scale=-1:${FIGURE},pad=iw:${CANVAS}:0:0:color=#00000000" \
   -loop "$LOOP" -q:v 45 -compression_level 6 -an "$OUT"
 
