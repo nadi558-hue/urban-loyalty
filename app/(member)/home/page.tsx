@@ -69,6 +69,10 @@ export default async function HomePage() {
   const { name, total_coins, lifetime_coins, tier } = member
   const firstName = name.split(' ')[0]
 
+  // Both forms of the pose: the animated one plays, the static one holds the
+  // layout until the figure scrolls into view. See components/CoachFigure.
+  const coachView = getCoachView(member)
+
   const [rules, ledger, classesThisMonth, leaderboard] = await Promise.all([
     getRules(),
     getLedger(member.id, 4),
@@ -287,7 +291,7 @@ export default async function HomePage() {
 
       {/* ── Coach ────────────────────────────────── */}
       <div style={{ paddingTop: 18 }}>
-        <CoachCard view={withAnimatedPose(getCoachView(member))} />
+        <CoachCard view={withAnimatedPose(coachView)} poster={coachView.image} />
       </div>
 
       {/* ── Ways to earn ─────────────────────────── */}

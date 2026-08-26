@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { COACH_NAMES, type CoachView } from '@/lib/coach'
 import { Flash, Setting2 } from 'iconsax-reactjs'
+import CoachFigure from '@/components/CoachFigure'
 
 /**
  * The coach standing beside a speech bubble, on the home screen.
@@ -18,7 +19,7 @@ const SPARKLES = [
   { at: { top: 62, right: 12 }, size: 9,  delay: 340 },
 ] as const
 
-export default function CoachCard({ view }: { view: CoachView }) {
+export default function CoachCard({ view, poster }: { view: CoachView; poster: string }) {
   const { image, message, pose, streak, coach, isMilestone } = view
 
   // An animated pose already contains its own crown, sparkles and motion, so
@@ -80,10 +81,10 @@ export default function CoachCard({ view }: { view: CoachView }) {
             animationDelay: `${sp.delay}ms`, pointerEvents: 'none',
           }}>✦</span>
         ))}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <CoachFigure
           className={isAnimated ? undefined : `coach-figure${isMilestone ? ' is-milestone' : ''}`}
           src={image}
+          poster={poster}
           alt={`${COACH_NAMES[coach]} — ${pose}`}
           style={{
             height: 190, width: 'auto', objectFit: 'contain', objectPosition: 'bottom',
