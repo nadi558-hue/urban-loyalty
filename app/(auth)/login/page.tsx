@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { authErrorMessage } from '@/lib/auth-errors'
 import TermsSheet from './TermsSheet'
 
 type Step = 'phone' | 'otp'
@@ -26,7 +27,7 @@ export default function LoginPage() {
     if (!agreed) { setError('יש לאשר את תקנון ותנאי השימוש כדי להמשיך'); return }
     setLoading(true); setError('')
     const { error } = await supabase.auth.signInWithOtp({ phone: formatPhone(phone) })
-    if (error) { setError(error.message); setLoading(false); return }
+    if (error) { setError(authErrorMessage(error)); setLoading(false); return }
     setStep('otp')
     setLoading(false)
   }
@@ -38,7 +39,7 @@ export default function LoginPage() {
       token: otp,
       type: 'sms',
     })
-    if (error) { setError(error.message); setLoading(false); return }
+    if (error) { setError(authErrorMessage(error)); setLoading(false); return }
 
     // The session lives in a cookie so the server can read it. When the browser
     // refuses to store it — Safari Private Browsing, or "Block All Cookies" —
