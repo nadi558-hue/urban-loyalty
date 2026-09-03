@@ -134,19 +134,22 @@ export default function ScanClient() {
           </div>
         ) : status.kind === 'success' ? (
           <div style={{ padding: '32px 0' }}>
-            {status.pending
-              ? <Timer1 size={56} variant="Bulk" color="#C0906F" />
-              : status.already
+            {/* `already` is checked before `pending`: a repeat scan of a
+                still-pending check-in used to render the fresh-scan heading,
+                which is what made extra scans look like they had registered. */}
+            {status.already
               ? <Verify size={56} variant="Bulk" color="#C0906F" />
+              : status.pending
+              ? <Timer1 size={56} variant="Bulk" color="#C0906F" />
               : <TickCircle size={56} variant="Bulk" color="#3f8f5e" />}
             <p style={{ fontFamily: 'var(--font-frank,serif)', fontSize: 22, fontWeight: 700, color: '#3B2E27', marginTop: 10 }}>
-              {status.pending ? 'הנוכחות נקלטה!' : status.already ? 'כבר בפנים!' : 'צ׳ק-אין הושלם!'}
+              {status.already ? 'כבר סרקת לשיעור הזה' : status.pending ? 'הנוכחות נקלטה!' : 'צ׳ק-אין הושלם!'}
             </p>
             <p style={{ fontSize: 14.5, color: '#8B7A6C', marginTop: 6 }}>
-              {status.pending
+              {status.already
+                ? (status.message ?? 'הסריקה הזו לא נרשמה — אין צורך לסרוק שוב')
+                : status.pending
                 ? (status.message ?? 'הנקודות יתווספו לאחר אימות הנוכחות')
-                : status.already
-                ? (status.message ?? 'כבר נרשם צ׳ק-אין לשיעור הזה')
                 : <>נוספו לך <b style={{ color: '#A66B43' }}>+{status.coins} UC</b> — אימון נעים</>}
             </p>
           </div>

@@ -64,9 +64,12 @@ export async function POST(req: Request) {
       ok: true,
       alreadyCheckedIn: true,
       pending,
+      // Say plainly that this scan was NOT recorded. The old wording read as a
+      // fresh success, so a member scanning five times believed five scans had
+      // registered — and so did we, until the table showed one.
       message: pending
-        ? 'כבר סרקת לשיעור הזה — המטבעות ייכנסו כשהנוכחות תסומן במערכת ⏳'
-        : 'כבר נרשם לך צ׳ק-אין לשיעור הזה 💪',
+        ? 'הסריקה הזו לא נרשמה — כבר סרקת לשיעור הזה. המטבע ייכנס כשהנוכחות תסומן במערכת ⏳'
+        : 'הסריקה הזו לא נרשמה — כבר סרקת לשיעור הזה והמטבע כבר אצלך 💪',
     })
   }
 
