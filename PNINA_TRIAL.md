@@ -1,6 +1,6 @@
 # Urban Club — הוראות הרצה לפנינה
 
-**כתובת האפליקציה:** https://urban-loyalty.vercel.app
+**כתובת האפליקציה:** https://club.theurbanstudio.net
 
 ---
 
