@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Instagram } from 'iconsax-reactjs'
 import type { ReferralRow } from './referrals-data'
@@ -8,12 +8,21 @@ import type { ReferralRow } from './referrals-data'
 export default function ReferralsClient({
   referralCode,
   referrals,
+  shareBonus,
 }: {
   referralCode: string
   referrals: ReferralRow[]
+  shareBonus: number
 }) {
   const [copied, setCopied] = useState(false)
-  const link = `https://club.urbanstudio.co.il/join?ref=${referralCode}`
+
+  // Build the invite link from wherever the app is actually served, the way the
+  // kiosk QR does. This used to be a hardcoded club.urbanstudio.co.il, a domain
+  // that has never existed — every invite a member sent led nowhere. The
+  // constant is only the pre-hydration fallback, so it must stay the real host.
+  const [origin, setOrigin] = useState('https://club.theurbanstudio.net')
+  useEffect(() => setOrigin(window.location.origin), [])
+  const link = `${origin}/join?ref=${referralCode}`
 
   const refStats = [
     { label: 'הזמנות', value: referrals.length },
@@ -196,7 +205,7 @@ export default function ReferralsClient({
               style={{ color: '#96613F', fontWeight: 700 }}>
               @urban_studio_official
             </a>
-            {' '}ושתף כאן – קבל 2 UC (פעם בחודש)
+            {' '}ושתף כאן – קבל {shareBonus} UC (פעם בחודש)
           </p>
           <Link href="/share"
             className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
@@ -206,7 +215,7 @@ export default function ReferralsClient({
               border: '1px solid rgba(192,144,111,0.25)',
             }}>
             <Instagram size={17} variant="Bulk" color="#DBB89C" />
-            העלאת סטורי – קבלת 7 UC
+            העלאת סטורי – קבלת {shareBonus} UC
           </Link>
         </div>
 
