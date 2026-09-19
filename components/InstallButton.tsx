@@ -22,6 +22,9 @@ export default function InstallButton() {
   const [installed, setInstalled] = useState(false)
 
   useEffect(() => {
+    // Deliberate: display-mode and user agent are browser-only, so reading
+    // them during render would break hydration. Runs once on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isStandalone()) { setInstalled(true); return }
     setPlatform(detectPlatform())
 

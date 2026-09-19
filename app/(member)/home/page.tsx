@@ -62,8 +62,12 @@ export default async function HomePage() {
   if (reconciled.awarded > 0) member = (await getCurrentMember()) ?? member
 
   const pending = await getPendingScans(member.id)
+  // This is an async Server Component rendered once per request, not a client
+  // render React may replay. "How old is this scan" is a per-request question.
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now()
   const stalePending = pending.filter(
-    (p) => Date.now() - new Date(p.created_at).getTime() > STALE_PENDING_MS,
+    (p) => now - new Date(p.created_at).getTime() > STALE_PENDING_MS,
   ).length
 
   const { name, total_coins, lifetime_coins, tier } = member

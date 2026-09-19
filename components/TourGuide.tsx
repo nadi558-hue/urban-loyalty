@@ -61,6 +61,10 @@ export default function TourGuide() {
   // First visit only. Reading localStorage in an effect (not during render)
   // keeps the server and first client render identical.
   useEffect(() => {
+    // Deliberate: reading localStorage during render would make the server and
+    // first client render disagree — the hydration bug the comment above
+    // describes. Runs once on mount, so there is no cascading render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     try { if (!localStorage.getItem(TOUR_KEY)) setActive(true) } catch { /* storage blocked */ }
     const replay = () => { setI(0); setActive(true) }
     window.addEventListener(TOUR_REPLAY_EVENT, replay)

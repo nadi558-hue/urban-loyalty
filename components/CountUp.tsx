@@ -17,6 +17,10 @@ export default function CountUp({ value, duration = 900 }: { value: number; dura
   useEffect(() => {
     if (value <= 0) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Deliberate: matchMedia is browser-only. On first render `shown` already
+    // equals `value`, so this only fires when `value` itself changes and the
+    // user has asked for no motion — jump to the number, skip the animation.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (reduce) { setShown(value); return }
 
     const t0 = performance.now()

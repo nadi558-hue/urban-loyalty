@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import { Instagram } from 'iconsax-reactjs'
 import type { ReferralRow } from './referrals-data'
@@ -20,8 +20,15 @@ export default function ReferralsClient({
   // kiosk QR does. This used to be a hardcoded club.urbanstudio.co.il, a domain
   // that has never existed — every invite a member sent led nowhere. The
   // constant is only the pre-hydration fallback, so it must stay the real host.
-  const [origin, setOrigin] = useState('https://club.theurbanstudio.net')
-  useEffect(() => setOrigin(window.location.origin), [])
+  // useSyncExternalStore, not an effect: it reads a browser-only value with an
+  // explicit server snapshot, so the server and first client render agree and
+  // no state is set during render. The origin never changes, so nothing to
+  // subscribe to.
+  const origin = useSyncExternalStore(
+    () => () => {},
+    () => window.location.origin,
+    () => 'https://club.theurbanstudio.net',
+  )
   const link = `${origin}/join?ref=${referralCode}`
 
   const refStats = [

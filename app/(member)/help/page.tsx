@@ -75,7 +75,13 @@ export default async function HelpPage() {
     getRewards(),
   ])
 
-  const stale = pending.filter(p => Date.now() - new Date(p.created_at).getTime() > STALE_PENDING_MS)
+  // This is an async Server Component rendered once per request, not a client
+  // render React may replay. Read once so both uses below judge staleness
+  // against the same instant.
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now()
+
+  const stale = pending.filter(p => now - new Date(p.created_at).getTime() > STALE_PENDING_MS)
   const affordable = rewards.filter(r => r.cost <= member.total_coins)
   const cheapestLocked = rewards
     .filter(r => r.cost > member.total_coins)
@@ -144,7 +150,7 @@ export default async function HelpPage() {
                 {pending.map(p => (
                   <li key={p.id} style={{ listStyle: 'disc' }}>
                     סריקה מ־{fmt(p.created_at)}
-                    {Date.now() - new Date(p.created_at).getTime() > STALE_PENDING_MS && (
+                    {now - new Date(p.created_at).getTime() > STALE_PENDING_MS && (
                       <span style={{ color: '#B43C3C' }}> · עדיין לא אושרה</span>
                     )}
                   </li>

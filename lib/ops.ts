@@ -27,6 +27,17 @@ export type Ops = {
 const DAY = 86_400_000
 const SYNC_OVERDUE_MS = 26 * 3_600_000
 
+// Shapes of the two joined selects below. The embedded `members(name)` comes
+// back as an object on a to-one relation, but PostgREST's generated types widen
+// it to an array, so it is spelled out here rather than inferred.
+type PendingRow = { id: string; created_at: string; members: { name: string } | null }
+type AwardRow = {
+  created_at: string
+  points: number
+  metadata: { class_name?: unknown } | null
+  members: { name: string } | null
+}
+
 /**
  * Operational snapshot for the admin dashboard.
  *
@@ -63,7 +74,7 @@ export async function getOps(): Promise<Ops> {
     const lastSyncAt = sync?.synced_at ?? null
     const lastSyncAgeMs = lastSyncAt ? Date.now() - new Date(lastSyncAt).getTime() : null
 
-    const pending: PendingScan[] = ((pendingRes.data ?? []) as any[]).map((r) => {
+    const pending: PendingScan[] = ((pendingRes.data ?? []) as unknown as PendingRow[]).map((r) => {
       const ageMs = Date.now() - new Date(r.created_at).getTime()
       return {
         id: r.id,
@@ -74,7 +85,7 @@ export async function getOps(): Promise<Ops> {
       }
     })
 
-    const recentAwards: RecentAward[] = ((awardsRes.data ?? []) as any[]).map((r) => ({
+    const recentAwards: RecentAward[] = ((awardsRes.data ?? []) as unknown as AwardRow[]).map((r) => ({
       name: r.members?.name ?? '—',
       className: typeof r.metadata?.class_name === 'string' ? r.metadata.class_name : null,
       createdAt: r.created_at,

@@ -7,15 +7,14 @@ import {
   reportWindow,
   arboxConfigured,
 } from '@/lib/arbox'
-import { awardPoints, getRules } from '@/lib/points'
+import { getRules } from '@/lib/points'
 import {
   awardAttendance, matchingScanIndex, type Promo,
 } from '@/lib/attendance'
 import { grantDateBonuses } from '@/lib/bonuses'
 import { syncPlanMembers, type MemberSyncResult } from '@/lib/member-sync'
 import { runTierReview, type TierReviewResult } from '@/lib/tiers'
-import { payReferral } from '@/lib/referrals'
-import { registerAttendance, breakStreak, runStreakRollover, type RolloverResult, type StreakMember } from '@/lib/streak'
+import { breakStreak, runStreakRollover, type RolloverResult, type StreakMember } from '@/lib/streak'
 
 // Allow up to 60s (Vercel Hobby max) — the sync fetches Arbox + reconciles.
 export const maxDuration = 60
