@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type Pending = { id: string; code: string; coins: number; member: string; reward: string; at: string }
 
@@ -22,6 +22,40 @@ export default function PendingAlert() {
   const [rows, setRows] = useState<Pending[]>([])
   const [muted, setMuted] = useState(false)
   const seen = useRef<Set<string> | null>(null)
+
+  // The poll below is started once and closes over the `chime` of that first
+  // render. Reading `muted` from state there would read `false` forever, so the
+  // mute button changed its own label and nothing else — staff pressing it
+  // during a class kept hearing the chime. The ref is what the timer can see.
+  const mutedRef = useRef(false)
+
+  // Declared before the effect that calls it, and stable, so the interval is
+  // not torn down and restarted on every render.
+  const chime = useCallback(() => {
+    if (mutedRef.current) return
+    try {
+      // Synthesised rather than an audio file: no asset to ship, and nothing
+      // to break if the file is missing. Two short rising notes.
+      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      const ctx = new Ctx()
+      // A context created without a prior user gesture can start suspended on
+      // stricter mobile browsers; resuming is a no-op where it already runs.
+      if (ctx.state === 'suspended') void ctx.resume()
+      ;[0, 0.18].forEach((delay, i) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.value = i === 0 ? 660 : 880
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay)
+        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + delay + 0.02)
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.35)
+        osc.connect(gain); gain.connect(ctx.destination)
+        osc.start(ctx.currentTime + delay)
+        osc.stop(ctx.currentTime + delay + 0.4)
+      })
+      setTimeout(() => ctx.close(), 1200)
+    } catch { /* autoplay policy, or no audio device */ }
+  }, [])
 
   useEffect(() => {
     let alive = true
@@ -53,7 +87,9 @@ export default function PendingAlert() {
           const n = list.length + (data.shares ?? 0)
           if ('setAppBadge' in navigator) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            n > 0 ? (navigator as any).setAppBadge(n) : (navigator as any).clearAppBadge()
+            const nav = navigator as any
+            if (n > 0) nav.setAppBadge(n)
+            else nav.clearAppBadge()
           }
         } catch { /* badge is a nicety, never a failure */ }
       } catch { /* a dropped poll is not worth surfacing — the next one is 20s away */ }
@@ -62,30 +98,7 @@ export default function PendingAlert() {
     tick()
     const t = setInterval(tick, POLL_MS)
     return () => { alive = false; clearInterval(t) }
-  }, [])
-
-  function chime() {
-    if (muted) return
-    try {
-      // Synthesised rather than an audio file: no asset to ship, and nothing
-      // to break if the file is missing. Two short rising notes.
-      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      const ctx = new Ctx()
-      ;[0, 0.18].forEach((delay, i) => {
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.type = 'sine'
-        osc.frequency.value = i === 0 ? 660 : 880
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay)
-        gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + delay + 0.02)
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.35)
-        osc.connect(gain); gain.connect(ctx.destination)
-        osc.start(ctx.currentTime + delay)
-        osc.stop(ctx.currentTime + delay + 0.4)
-      })
-      setTimeout(() => ctx.close(), 1200)
-    } catch { /* autoplay policy, or no audio device */ }
-  }
+  }, [chime])
 
   if (rows.length === 0) return null
 
@@ -125,7 +138,7 @@ export default function PendingAlert() {
         }}>לטיפול</a>
 
         <button
-          onClick={() => setMuted(m => !m)}
+          onClick={() => setMuted(m => { mutedRef.current = !m; return !m })}
           aria-label={muted ? 'הפעלת צליל התראה' : 'השתקת צליל התראה'}
           style={{
             background: 'transparent', border: '1px solid rgba(42,33,28,0.35)',
